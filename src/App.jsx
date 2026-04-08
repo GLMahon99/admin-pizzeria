@@ -8,6 +8,7 @@ import Dashboard from './pages/Dashboard';
 import Inventory from './pages/Inventory';
 import Orders from './pages/Orders';
 import Layout from './components/Layout';
+import Supplies from './pages/Supplies';
 
 function App() {
   const { token, loading } = useAuth();
@@ -25,6 +26,7 @@ function App() {
           <Route index element={<Dashboard />} />
           <Route path="pedidos" element={<Orders />} />
           <Route path="inventario" element={<Inventory />} />
+          <Route path="insumos" element={<Supplies />} />
         </Route>
 
         {/* Redirección por defecto si la ruta no existe */}

@@ -6,7 +6,8 @@ import {
     Package,
     LogOut,
     Pizza,
-    User
+    User,
+    Cookie
 } from 'lucide-react';
 
 const Sidebar = () => {
@@ -22,6 +23,7 @@ const Sidebar = () => {
         { to: "/", icon: <LayoutDashboard size={20} />, label: "Dashboard" },
         { to: "/pedidos", icon: <ShoppingBag size={20} />, label: "Pedidos" },
         { to: "/inventario", icon: <Package size={20} />, label: "Inventario" },
+        { to: "/insumos", icon: <Cookie size={20} />, label: "Insumos" },
     ];
 
     return (
