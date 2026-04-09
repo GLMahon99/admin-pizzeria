@@ -5,10 +5,8 @@ import api from '../api/axiosConfig';
 const Orders = () => {
     // Estados para la lista y filtros
     const [filter, setFilter] = useState('Hoy');
-    const [pedidos, setPedidos] = useState([
-        { id: 1024, cliente: "Gaston Mahon", total: 12500, fecha: new Date(), detalle: [{ nombre: 'Muzza', cantidad: 1 }], hora: "12:30" },
-        { id: 1020, cliente: "Marcos Paz", total: 8500, fecha: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), detalle: [{ nombre: 'Fugazzeta', cantidad: 1 }], hora: "21:15" },
-    ]);
+    const [pedidos, setPedidos] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     // Estados para el Modal de Nuevo Pedido
     const [showNewOrderModal, setShowNewOrderModal] = useState(false);
@@ -19,8 +17,26 @@ const Orders = () => {
     });
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('Todas');
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const categories = ['Todas', 'Pizzas', 'Empanadas', 'Bebidas', 'Postres'];
+
+    const fetchData = async () => {
+        try {
+            setLoading(true);
+            const response = await api.get('/pedidos');
+            setPedidos(response.data);
+        } catch (error) {
+            console.error('Error al cargar pedidos:', error);
+            alert('No se pudieron cargar los pedidos.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchData();
+    }, []);
 
     useEffect(() => {
         if (showNewOrderModal) {
@@ -67,11 +83,34 @@ const Orders = () => {
         return newOrder.items.reduce((acc, item) => acc + (parseFloat(item.precio) * item.cantidad), 0);
     };
 
-    const handleConfirmOrder = () => {
-        // Por ahora solo visual
-        alert(`Pedido de ${newOrder.cliente} confirmado por $${calculateTotal()}`);
-        setShowNewOrderModal(false);
-        setNewOrder({ cliente: '', items: [] });
+    const handleConfirmOrder = async () => {
+        if (isSubmitting) return;
+        setIsSubmitting(true);
+
+        try {
+            const orderData = {
+                id_cliente: null, // Para ventas manuales por ahora
+                total: calculateTotal(),
+                estado: 'Entregado', // Asumimos entregado si es en local
+                items: newOrder.items.map(item => ({
+                    id_producto: item.id_producto,
+                    cantidad: item.cantidad,
+                    precio: parseFloat(item.precio)
+                }))
+            };
+
+            await api.post('/pedidos', orderData);
+            
+            setShowNewOrderModal(false);
+            setNewOrder({ cliente: '', items: [] });
+            fetchData(); // Recargar lista
+            alert('Pedido registrado con éxito');
+        } catch (error) {
+            console.error('Error al confirmar pedido:', error);
+            alert('Hubo un error al procesar la venta.');
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     const filteredProducts = availableProducts.filter(p => {
@@ -204,45 +243,33 @@ const Orders = () => {
                                     <ShoppingCart size={14}/> Detalle del Pedido Actual
                                 </h3>
 
-                                <div className="space-y-4 mb-8">
-                                    <div className="relative">
-                                        <User className="absolute left-4 top-4 text-gray-400" size={18} />
-                                        <input 
-                                            type="text" 
-                                            placeholder="Nombre del Cliente / Nota" 
-                                            className="w-full pl-11 p-5 bg-white border-white rounded-[1.5rem] shadow-sm outline-none focus:ring-2 focus:ring-orange-500 font-bold text-lg"
-                                            value={newOrder.cliente}
-                                            onChange={(e) => setNewOrder({...newOrder, cliente: e.target.value})}
-                                        />
-                                    </div>
-                                </div>
 
-                                <div className="flex-1 overflow-y-auto mb-6 pr-2 custom-scrollbar">
+                                <div className="flex-1 overflow-y-auto mb-8 pr-2 custom-scrollbar">
                                     {newOrder.items.length === 0 ? (
-                                        <div className="h-full border-4 border-dashed border-gray-100/80 rounded-[3rem] flex flex-col items-center justify-center p-10 text-center bg-gray-50/30">
-                                            <ShoppingCart size={64} className="text-gray-200 mb-6 animate-pulse" />
-                                            <p className="text-sm font-black text-gray-300 uppercase tracking-[0.2em] leading-loose">
+                                        <div className="h-full border-4 border-dashed border-gray-100/80 rounded-[3rem] flex flex-col items-center justify-center p-12 text-center bg-gray-50/30">
+                                            <ShoppingCart size={80} className="text-gray-100 mb-8 animate-pulse" />
+                                            <p className="text-xs font-black text-gray-300 uppercase tracking-[0.3em] leading-loose">
                                                 Tu pedido está<br/>
                                                 <span className="text-orange-200 font-black">esperando</span>
                                             </p>
                                         </div>
                                     ) : (
-                                        <div className="space-y-3">
+                                        <div className="space-y-4">
                                             {newOrder.items.map(item => (
-                                                <div key={item.id_producto} className="bg-white p-5 rounded-[1.5rem] shadow-sm border border-gray-100 flex items-center justify-between group animate-in slide-in-from-right-3">
+                                                <div key={item.id_producto} className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 flex items-center justify-between group animate-in slide-in-from-right-3">
                                                     <div className="flex flex-col flex-1">
-                                                        <span className="text-sm font-black text-gray-800 uppercase tracking-tight line-clamp-1">{item.nombre}</span>
+                                                        <span className="text-base font-black text-gray-800 uppercase tracking-tighter line-clamp-1">{item.nombre}</span>
                                                         <div className="flex items-center gap-2 mt-1">
-                                                            <span className="bg-orange-100 text-orange-600 px-2 py-0.5 rounded-lg text-[10px] font-black uppercase tracking-tighter">x{item.cantidad}</span>
-                                                            <span className="text-xs font-bold text-gray-400">Total: <span className="text-gray-800">${(parseFloat(item.precio) * item.cantidad).toLocaleString()}</span></span>
+                                                            <span className="bg-orange-100 text-orange-600 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter">x{item.cantidad}</span>
+                                                            <span className="text-xs font-bold text-gray-400">Total: <span className="text-slate-800">${(parseFloat(item.precio) * item.cantidad).toLocaleString()}</span></span>
                                                         </div>
                                                     </div>
                                                     <button 
                                                         onClick={() => removeItemFromOrder(item.id_producto)} 
-                                                        className="ml-4 p-3 text-red-100 group-hover:text-red-500 hover:bg-red-50 rounded-2xl transition-all"
-                                                        title="Eliminar de la lista"
+                                                        className="ml-4 p-4 text-red-100 group-hover:text-red-500 hover:bg-red-50 rounded-2xl transition-all"
+                                                        title="Eliminar"
                                                     >
-                                                        <Trash2 size={20} />
+                                                        <Trash2 size={24} />
                                                     </button>
                                                 </div>
                                             ))}
@@ -251,24 +278,24 @@ const Orders = () => {
                                 </div>
 
                                 <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 space-y-4">
-                                    <div className="flex justify-between items-center text-gray-400 uppercase tracking-widest font-black text-xs">
+                                    <div className="flex justify-between items-center text-gray-400 uppercase tracking-[0.2em] font-black text-[10px]">
                                         <span>Subtotal</span>
                                         <span>${calculateTotal().toLocaleString()}</span>
                                     </div>
-                                    <div className="flex justify-between items-center border-t pt-4">
-                                        <span className="text-gray-800 font-black text-sm uppercase tracking-widest">Total</span>
-                                        <span className="text-3xl font-black text-orange-600 tracking-tighter">${calculateTotal().toLocaleString()}</span>
+                                    <div className="flex justify-between items-center border-t border-gray-50 pt-4">
+                                        <span className="text-gray-800 font-black text-[10px] uppercase tracking-widest">Total</span>
+                                        <span className="text-2xl font-black text-orange-600 tracking-tight">${calculateTotal().toLocaleString()}</span>
                                     </div>
                                     <button 
                                         onClick={handleConfirmOrder}
-                                        disabled={newOrder.items.length === 0 || !newOrder.cliente}
-                                        className={`w-full py-5 rounded-2xl font-black text-lg transition-all shadow-xl flex items-center justify-center gap-2 ${
-                                            newOrder.items.length === 0 || !newOrder.cliente 
-                                            ? 'bg-gray-200 text-gray-400 cursor-not-allowed shadow-none' 
+                                        disabled={newOrder.items.length === 0 || isSubmitting}
+                                        className={`w-full py-4 rounded-2xl font-black text-base transition-all shadow-xl flex items-center justify-center gap-2 ${
+                                            newOrder.items.length === 0 || isSubmitting
+                                            ? 'bg-gray-100 text-gray-300 cursor-not-allowed shadow-none' 
                                             : 'bg-orange-600 text-white hover:bg-orange-700 shadow-orange-100'
                                         }`}
                                     >
-                                        <DollarSign size={20} /> Confirmar Pedido
+                                        <DollarSign size={20} /> {isSubmitting ? 'Procesando...' : 'Confirmar Pedido'}
                                     </button>
                                 </div>
                             </div>
@@ -295,17 +322,22 @@ const Orders = () => {
 
             {/* Lista de Pedidos Actuales */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {filteredOrders.length > 0 ? (
+                {loading ? (
+                    <div className="col-span-full py-32 text-center text-gray-400">
+                         <div className="animate-bounce mb-4 text-orange-500"><ShoppingCart size={40} className="mx-auto" /></div>
+                         <p className="font-black uppercase tracking-widest text-sm text-gray-400">Cargando las ventas...</p>
+                    </div>
+                ) : filteredOrders.length > 0 ? (
                     filteredOrders.map((pedido) => (
-                        <div key={pedido.id} className="group bg-white rounded-[2.5rem] shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-2xl hover:shadow-gray-200/50 transition-all duration-300 border-t-8 border-t-orange-500">
+                        <div key={pedido.id_pedido} className="group bg-white rounded-[2.5rem] shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-2xl hover:shadow-gray-200/50 transition-all duration-300 border-t-8 border-t-orange-500">
                             <div className="p-8 flex-1">
                                 <div className="flex justify-between items-start mb-6">
                                     <div className="flex flex-col">
                                         <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none mb-1">Orden de Compra</span>
-                                        <span className="text-sm font-black text-slate-800 tracking-tight">#{pedido.id}</span>
+                                        <span className="text-sm font-black text-slate-800 tracking-tight">#{pedido.id_pedido}</span>
                                     </div>
                                     <div className="flex items-center text-slate-500 text-[10px] font-black bg-slate-50 px-3 py-1.5 rounded-full uppercase tracking-tighter">
-                                        <Clock size={12} className="mr-1.5 text-orange-500" /> {pedido.hora}
+                                        <Clock size={12} className="mr-1.5 text-orange-500" /> {new Date(pedido.fecha).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Argentina/Buenos_Aires' })}
                                     </div>
                                 </div>
 
@@ -314,25 +346,26 @@ const Orders = () => {
                                         <User size={24} />
                                     </div>
                                     <div>
-                                        <h3 className="font-black text-gray-800 text-xl leading-tight">{pedido.cliente}</h3>
+                                        <h3 className="font-black text-gray-800 text-xl leading-tight">{pedido.cliente_nombre || 'Cliente Mostrador'}</h3>
                                         <p className="text-[10px] text-gray-400 uppercase tracking-widest font-black flex items-center gap-1.5 mt-0.5">
                                             <Calendar size={10} /> {new Date(pedido.fecha).toLocaleDateString()}
                                         </p>
                                     </div>
                                 </div>
 
-                                <div className="space-y-3 mb-8 bg-gray-50/50 p-6 rounded-[1.5rem] border border-gray-100/50">
+                                <div className="space-y-3 mb-8 bg-gray-50/50 p-6 rounded-[1.5rem] border border-gray-100/50 max-h-40 overflow-y-auto custom-scrollbar">
                                     <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Resumen de Productos</p>
-                                    {pedido.detalle.map((item, idx) => (
+                                    {pedido.detalle && pedido.detalle.map((item, idx) => (
                                         <div key={idx} className="flex justify-between items-center text-sm">
-                                            <span className="text-gray-600 font-bold"><span className="text-orange-600">x{item.cantidad}</span> {item.nombre}</span>
+                                            <span className="text-gray-600 font-bold"><span className="text-orange-600">x{item.cantidad}</span> {item.producto_nombre}</span>
+                                            <span className="text-gray-400 font-bold text-xs">${parseFloat(item.precio_unitario).toLocaleString()}</span>
                                         </div>
                                     ))}
                                 </div>
 
                                 <div className="flex justify-between items-center px-2">
                                     <span className="text-gray-400 font-black text-[10px] uppercase tracking-[0.2em]">Total Cobrado</span>
-                                    <span className="text-3xl font-black text-slate-900 tracking-tighter">${pedido.total.toLocaleString()}</span>
+                                    <span className="text-3xl font-black text-slate-900 tracking-tighter">${parseFloat(pedido.total).toLocaleString()}</span>
                                 </div>
                             </div>
 
