@@ -7,7 +7,8 @@ import {
     LogOut,
     Pizza,
     User,
-    Cookie
+    Cookie,
+    Settings as SettingsIcon
 } from 'lucide-react';
 
 const Sidebar = () => {
@@ -59,8 +60,22 @@ const Sidebar = () => {
             </nav>
 
             {/* User & Footer */}
-            <div className="p-4 border-t border-slate-800 space-y-4">
-                <div className="flex items-center gap-3 px-4 py-2">
+            <div className="p-4 border-t border-slate-800 space-y-2">
+                
+                <NavLink
+                    to="/configuracion"
+                    className={({ isActive }) => `
+                        flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition-all duration-200
+                        ${isActive
+                            ? 'bg-orange-600 text-white shadow-lg shadow-orange-600/20'
+                            : 'text-slate-400 hover:bg-slate-800 hover:text-white'}
+                    `}
+                >
+                    <SettingsIcon size={20} />
+                    Configuración
+                </NavLink>
+
+                <div className="flex items-center gap-3 px-4 py-2 pt-2">
                     <div className="w-10 h-10 bg-slate-800 rounded-full flex items-center justify-center text-orange-500 border border-slate-700">
                         <User size={20} />
                     </div>
