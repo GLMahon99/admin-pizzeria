@@ -134,6 +134,69 @@ const Orders = () => {
         });
     }, [filter, pedidos]);
 
+    const handlePrintTicket = (pedido) => {
+        const printWindow = window.open('', '_blank', 'width=300,height=600');
+        const fechaFormat = new Date(pedido.fecha).toLocaleDateString('es-AR') + ' ' + 
+                           new Date(pedido.fecha).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' });
+        
+        const html = `
+            <html>
+            <head>
+                <title>Ticket #${pedido.id_pedido}</title>
+                <style>
+                    body { font-family: 'Courier New', Courier, monospace; width: 280px; font-size: 12px; margin: 0; padding: 10px; }
+                    .center { text-align: center; }
+                    .bold { font-weight: bold; }
+                    .divider { border-top: 1px dashed #000; margin: 10px 0; }
+                    .item { display: flex; justify-content: space-between; margin-bottom: 5px; }
+                    .total { display: flex; justify-content: space-between; font-size: 16px; margin-top: 10px; }
+                    .afip-placeholder { border: 1px solid #000; padding: 5px; margin-top: 15px; font-size: 10px; }
+                    @media print { body { margin: 0; padding: 10px; } }
+                </style>
+            </head>
+            <body onload="window.print(); window.close();">
+                <div class="center bold" style="font-size: 18px;">PIZZERÍA APP</div>
+                <div class="center text-gray-500">Florida, Vicente López</div>
+                <div class="divider"></div>
+                <div class="bold">ORDEN: #${pedido.id_pedido}</div>
+                <div>FECHA: ${fechaFormat}</div>
+                <div class="divider"></div>
+                
+                <div class="bold">CLIENTE:</div>
+                <div>${pedido.cliente_nombre || 'Cliente Mostrador'}</div>
+                ${pedido.cliente_direccion ? `<div class="bold">DIRECCIÓN:</div><div>${pedido.cliente_direccion}</div>` : ''}
+                
+                <div class="divider"></div>
+                <div class="bold">PRODUCTOS:</div>
+                ${pedido.detalle ? pedido.detalle.map(item => `
+                    <div class="item">
+                        <span>${item.cantidad}x ${item.producto_nombre}</span>
+                        <span>$${(item.cantidad * item.precio_unitario).toLocaleString()}</span>
+                    </div>
+                `).join('') : 'Sin detalle'}
+                
+                <div class="divider"></div>
+                <div class="total bold">
+                    <span>TOTAL:</span>
+                    <span>$${parseFloat(pedido.total).toLocaleString()}</span>
+                </div>
+                
+                <div class="divider"></div>
+                <div class="afip-placeholder center">
+                    <p class="bold" style="margin: 0;">FACTURA B - CONSUMIDOR FINAL</p>
+                    <p style="margin: 5px 0;">CAE: 74218392817263 (PRUEBA)</p>
+                    <p style="margin: 0;">VTO: 26/04/2026</p>
+                    <div style="background: #eee; height: 30px; margin-top: 5px; display: flex; align-items: center; justify-content: center; font-size: 8px;">QR CODE PLACEHOLDER</div>
+                </div>
+                <div class="center" style="margin-top: 10px;">¡Gracias por tu compra!</div>
+            </body>
+            </html>
+        `;
+        
+        printWindow.document.write(html);
+        printWindow.document.close();
+    };
+
     const filterOptions = [
         { label: 'Hoy', value: 'Hoy' },
         { label: 'Últimos 7 días', value: '7d' },
@@ -369,12 +432,12 @@ const Orders = () => {
                                 </div>
                             </div>
 
-                            <div className="p-6 grid grid-cols-2 gap-4 bg-gray-50/30 border-t border-gray-100">
-                                <button className="flex items-center justify-center gap-2 bg-slate-800 hover:bg-black text-white py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 shadow-lg shadow-slate-100">
-                                    <Printer size={16} /> Comprobante
-                                </button>
-                                <button className="flex items-center justify-center gap-2 bg-white hover:bg-orange-50 text-orange-600 border border-orange-100 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 shadow-sm">
-                                    <Tag size={16} /> Etiqueta
+                            <div className="p-6 bg-gray-50/30 border-t border-gray-100">
+                                <button 
+                                    onClick={() => handlePrintTicket(pedido)}
+                                    className="w-full flex items-center justify-center gap-2 bg-slate-800 hover:bg-black text-white py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 shadow-lg shadow-slate-100"
+                                >
+                                    <Printer size={16} /> Imprimir Ticket
                                 </button>
                             </div>
                         </div>
