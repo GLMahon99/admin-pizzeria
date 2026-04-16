@@ -397,7 +397,16 @@ const Orders = () => {
                                 <div className="flex justify-between items-start mb-6">
                                     <div className="flex flex-col">
                                         <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none mb-1">Orden de Compra</span>
-                                        <span className="text-sm font-black text-slate-800 tracking-tight">#{pedido.id_pedido}</span>
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-sm font-black text-slate-800 tracking-tight">#{pedido.id_pedido}</span>
+                                            <span className={`px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-tighter ${
+                                                pedido.estado === 'Aprobado' ? 'bg-green-100 text-green-700' :
+                                                pedido.estado === 'Rechazado' ? 'bg-red-100 text-red-700' :
+                                                'bg-yellow-100 text-yellow-700'
+                                            }`}>
+                                                {pedido.estado}
+                                            </span>
+                                        </div>
                                     </div>
                                     <div className="flex items-center text-slate-500 text-[10px] font-black bg-slate-50 px-3 py-1.5 rounded-full uppercase tracking-tighter">
                                         <Clock size={12} className="mr-1.5 text-orange-500" /> {new Date(pedido.fecha).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Argentina/Buenos_Aires' })}
