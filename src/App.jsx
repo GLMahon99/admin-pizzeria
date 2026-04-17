@@ -1,8 +1,8 @@
-// src/App.jsx
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
+import { useTenant } from './context/TenantContext';
 
-// Importamos tus páginas (las que iremos creando)
+// Importamos tus páginas
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Inventory from './pages/Inventory';
@@ -12,9 +12,21 @@ import Supplies from './pages/Supplies';
 import Settings from './pages/Settings';
 
 function App() {
-  const { token, loading } = useAuth();
+  const { token, loading: authLoading } = useAuth();
+  const { loading: tenantLoading, error: tenantError } = useTenant();
 
-  if (loading) return <div className="flex h-screen items-center justify-center">Cargando...</div>;
+  if (authLoading || tenantLoading) {
+    return <div className="flex h-screen items-center justify-center">Cargando...</div>;
+  }
+
+  if (tenantError) {
+    return (
+      <div className="flex h-screen items-center justify-center flex-col gap-4">
+        <h1 className="text-2xl font-bold text-red-600">Error</h1>
+        <p>{tenantError}</p>
+      </div>
+    );
+  }
 
   return (
     <Router>

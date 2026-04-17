@@ -1,6 +1,12 @@
 /* src/index.css */
 @import "tailwindcss";
 
+:root {
+  --color-primary: #ef4444; /* Rojo por defecto */
+  --color-secondary: #f97316; /* Naranja por defecto */
+  --color-tertiary: #1f2937; /* Negro/Gris oscuro por defecto */
+}
+
 /* Opcional: un reset básico para que el body ocupe toda la pantalla */
 body {
   margin: 0;
