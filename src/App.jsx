@@ -28,8 +28,8 @@ function App() {
     <Router>
       <Routes>
         {/* Rutas públicas: Login y Registro */}
-        <Route path="/login" element={!token ? <Login /> : <Navigate to="/" />} />
-        <Route path="/register" element={!token ? <Register /> : <Navigate to="/" />} />
+        <Route path="login" element={!token ? <Login /> : <Navigate to="/" />} />
+        <Route path="register" element={!token ? <Register /> : <Navigate to="/" />} />
 
         {/* Rutas privadas: Todo lo que esté dentro de Layout requiere Token */}
         <Route path="/" element={token ? <Layout /> : <Navigate to="/login" />}>
