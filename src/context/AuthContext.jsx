@@ -5,9 +5,7 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
-    // const [token, setToken] = useState(localStorage.getItem('admin_token') || null);
-    // Cambiala temporalmente por esta:
-    const [token, setToken] = useState('token-de-prueba-para-diseno');
+    const [token, setToken] = useState(localStorage.getItem('admin_token') || null);
     const [loading, setLoading] = useState(true);
 
     // Configuramos Axios para que SIEMPRE use el token si existe
