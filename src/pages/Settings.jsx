@@ -1,203 +1,178 @@
-import {
-    Globe,
-    Palette,
-    Image as ImageIcon,
-    Phone,
-
-
-    MessageCircle,
-    Save,
-    Layout
-} from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { Save, ShieldCheck, Key, Palette, Image as ImageIcon, Loader2 } from 'lucide-react';
+import api from '../api/axiosConfig';
 
 const Settings = () => {
-    const [activeTab, setActiveTab] = useState('general');
+    const [loading, setLoading] = useState(true);
+    const [saving, setSaving] = useState(false);
+    const [config, setConfig] = useState({
+        nombre: '',
+        logo_url: '',
+        color_primario: '',
+        mp_public_key: '',
+        mp_access_token: ''
+    });
+    const [message, setMessage] = useState({ type: '', text: '' });
 
-    const tabs = [
-        { id: 'general', label: 'General', icon: <Globe size={18} /> },
-        { id: 'apariencia', label: 'Apariencia', icon: <Palette size={18} /> },
-        { id: 'contacto', label: 'Contacto y Redes', icon: <Phone size={18} /> },
-    ];
+    useEffect(() => {
+        fetchConfig();
+    }, []);
+
+    const fetchConfig = async () => {
+        try {
+            const response = await api.get('/admin/config-details');
+            setConfig(response.data);
+        } catch (error) {
+            console.error('Error al cargar config:', error);
+            setMessage({ type: 'error', text: 'Error al cargar la configuración' });
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setSaving(true);
+        setMessage({ type: '', text: '' });
+
+        try {
+            await api.put('/admin/config', config);
+            setMessage({ type: 'success', text: '¡Configuración guardada con éxito!' });
+            // Recargar la página para aplicar cambios visuales si los hay
+            setTimeout(() => window.location.reload(), 1500);
+        } catch (error) {
+            console.error('Error al guardar:', error);
+            setMessage({ type: 'error', text: 'No se pudo guardar la configuración' });
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    if (loading) {
+        return (
+            <div className="h-full flex items-center justify-center">
+                <Loader2 className="animate-spin text-orange-600" size={32} />
+            </div>
+        );
+    }
 
     return (
-        <div className="max-w-4xl mx-auto space-y-8 pb-10">
-            {/* Header */}
-            <header className="flex justify-between items-end">
-                <div>
-                    <h1 className="text-3xl font-extrabold text-gray-800">Coonfiguración de la <span className="text-orange-600">Tienda</span></h1>
-                    <p className="text-gray-500">Personalizá cómo se ve y funciona tu pizzería online.</p>
+        <div className="max-w-4xl mx-auto space-y-8 animate-in fade-in duration-500">
+            <div>
+                <h1 className="text-3xl font-black text-gray-800 tracking-tight italic uppercase">Configuración</h1>
+                <p className="text-gray-500 font-bold uppercase text-xs tracking-widest mt-1">Personalizá tu pizzería y métodos de pago</p>
+            </div>
+
+            {message.text && (
+                <div className={`p-4 rounded-2xl font-bold flex items-center gap-3 animate-in slide-in-from-top-4 ${
+                    message.type === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                }`}>
+                    <ShieldCheck size={20} />
+                    {message.text}
                 </div>
-                <button className="flex items-center gap-2 bg-orange-600 hover:bg-orange-700 text-white px-6 py-3 rounded-2xl font-black shadow-lg shadow-orange-100 transition-all active:scale-95">
-                    <Save size={20} /> Guardar Cambios
-                </button>
-            </header>
+            )}
 
-            {/* Tabs Navigation */}
-            <div className="flex gap-2 p-1 bg-gray-100 rounded-2xl w-fit">
-                {tabs.map(tab => (
+            <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                {/* Branding */}
+                <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100 space-y-6">
+                    <h2 className="text-xl font-black text-gray-800 flex items-center gap-2">
+                        <Palette className="text-orange-600" size={20} /> Branding y Diseño
+                    </h2>
+                    
+                    <div className="space-y-4">
+                        <div className="space-y-2">
+                            <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Nombre de la Pizzería</label>
+                            <input
+                                type="text"
+                                className="w-full bg-gray-50 border-2 border-gray-100 p-4 rounded-2xl focus:border-orange-600 outline-none font-bold"
+                                value={config.nombre}
+                                onChange={(e) => setConfig({...config, nombre: e.target.value})}
+                                required
+                            />
+                        </div>
+
+                        <div className="space-y-2">
+                            <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">URL del Logo (Link)</label>
+                            <div className="relative">
+                                <ImageIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300" size={18} />
+                                <input
+                                    type="text"
+                                    className="w-full bg-gray-50 border-2 border-gray-100 p-4 pl-12 rounded-2xl focus:border-orange-600 outline-none font-bold"
+                                    value={config.logo_url}
+                                    onChange={(e) => setConfig({...config, logo_url: e.target.value})}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="space-y-2">
+                            <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Color de Marca</label>
+                            <div className="flex gap-4 items-center">
+                                <input
+                                    type="color"
+                                    className="w-16 h-16 rounded-2xl border-2 border-gray-100 p-1 cursor-pointer"
+                                    value={config.color_primario || '#EA580C'}
+                                    onChange={(e) => setConfig({...config, color_primario: e.target.value})}
+                                />
+                                <span className="font-mono font-bold text-gray-500">{config.color_primario || '#EA580C'}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Mercado Pago */}
+                <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100 space-y-6">
+                    <h2 className="text-xl font-black text-gray-800 flex items-center gap-2">
+                        <Key className="text-blue-600" size={20} /> Mercado Pago
+                    </h2>
+                    
+                    <div className="bg-blue-50 p-4 rounded-2xl border border-blue-100 space-y-2">
+                        <p className="text-[10px] font-bold text-blue-600 uppercase tracking-widest flex items-center gap-1">
+                            <ShieldCheck size={12} /> Configuración Segura
+                        </p>
+                        <p className="text-xs text-blue-700 leading-relaxed font-medium">
+                            Estas llaves son necesarias para recibir los pagos directamente en tu cuenta de Mercado Pago.
+                        </p>
+                    </div>
+
+                    <div className="space-y-4">
+                        <div className="space-y-2">
+                            <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Public Key (APP_USR-...)</label>
+                            <input
+                                type="text"
+                                className="w-full bg-gray-50 border-2 border-gray-100 p-4 rounded-2xl focus:border-blue-600 outline-none font-mono text-sm"
+                                value={config.mp_public_key}
+                                onChange={(e) => setConfig({...config, mp_public_key: e.target.value})}
+                                placeholder="APP_USR-xxxx-xxxx-xxxx-xxxx"
+                            />
+                        </div>
+
+                        <div className="space-y-2">
+                            <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Access Token (APP_USR-...)</label>
+                            <input
+                                type="password"
+                                className="w-full bg-gray-50 border-2 border-gray-100 p-4 rounded-2xl focus:border-blue-600 outline-none font-mono text-sm"
+                                value={config.mp_access_token}
+                                onChange={(e) => setConfig({...config, mp_access_token: e.target.value})}
+                                placeholder="APP_USR-xxxxxxxxxxxxxxxxxxxxxxxx"
+                            />
+                        </div>
+                    </div>
+                </div>
+
+                <div className="md:col-span-2 flex justify-end">
                     <button
-                        key={tab.id}
-                        onClick={() => setActiveTab(tab.id)}
-                        className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-sm transition-all ${activeTab === tab.id
-                            ? 'bg-white text-gray-800 shadow-sm'
-                            : 'text-gray-400 hover:text-gray-600'
-                            }`}
+                        type="submit"
+                        disabled={saving}
+                        className="bg-orange-600 hover:bg-orange-700 text-white px-10 py-4 rounded-2xl font-black text-lg shadow-xl shadow-orange-100 transition-all active:scale-95 flex items-center gap-3 disabled:opacity-50"
                     >
-                        {tab.icon} {tab.label}
+                        {saving ? <Loader2 className="animate-spin" /> : <Save />}
+                        {saving ? 'Guardando...' : 'Guardar Cambios'}
                     </button>
-                ))}
-            </div>
-
-            {/* Content Area */}
-            <div className="bg-white rounded-[2.5rem] shadow-sm border border-gray-100 p-8 md:p-12">
-
-                {/* --- SECCIÓN GENERAL --- */}
-                {activeTab === 'general' && (
-                    <div className="space-y-8 animate-in fade-in slide-in-from-left-4 duration-500">
-                        <section className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            <div className="space-y-2">
-                                <label className="text-xs font-black text-gray-400 uppercase tracking-widest">Nombre del Sitio</label>
-                                <input
-                                    type="text"
-                                    placeholder="Ej: Pizza App Florida"
-                                    className="w-full p-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-orange-500 outline-none font-bold"
-                                />
-                                <p className="text-[10px] text-gray-400 font-medium">Este es el título que verán los usuarios en su navegador.</p>
-                            </div>
-                            <div className="space-y-2">
-                                <label className="text-xs font-black text-gray-400 uppercase tracking-widest">Eslogan o Frase</label>
-                                <input
-                                    type="text"
-                                    placeholder="Ej: Las mejores pizzas de zona norte"
-                                    className="w-full p-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-orange-500 outline-none font-bold"
-                                />
-                            </div>
-                        </section>
-
-                        <section className="space-y-4">
-                            <label className="text-xs font-black text-gray-400 uppercase tracking-widest">Logo de la Marca</label>
-                            <div className="flex items-center gap-6">
-                                <div className="w-32 h-32 bg-gray-50 rounded-3xl border-2 border-dashed border-gray-200 flex flex-col items-center justify-center text-gray-400 gap-2 hover:border-orange-500 hover:text-orange-500 transition-all cursor-pointer">
-                                    <ImageIcon size={32} />
-                                    <span className="text-[10px] font-black uppercase tracking-tight text-center px-2">Subir Logo (PNG)</span>
-                                </div>
-                                <div className="space-y-1">
-                                    <p className="text-sm font-bold text-gray-800">Avatar del Dashboard</p>
-                                    <p className="text-xs text-gray-400 pr-10">Se recomienda una imagen cuadrada con fondo transparente (PNG).</p>
-                                </div>
-                            </div>
-                        </section>
-                    </div>
-                )}
-
-                {/* --- SECCIÓN APARIENCIA --- */}
-                {activeTab === 'apariencia' && (
-                    <div className="space-y-10 animate-in fade-in slide-in-from-left-4 duration-500">
-                        <section className="space-y-6">
-                            <h3 className="text-sm font-black text-gray-400 uppercase tracking-widest flex items-center gap-2">
-                                <Palette size={16} className="text-orange-500" /> Paleta de Colores
-                            </h3>
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                                <ColorBox label="Primario" color="#ea580c" name="Naranja Pizza" />
-                                <ColorBox label="Secundario" color="#0f172a" name="Slate Deep" />
-                                <ColorBox label="Acento" color="#22c55e" name="Verde Éxito" />
-                                <ColorBox label="Fondo" color="#f8fafc" name="Gris Nube" />
-                            </div>
-                        </section>
-
-                        <section className="bg-orange-50/50 p-6 rounded-3xl border border-orange-100 flex items-center justify-between">
-                            <div className="flex items-center gap-4">
-                                <div className="bg-orange-600 p-2 rounded-xl text-white">
-                                    <Layout size={20} />
-                                </div>
-                                <div>
-                                    <p className="text-sm font-black text-orange-900 uppercase tracking-tight">Modo Oscuro Automático</p>
-                                    <p className="text-xs text-orange-700/60 font-medium">Activar según preferencia del navegador del cliente.</p>
-                                </div>
-                            </div>
-                            <div className="w-12 h-6 bg-orange-200 rounded-full relative cursor-not-allowed">
-                                <div className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full shadow-sm" />
-                            </div>
-                        </section>
-                    </div>
-                )}
-
-                {/* --- SECCIÓN CONTACTO --- */}
-                {activeTab === 'contacto' && (
-                    <div className="space-y-8 animate-in fade-in slide-in-from-left-4 duration-500">
-                        <section className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            <div className="space-y-2">
-                                <label className="text-xs font-black text-gray-400 uppercase tracking-widest">WhatsApp de Pedidos</label>
-                                <div className="relative">
-                                    <MessageCircle className="absolute left-4 top-4 text-green-500" size={18} />
-                                    <input
-                                        type="tel"
-                                        placeholder="+54 9 11 1234 5678"
-                                        className="w-full pl-12 p-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-green-500 outline-none font-bold"
-                                    />
-                                </div>
-                            </div>
-                            <div className="space-y-2">
-                                <label className="text-xs font-black text-gray-400 uppercase tracking-widest">Número Local (Fijo)</label>
-                                <div className="relative">
-                                    <Phone className="absolute left-4 top-4 text-blue-500" size={18} />
-                                    <input
-                                        type="tel"
-                                        placeholder="011 4765-XXXX"
-                                        className="w-full pl-12 p-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none font-bold"
-                                    />
-                                </div>
-                            </div>
-                        </section>
-
-                        <div className="divider h-px bg-gray-100 w-full" />
-
-                        <section className="space-y-6">
-                            <h3 className="text-sm font-black text-gray-400 uppercase tracking-widest">Redes Sociales</h3>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div className="flex items-center gap-4 bg-gray-50 p-4 rounded-2xl border border-transparent hover:border-pink-200 transition-all group">
-                                    <div className="bg-white p-3 rounded-xl text-pink-500 shadow-sm group-hover:scale-110 transition-transform">
-
-                                    </div>
-                                    <input
-                                        type="text"
-                                        placeholder="Username de Instagram"
-                                        className="flex-1 bg-transparent border-none outline-none font-bold text-sm"
-                                    />
-                                </div>
-                                <div className="flex items-center gap-4 bg-gray-50 p-4 rounded-2xl border border-transparent hover:border-blue-200 transition-all group">
-                                    <div className="bg-white p-3 rounded-xl text-blue-600 shadow-sm group-hover:scale-110 transition-transform">
-
-                                    </div>
-                                    <input
-                                        type="text"
-                                        placeholder="/pizzerianombre"
-                                        className="flex-1 bg-transparent border-none outline-none font-bold text-sm"
-                                    />
-                                </div>
-                            </div>
-                        </section>
-                    </div>
-                )}
-
-            </div>
+                </div>
+            </form>
         </div>
     );
 };
-
-// Sub-componente para los cuadros de colores
-const ColorBox = ({ label, color, name }) => (
-    <div className="bg-gray-50 p-4 rounded-3xl border border-gray-100 group hover:-translate-y-1 transition-all cursor-pointer">
-        <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3">{label}</p>
-        <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl shadow-inner border border-white" style={{ background: color }} />
-            <div>
-                <p className="text-xs font-black text-gray-800">{color}</p>
-                <p className="text-[9px] font-bold text-gray-400 uppercase tracking-tight">{name}</p>
-            </div>
-        </div>
-    </div>
-);
 
 export default Settings;
