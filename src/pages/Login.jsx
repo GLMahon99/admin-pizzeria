@@ -1,20 +1,25 @@
-import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useTenant } from '../context/TenantContext'; // Import useTenant
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import api from '../api/axiosConfig';
-import { Lock, User, Pizza, AlertCircle } from 'lucide-react';
+import { Lock, Hash, Pizza, AlertCircle, ArrowRight, CheckCircle } from 'lucide-react';
 
 const Login = () => {
-    const [credentials, setCredentials] = useState({ email: '', password: '' });
+    const [credentials, setCredentials] = useState({ cuit: '', password: '' });
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
     const { login } = useAuth();
+    const { setTenant } = useTenant(); // Obtener setTenant
     const navigate = useNavigate();
+    const location = useLocation();
+    
+    // Capturamos el mensaje de éxito si viene de registro
+    const successMessage = location.state?.message;
 
     const handleChange = (e) => {
         setCredentials({ ...credentials, [e.target.name]: e.target.value });
-        if (error) setError(''); // Limpiamos el error mientras escribe
+        if (error) setError('');
     };
 
     const handleSubmit = async (e) => {
@@ -22,90 +27,127 @@ const Login = () => {
         setLoading(true);
 
         try {
-            // Llamada al backend (Asegurate de tener esta ruta en tu Node.js)
-            const res = await api.post('/auth/login-admin', credentials);
+            // Nueva ruta de login para administradores de empresas
+            const res = await api.post('/auth/company-login', credentials);
 
-            // Si el backend devuelve el token y los datos del admin:
-            login(res.data.user, res.data.token);
-            navigate('/'); // Nos vamos al Dashboard
+            // Guardamos el usuario y el token
+            login(res.data.empresa, res.data.token);
+            
+            // Seteamos el tenant globalmente para actualizar colores y logo
+            setTenant(res.data.empresa); 
+            
+            // Navegamos al Dashboard
+            navigate('/');
         } catch (err) {
-            setError(err.response?.data?.message || 'Credenciales incorrectas. Intentalo de nuevo.');
+            setError(err.response?.data?.message || 'Cuit o contraseña incorrectos. Revisá tus datos.');
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-orange-50 p-4">
-            <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 border border-orange-100">
+        <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4 relative overflow-hidden">
+            {/* Elementos decorativos animados */}
+            <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+                <div className="absolute top-[10%] left-[5%] w-72 h-72 bg-orange-200/40 rounded-full blur-[100px] animate-pulse"></div>
+                <div className="absolute bottom-[10%] right-[5%] w-72 h-72 bg-red-200/40 rounded-full blur-[100px] animate-pulse"></div>
+            </div>
 
-                {/* Logo / Header */}
-                <div className="text-center mb-8">
-                    <div className="inline-flex items-center justify-center w-16 h-16 bg-orange-600 rounded-full text-white mb-4 shadow-lg">
-                        <Pizza size={32} />
+            <div className="max-w-md w-full relative z-10">
+                <div className="bg-white/80 backdrop-blur-xl rounded-[2.5rem] shadow-2xl p-8 md:p-12 border border-white">
+                    
+                    {/* Header */}
+                    <div className="text-center mb-10">
+                        <div className="inline-flex items-center justify-center w-20 h-20 bg-orange-600 rounded-3xl text-white mb-6 shadow-2xl rotate-12 transition-transform hover:rotate-0 duration-500">
+                            <Pizza size={40} />
+                        </div>
+                        <h1 className="text-4xl font-extrabold text-gray-900 tracking-tighter">Panel <span className="text-orange-600">Admin</span></h1>
+                        <p className="text-gray-500 font-medium mt-2 italic">Gestioná tu pizzería en un solo lugar.</p>
                     </div>
-                    <h1 className="text-2xl font-bold text-gray-800">Panel de Control</h1>
-                    <p className="text-gray-500">Ingresá tus credenciales de administrador</p>
+
+                    {/* Mensaje de Éxito Post-Registro */}
+                    {successMessage && (
+                        <div className="mb-6 p-4 bg-green-50 rounded-2xl border border-green-100 text-green-700 flex items-center gap-3">
+                            <CheckCircle size={20} className="shrink-0" />
+                            <p className="text-xs font-bold">{successMessage}</p>
+                        </div>
+                    )}
+
+                    {/* Mensaje de Error */}
+                    {error && (
+                        <div className="mb-6 p-4 bg-red-50 rounded-2xl border border-red-100 text-red-600 flex items-center gap-3">
+                            <AlertCircle size={20} className="shrink-0" />
+                            <p className="text-xs font-bold">{error}</p>
+                        </div>
+                    )}
+
+                    <form onSubmit={handleSubmit} className="space-y-6">
+                        {/* CUIT */}
+                        <div className="space-y-2">
+                            <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-2">Identificador (CUIT)</label>
+                            <div className="relative group">
+                                <Hash className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-orange-600 transition-colors" size={20} />
+                                <input
+                                    type="text"
+                                    name="cuit"
+                                    required
+                                    className="w-full pl-14 pr-6 py-5 bg-gray-100/50 border-2 border-transparent rounded-[1.5rem] focus:bg-white focus:border-orange-500 ring-0 outline-none transition-all font-bold text-gray-800 placeholder:text-gray-400"
+                                    placeholder="20-XXXXXXXX-X"
+                                    onChange={handleChange}
+                                />
+                            </div>
+                        </div>
+
+                        {/* Password */}
+                        <div className="space-y-2">
+                            <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-2">Contraseña</label>
+                            <div className="relative group">
+                                <Lock className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-orange-600 transition-colors" size={20} />
+                                <input
+                                    type="password"
+                                    name="password"
+                                    required
+                                    className="w-full pl-14 pr-6 py-5 bg-gray-100/50 border-2 border-transparent rounded-[1.5rem] focus:bg-white focus:border-orange-500 ring-0 outline-none transition-all font-bold text-gray-800 placeholder:text-gray-400"
+                                    placeholder="••••••••"
+                                    onChange={handleChange}
+                                />
+                            </div>
+                        </div>
+
+                        <button
+                            type="submit"
+                            disabled={loading}
+                            className="w-full py-5 bg-orange-600 hover:bg-orange-700 text-white rounded-[1.5rem] font-black text-lg shadow-2xl shadow-orange-200 transition-all active:scale-95 flex items-center justify-center gap-3"
+                        >
+                            {loading ? 'Verificando...' : (
+                                <>
+                                    Ingresar al Sistema <ArrowRight size={22} />
+                                </>
+                            )}
+                        </button>
+                    </form>
+
+                    <div className="mt-12 pt-8 border-t border-gray-100 flex flex-col gap-4 items-center">
+                        <p className="text-sm text-gray-500 font-medium">
+                            ¿Aún no tenés tu pizzería registrada?
+                        </p>
+                        <Link 
+                            to="/register" 
+                            className="bg-gray-900 text-white px-8 py-3 rounded-full text-xs font-black uppercase tracking-widest hover:bg-orange-600 transition-colors shadow-lg shadow-gray-200"
+                        >
+                            Registrar Empresa
+                        </Link>
+                    </div>
                 </div>
 
-                {/* Mensaje de Error */}
-                {error && (
-                    <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 flex items-center gap-3 animate-pulse">
-                        <AlertCircle size={20} />
-                        <p className="text-sm font-medium">{error}</p>
-                    </div>
-                )}
-
-                <form onSubmit={handleSubmit} className="space-y-6">
-                    {/* Email */}
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Email del Admin</label>
-                        <div className="relative">
-                            <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
-                                <User size={18} />
-                            </span>
-                            <input
-                                type="email"
-                                name="email"
-                                required
-                                className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition"
-                                placeholder="admin@pizzeria.com"
-                                onChange={handleChange}
-                            />
-                        </div>
-                    </div>
-
-                    {/* Password */}
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Contraseña</label>
-                        <div className="relative">
-                            <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
-                                <Lock size={18} />
-                            </span>
-                            <input
-                                type="password"
-                                name="password"
-                                required
-                                className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition"
-                                placeholder="••••••••"
-                                onChange={handleChange}
-                            />
-                        </div>
-                    </div>
-
-                    <button
-                        type="submit"
-                        disabled={loading}
-                        className={`w-full py-3 px-4 rounded-lg text-white font-bold transition shadow-md ${loading ? 'bg-orange-300 cursor-not-allowed' : 'bg-orange-600 hover:bg-orange-700 active:transform active:scale-95'
-                            }`}
-                    >
-                        {loading ? 'Validando...' : 'Iniciar Sesión'}
-                    </button>
-                </form>
-
-                <p className="mt-8 text-center text-xs text-gray-400 uppercase tracking-widest">
-                    Florida, Buenos Aires - 2026
-                </p>
+                <div className="mt-10 flex flex-col items-center gap-2 opacity-30">
+                    <p className="text-[10px] font-black text-gray-900 uppercase tracking-[0.5em] text-center">
+                        Secure Enterprise Platform
+                    </p>
+                    <p className="text-[9px] font-bold text-gray-500 uppercase tracking-widest">
+                        v2.0 Build 2026-04
+                    </p>
+                </div>
             </div>
         </div>
     );

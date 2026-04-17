@@ -8,54 +8,6 @@ export const TenantProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    useEffect(() => {
-        const fetchConfig = async () => {
-            try {
-                // 1. Obtener el slug del subdominio o de la URL
-                const hostname = window.location.hostname;
-                const searchParams = new URLSearchParams(window.location.search);
-                
-                let slug = searchParams.get('tenant'); // Prioridad si viene por query (útil para testing)
-
-                if (!slug) {
-                    if (hostname === 'localhost' || hostname.includes('127.0.0.1')) {
-                        slug = 'pizzeria-la-nona'; // Slug por defecto para desarrollo local
-                    } else {
-                        // Ejemplo: slug.admin-pizzeria.com -> slug
-                        slug = hostname.split('.')[0];
-                    }
-                }
-
-                console.log('--- Identificando Tenant ---');
-                console.log('Hostname:', hostname);
-                console.log('Slug detectado:', slug);
-
-                // 2. Configurar axios para que incluya siempre el tenant en los headers
-                axios.defaults.headers.common['x-tenant'] = slug;
-                
-                // 3. Obtener la configuración de la empresa
-                // Usamos la ruta que creamos en el backend
-                const response = await axios.get(`${import.meta.env.VITE_API_URL}/admin/config`, {
-                    headers: { 'x-tenant': slug } // Asegurarnos de enviarlo en esta petición también
-                });
-
-                const config = response.data;
-                setTenantConfig(config);
-
-                // 4. Inyectar estilos globales basados en la configuración
-                applyBranding(config);
-
-                setLoading(false);
-            } catch (err) {
-                console.error('Error al cargar la configuración del tenant:', err);
-                setError('No se pudo identificar la pizzería.');
-                setLoading(false);
-            }
-        };
-
-        fetchConfig();
-    }, []);
-
     const applyBranding = (config) => {
         if (!config) return;
 
@@ -70,8 +22,56 @@ export const TenantProvider = ({ children }) => {
         if (config.nombre) document.title = `Admin - ${config.nombre}`;
     };
 
+    // Método para setear el tenant manualmente tras el login
+    const setTenant = (config) => {
+        setTenantConfig(config);
+        applyBranding(config);
+        if (config.slug) {
+            axios.defaults.headers.common['x-tenant'] = config.slug;
+        }
+    };
+
+    useEffect(() => {
+        const fetchConfig = async () => {
+            try {
+                // Si ya tenemos el token, tal vez el tenant ya esté identificado.
+                // Pero si no, intentamos por URL como fallback.
+                const hostname = window.location.hostname;
+                const searchParams = new URLSearchParams(window.location.search);
+                
+                let slug = searchParams.get('tenant');
+
+                if (!slug) {
+                    if (hostname === 'localhost' || hostname.includes('127.0.0.1')) {
+                        // Omito el slug por defecto si prefiero que fuerce el login
+                        setLoading(false);
+                        return;
+                    } else {
+                        slug = hostname.split('.')[0];
+                    }
+                }
+
+                if (slug) {
+                    axios.defaults.headers.common['x-tenant'] = slug;
+                    const response = await axios.get(`${import.meta.env.VITE_API_URL}/admin/config`);
+                    const config = response.data;
+                    setTenantConfig(config);
+                    applyBranding(config);
+                }
+
+                setLoading(false);
+            } catch (err) {
+                console.error('Error al cargar la configuración del tenant:', err);
+                // No bloqueamos el render si falla el automuestreo, permitimos el login centralizado
+                setLoading(false);
+            }
+        };
+
+        fetchConfig();
+    }, []);
+
     return (
-        <TenantContext.Provider value={{ tenantConfig, loading, error }}>
+        <TenantContext.Provider value={{ tenantConfig, setTenant, loading, error }}>
             {children}
         </TenantContext.Provider>
     );

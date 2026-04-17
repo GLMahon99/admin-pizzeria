@@ -4,6 +4,7 @@ import { useTenant } from './context/TenantContext';
 
 // Importamos tus páginas
 import Login from './pages/Login';
+import Register from './pages/Register'; // Importamos la nueva página
 import Dashboard from './pages/Dashboard';
 import Inventory from './pages/Inventory';
 import Orders from './pages/Orders';
@@ -15,24 +16,20 @@ function App() {
   const { token, loading: authLoading } = useAuth();
   const { loading: tenantLoading, error: tenantError } = useTenant();
 
-  if (authLoading || tenantLoading) {
-    return <div className="flex h-screen items-center justify-center">Cargando...</div>;
-  }
+  // NOTA: Para el login centralizado, tal vez no queremos bloquear por tenantError antes de loguear
+  // Pero lo dejamos así por ahora si el tenant se detecta por URL.
+  // Sin embargo, si el login es GLOBAL, el tenantError no debería bloquear la página de login.
 
-  if (tenantError) {
-    return (
-      <div className="flex h-screen items-center justify-center flex-col gap-4">
-        <h1 className="text-2xl font-bold text-red-600">Error</h1>
-        <p>{tenantError}</p>
-      </div>
-    );
+  if (authLoading) {
+    return <div className="flex h-screen items-center justify-center">Cargando...</div>;
   }
 
   return (
     <Router>
       <Routes>
-        {/* Ruta pública: Login */}
+        {/* Rutas públicas: Login y Registro */}
         <Route path="/login" element={!token ? <Login /> : <Navigate to="/" />} />
+        <Route path="/register" element={!token ? <Register /> : <Navigate to="/" />} />
 
         {/* Rutas privadas: Todo lo que esté dentro de Layout requiere Token */}
         <Route path="/" element={token ? <Layout /> : <Navigate to="/login" />}>
