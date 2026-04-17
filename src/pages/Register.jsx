@@ -8,6 +8,7 @@ const Register = () => {
         nombre: '', 
         cuit: '', 
         slug: '',
+        email_contacto: '', // Nuevo campo
         password: '',
         confirmPassword: ''
     });
@@ -95,6 +96,23 @@ const Register = () => {
                                     value={formData.nombre}
                                     className="w-full pl-12 pr-4 py-4 bg-gray-50 border-2 border-transparent rounded-2xl focus:bg-white focus:border-orange-500 ring-0 outline-none transition-all font-bold text-gray-800"
                                     placeholder="Ej: La Posta del Horno"
+                                    onChange={handleChange}
+                                />
+                            </div>
+                        </div>
+
+                        {/* Email de Contacto */}
+                        <div className="space-y-1">
+                            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2">Email de Contacto</label>
+                            <div className="relative">
+                                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">@</span>
+                                <input
+                                    type="email"
+                                    name="email_contacto"
+                                    required
+                                    value={formData.email_contacto}
+                                    className="w-full pl-12 pr-4 py-4 bg-gray-50 border-2 border-transparent rounded-2xl focus:bg-white focus:border-orange-500 ring-0 outline-none transition-all font-bold text-gray-800"
+                                    placeholder="contacto@pizzeria.com"
                                     onChange={handleChange}
                                 />
                             </div>
