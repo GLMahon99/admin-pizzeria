@@ -10,12 +10,26 @@ const api = axios.create({
     },
 });
 
-// Interceptor para inyectar el token automáticamente si existe en el localStorage
+// Interceptor para inyectar el token y el tenant automáticamente
 api.interceptors.request.use((config) => {
     const token = localStorage.getItem('admin_token');
+    const userJson = localStorage.getItem('admin_user');
+    
     if (token) {
         config.headers.Authorization = `Bearer ${token}`;
     }
+
+    if (userJson) {
+        try {
+            const user = JSON.parse(userJson);
+            if (user.slug) {
+                config.headers['x-tenant'] = user.slug;
+            }
+        } catch (e) {
+            console.error("Error al parsear admin_user:", e);
+        }
+    }
+
     return config;
 });
 
