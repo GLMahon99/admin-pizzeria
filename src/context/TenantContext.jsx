@@ -1,9 +1,11 @@
 import { createContext, useState, useEffect, useContext } from 'react';
 import axios from 'axios';
+import { useAuth } from './AuthContext'; // Importar AuthContext
 
 const TenantContext = createContext();
 
 export const TenantProvider = ({ children }) => {
+    const { user } = useAuth(); // Obtener el usuario logueado (la empresa)
     const [tenantConfig, setTenantConfig] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -34,8 +36,14 @@ export const TenantProvider = ({ children }) => {
     useEffect(() => {
         const fetchConfig = async () => {
             try {
-                // Si ya tenemos el token, tal vez el tenant ya esté identificado.
-                // Pero si no, intentamos por URL como fallback.
+                // 1. Prioridad: Si el usuario ya está logueado, usamos su data
+                if (user && user.slug) {
+                    setTenant(user);
+                    setLoading(false);
+                    return;
+                }
+
+                // 2. Fallback: Intentar por URL (para rutas públicas o antes del login)
                 const hostname = window.location.hostname;
                 const searchParams = new URLSearchParams(window.location.search);
                 
@@ -43,7 +51,6 @@ export const TenantProvider = ({ children }) => {
 
                 if (!slug) {
                     if (hostname === 'localhost' || hostname.includes('127.0.0.1')) {
-                        // Omito el slug por defecto si prefiero que fuerce el login
                         setLoading(false);
                         return;
                     } else {
@@ -62,13 +69,12 @@ export const TenantProvider = ({ children }) => {
                 setLoading(false);
             } catch (err) {
                 console.error('Error al cargar la configuración del tenant:', err);
-                // No bloqueamos el render si falla el automuestreo, permitimos el login centralizado
                 setLoading(false);
             }
         };
 
         fetchConfig();
-    }, []);
+    }, [user]); // Re-ejecutar si el usuario cambia (ej: tras login)
 
     return (
         <TenantContext.Provider value={{ tenantConfig, setTenant, loading, error }}>

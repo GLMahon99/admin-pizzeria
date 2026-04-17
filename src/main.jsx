@@ -7,10 +7,10 @@ import { TenantProvider } from './context/TenantContext'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <TenantProvider>
-      <AuthProvider>
+    <AuthProvider>
+      <TenantProvider>
         <App />
-      </AuthProvider>
-    </TenantProvider>
+      </TenantProvider>
+    </AuthProvider>
   </React.StrictMode>
 )
