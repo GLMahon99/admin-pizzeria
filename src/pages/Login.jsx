@@ -3,7 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { useTenant } from '../context/TenantContext'; // Import useTenant
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import api from '../api/axiosConfig';
-import { Lock, Hash, Pizza, AlertCircle, ArrowRight, CheckCircle } from 'lucide-react';
+import { Lock, Hash, Store, AlertCircle, ArrowRight, CheckCircle } from 'lucide-react';
 
 const Login = () => {
     const [credentials, setCredentials] = useState({ cuit: '', password: '' });
@@ -14,7 +14,7 @@ const Login = () => {
     const { setTenant } = useTenant(); // Obtener setTenant
     const navigate = useNavigate();
     const location = useLocation();
-    
+
     // Capturamos el mensaje de éxito si viene de registro
     const successMessage = location.state?.message;
 
@@ -33,10 +33,10 @@ const Login = () => {
 
             // Guardamos el usuario y el token
             login(res.data.empresa, res.data.token);
-            
+
             // Seteamos el tenant globalmente para actualizar colores y logo
-            setTenant(res.data.empresa); 
-            
+            setTenant(res.data.empresa);
+
             // Navegamos al Dashboard
             navigate('/');
         } catch (err) {
@@ -56,11 +56,11 @@ const Login = () => {
 
             <div className="max-w-md w-full relative z-10">
                 <div className="bg-white/80 backdrop-blur-xl rounded-[2.5rem] shadow-2xl p-8 md:p-12 border border-white">
-                    
+
                     {/* Header */}
                     <div className="text-center mb-10">
                         <div className="inline-flex items-center justify-center w-20 h-20 bg-orange-600 rounded-3xl text-white mb-6 shadow-2xl rotate-12 transition-transform hover:rotate-0 duration-500">
-                            <Pizza size={40} />
+                            <Store size={40} />
                         </div>
                         <h1 className="text-4xl font-extrabold text-gray-900 tracking-tighter">Panel <span className="text-orange-600">Admin</span></h1>
                         <p className="text-gray-500 font-medium mt-2 italic">Gestioná tu pizzería en un solo lugar.</p>
@@ -132,8 +132,8 @@ const Login = () => {
                         <p className="text-sm text-gray-500 font-medium">
                             ¿Aún no tenés tu pizzería registrada?
                         </p>
-                        <Link 
-                            to="/register" 
+                        <Link
+                            to="/register"
                             className="bg-gray-900 text-white px-8 py-3 rounded-full text-xs font-black uppercase tracking-widest hover:bg-orange-600 transition-colors shadow-lg shadow-gray-200"
                         >
                             Registrar Empresa
