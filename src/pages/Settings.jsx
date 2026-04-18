@@ -10,6 +10,9 @@ const Settings = () => {
         logo_url: '',
         color_primario: '',
         color_secundario: '',
+        whatsapp: '',
+        instagram: '',
+        facebook: '',
         mp_public_key: '',
         mp_access_token: ''
     });
@@ -131,6 +134,48 @@ const Settings = () => {
                                     <span className="font-mono font-bold text-gray-500 text-xs">{config.color_secundario || '#1F2937'}</span>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Redes Sociales y Contacto */}
+                <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100 space-y-6">
+                    <h2 className="text-xl font-black text-gray-800 flex items-center gap-2">
+                        <Phone className="text-green-600" size={20} /> Redes y Contacto
+                    </h2>
+                    
+                    <div className="space-y-4">
+                        <div className="space-y-2">
+                            <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Número de WhatsApp</label>
+                            <input
+                                type="text"
+                                className="w-full bg-gray-50 border-2 border-gray-100 p-4 rounded-2xl focus:border-green-600 outline-none font-bold"
+                                value={config.whatsapp}
+                                onChange={(e) => setConfig({...config, whatsapp: e.target.value})}
+                                placeholder="Ej: 5491112345678"
+                            />
+                        </div>
+
+                        <div className="space-y-2">
+                            <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Link de Instagram</label>
+                            <input
+                                type="text"
+                                className="w-full bg-gray-50 border-2 border-gray-100 p-4 rounded-2xl focus:border-pink-600 outline-none font-bold text-sm"
+                                value={config.instagram}
+                                onChange={(e) => setConfig({...config, instagram: e.target.value})}
+                                placeholder="https://instagram.com/tu_pizzeria"
+                            />
+                        </div>
+
+                        <div className="space-y-2">
+                            <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Link de Facebook</label>
+                            <input
+                                type="text"
+                                className="w-full bg-gray-50 border-2 border-gray-100 p-4 rounded-2xl focus:border-blue-700 outline-none font-bold text-sm"
+                                value={config.facebook}
+                                onChange={(e) => setConfig({...config, facebook: e.target.value})}
+                                placeholder="https://facebook.com/tu_pizzeria"
+                            />
                         </div>
                     </div>
                 </div>
