@@ -9,6 +9,7 @@ const Settings = () => {
         nombre: '',
         logo_url: '',
         color_primario: '',
+        color_secundario: '',
         mp_public_key: '',
         mp_access_token: ''
     });
@@ -105,16 +106,30 @@ const Settings = () => {
                             </div>
                         </div>
 
-                        <div className="space-y-2">
-                            <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Color de Marca</label>
-                            <div className="flex gap-4 items-center">
-                                <input
-                                    type="color"
-                                    className="w-16 h-16 rounded-2xl border-2 border-gray-100 p-1 cursor-pointer"
-                                    value={config.color_primario || '#EA580C'}
-                                    onChange={(e) => setConfig({...config, color_primario: e.target.value})}
-                                />
-                                <span className="font-mono font-bold text-gray-500">{config.color_primario || '#EA580C'}</span>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Color Principal</label>
+                                <div className="flex gap-4 items-center">
+                                    <input
+                                        type="color"
+                                        className="w-12 h-12 rounded-xl border-2 border-gray-100 p-1 cursor-pointer"
+                                        value={config.color_primario || '#EA580C'}
+                                        onChange={(e) => setConfig({...config, color_primario: e.target.value})}
+                                    />
+                                    <span className="font-mono font-bold text-gray-500 text-xs">{config.color_primario || '#EA580C'}</span>
+                                </div>
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Color Secundario</label>
+                                <div className="flex gap-4 items-center">
+                                    <input
+                                        type="color"
+                                        className="w-12 h-12 rounded-xl border-2 border-gray-100 p-1 cursor-pointer"
+                                        value={config.color_secundario || '#1F2937'}
+                                        onChange={(e) => setConfig({...config, color_secundario: e.target.value})}
+                                    />
+                                    <span className="font-mono font-bold text-gray-500 text-xs">{config.color_secundario || '#1F2937'}</span>
+                                </div>
                             </div>
                         </div>
                     </div>
