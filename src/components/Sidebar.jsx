@@ -5,9 +5,9 @@ import {
     ShoppingBag,
     Package,
     LogOut,
-    Pizza,
+    Store,
     User,
-    Cookie,
+    PackageCheck,
     Settings as SettingsIcon
 } from 'lucide-react';
 
@@ -24,7 +24,7 @@ const Sidebar = () => {
         { to: "/", icon: <LayoutDashboard size={20} />, label: "Dashboard" },
         { to: "/pedidos", icon: <ShoppingBag size={20} />, label: "Pedidos" },
         { to: "/inventario", icon: <Package size={20} />, label: "Inventario" },
-        { to: "/insumos", icon: <Cookie size={20} />, label: "Insumos" },
+        { to: "/insumos", icon: <PackageCheck size={20} />, label: "Insumos" },
     ];
 
     return (
@@ -36,7 +36,7 @@ const Sidebar = () => {
                     <img src={user.logo_url} alt={user.nombre} className="h-10 w-auto object-contain rounded-lg" />
                 ) : (
                     <div className="bg-orange-600 p-2 rounded-xl shadow-lg shadow-orange-900/20">
-                        <Pizza className="text-white" size={24} />
+                        <Store className="text-white" size={24} />
                     </div>
                 )}
                 <span className="text-xl font-black text-white tracking-tighter italic truncate">

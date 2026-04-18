@@ -64,7 +64,7 @@ const Settings = () => {
         <div className="max-w-4xl mx-auto space-y-8 animate-in fade-in duration-500">
             <div>
                 <h1 className="text-3xl font-black text-gray-800 tracking-tight italic uppercase">Configuración</h1>
-                <p className="text-gray-500 font-bold uppercase text-xs tracking-widest mt-1">Personalizá tu pizzería y métodos de pago</p>
+                <p className="text-gray-500 font-bold uppercase text-xs tracking-widest mt-1">Personalizá tu negocio/pizzería y métodos de pago</p>
             </div>
 
             {message.text && (
@@ -86,7 +86,7 @@ const Settings = () => {
                     
                     <div className="space-y-4">
                         <div className="space-y-2">
-                            <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Nombre de la Pizzería</label>
+                            <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Nombre del Local</label>
                             <input
                                 type="text"
                                 className="w-full bg-gray-50 border-2 border-gray-100 p-4 rounded-2xl focus:border-orange-600 outline-none font-bold"

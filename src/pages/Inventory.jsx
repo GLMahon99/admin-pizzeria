@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Plus, ImagePlus, Pizza, DollarSign, Tag, Trash2, Edit, Save, X, Utensils, Beaker } from 'lucide-react';
+import { Plus, ImagePlus, Utensils, DollarSign, Tag, Trash2, Edit, Save, X, Beaker } from 'lucide-react';
 import api from '../api/axiosConfig';
 
 const Inventory = () => {
@@ -20,7 +20,7 @@ const Inventory = () => {
     const initialFormState = {
         nombre: '',
         descripcion: '',
-        categoria: 'Pizzas',
+        categoria: 'Principales',
         precio: '',
         precio_chica: ''
     };
@@ -75,7 +75,7 @@ const Inventory = () => {
             setFormData({
                 nombre: data.nombre,
                 descripcion: data.descripcion || '',
-                categoria: data.categoria || 'Pizzas',
+                categoria: data.categoria || 'Principales',
                 precio: data.precio || '',
                 precio_chica: data.precio_chica || ''
             });
@@ -138,7 +138,7 @@ const Inventory = () => {
             dataToUpload.append('categoria', formData.categoria);
             dataToUpload.append('precio', parseFloat(formData.precio));
             
-            if (formData.categoria === 'Pizzas') {
+            if (formData.categoria === 'Principales') {
                 if (formData.precio_chica !== '') {
                     dataToUpload.append('precio_chica', parseFloat(formData.precio_chica));
                 } else {
@@ -199,7 +199,7 @@ const Inventory = () => {
             <header className="flex justify-between items-center">
                 <div>
                     <h1 className="text-3xl font-extrabold text-gray-800">Inventario de <span className="text-orange-600">Productos</span></h1>
-                    <p className="text-gray-500">Gestioná el menú y los precios de tu pizzería</p>
+                    <p className="text-gray-500">Gestioná el menú y los precios de tu local</p>
                 </div>
                 <button
                     onClick={() => {
@@ -221,7 +221,7 @@ const Inventory = () => {
                 <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
                     <div className="bg-white rounded-3xl shadow-2xl w-full max-w-4xl overflow-hidden animate-in fade-in zoom-in duration-200 h-auto max-h-[95vh] flex flex-col">
                         <div className="bg-orange-600 p-6 text-white flex justify-between items-center shrink-0">
-                            <h2 className="text-xl font-bold flex items-center gap-2"><Pizza /> {editingId ? 'Editar Producto' : 'Cargar Nuevo Producto'}</h2>
+                            <h2 className="text-xl font-bold flex items-center gap-2"><Utensils /> {editingId ? 'Editar Producto' : 'Cargar Nuevo Producto'}</h2>
                             <button onClick={() => {
                                 setShowForm(false);
                                 setEditingId(null);
@@ -269,14 +269,14 @@ const Inventory = () => {
                                                         <option key={cat} value={cat} />
                                                     ))}
                                                     {/* Sugerencias base si no hay nada en la DB */}
-                                                    {!categories.includes('Pizzas') && <option value="Pizzas" />}
-                                                    {!categories.includes('Empanadas') && <option value="Empanadas" />}
+                                                    {!categories.includes('Principales') && <option value="Principales" />}
+                                                    {!categories.includes('Entradas') && <option value="Entradas" />}
                                                     {!categories.includes('Bebidas') && <option value="Bebidas" />}
                                                     {!categories.includes('Postres') && <option value="Postres" />}
                                                 </datalist>
                                             </div>
                                             <div>
-                                                <label className="text-xs font-black text-gray-400 uppercase tracking-widest">{formData.categoria === 'Pizzas' ? 'Precio (Grande)' : 'Precio'}</label>
+                                                <label className="text-xs font-black text-gray-400 uppercase tracking-widest">{formData.categoria === 'Principales' ? 'Precio (Grande)' : 'Precio'}</label>
                                                 <div className="relative mt-1">
                                                     <DollarSign className="absolute left-3 top-3.5 text-gray-400" size={16} />
                                                     <input
@@ -293,9 +293,9 @@ const Inventory = () => {
                                             </div>
                                         </div>
 
-                                        {formData.categoria === 'Pizzas' && (
+                                        {formData.categoria === 'Principales' && (
                                             <div className="animate-in fade-in slide-in-from-top-2">
-                                                <label className="text-xs font-black text-gray-400 uppercase tracking-widest">Precio (Chica)</label>
+                                                <label className="text-xs font-black text-gray-400 uppercase tracking-widest">Precio (Opción 2)</label>
                                                 <div className="relative mt-1">
                                                     <DollarSign className="absolute left-3 top-3.5 text-gray-400" size={16} />
                                                     <input
@@ -447,7 +447,7 @@ const Inventory = () => {
             <div className="bg-white rounded-[2rem] shadow-xl shadow-gray-200/50 border border-gray-100 overflow-hidden">
                 {loading ? (
                     <div className="p-20 text-center text-gray-400">
-                         <div className="animate-bounce mb-4 text-orange-500"><Pizza size={40} className="mx-auto" /></div>
+                         <div className="animate-bounce mb-4 text-orange-500"><Utensils size={40} className="mx-auto" /></div>
                          <p className="font-black uppercase tracking-widest text-sm">Cocinando tu lista de productos...</p>
                     </div>
                 ) : products.length === 0 ? (
@@ -476,7 +476,7 @@ const Inventory = () => {
                                                 </div>
                                             ) : (
                                                 <div className="w-20 h-20 bg-gray-100 rounded-[1.5rem] flex items-center justify-center text-gray-300 shrink-0 border-4 border-white group-hover:scale-105 transition-transform">
-                                                    <Pizza size={32} />
+                                                    <Utensils size={32} />
                                                 </div>
                                             )}
                                             <div className="flex flex-col">
