@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Save, ShieldCheck, Key, Palette, Image as ImageIcon, Loader2 } from 'lucide-react';
+import { Save, ShieldCheck, Key, Palette, Image as ImageIcon, Loader2, Phone } from 'lucide-react';
 import api from '../api/axiosConfig';
 
 const Settings = () => {
