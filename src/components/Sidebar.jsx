@@ -32,11 +32,15 @@ const Sidebar = () => {
 
             {/* Logo Area */}
             <div className="p-8 flex items-center gap-3">
-                <div className="bg-orange-600 p-2 rounded-xl shadow-lg shadow-orange-900/20">
-                    <Pizza className="text-white" size={24} />
-                </div>
-                <span className="text-xl font-black text-white tracking-tighter italic">
-                    PIZZA<span className="text-orange-500">ADMIN</span>
+                {user?.logo_url ? (
+                    <img src={user.logo_url} alt={user.nombre} className="h-10 w-auto object-contain rounded-lg" />
+                ) : (
+                    <div className="bg-orange-600 p-2 rounded-xl shadow-lg shadow-orange-900/20">
+                        <Pizza className="text-white" size={24} />
+                    </div>
+                )}
+                <span className="text-xl font-black text-white tracking-tighter italic truncate">
+                    {user?.nombre?.split(' ')[0]}<span className="text-orange-500">ADMIN</span>
                 </span>
             </div>
 
