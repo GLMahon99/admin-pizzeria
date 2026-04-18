@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import api from '../api/axiosConfig';
-import { Lock, Building, Pizza, AlertCircle, Hash, ArrowRight } from 'lucide-react';
+import { Lock, Building, AlertCircle, Hash, ArrowRight } from 'lucide-react';
 
 const Register = () => {
-    const [formData, setFormData] = useState({ 
-        nombre: '', 
-        cuit: '', 
+    const [formData, setFormData] = useState({
+        nombre: '',
+        cuit: '',
         slug: '',
         email_contacto: '', // Nuevo campo
         password: '',
@@ -19,7 +19,7 @@ const Register = () => {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        
+
         // Auto-generar slug desde el nombre si se está escribiendo el nombre
         if (name === 'nombre') {
             const autoSlug = value
@@ -32,13 +32,13 @@ const Register = () => {
         } else {
             setFormData({ ...formData, [name]: value });
         }
-        
+
         if (error) setError('');
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
+
         if (formData.password !== formData.confirmPassword) {
             return setError('Las contraseñas no coinciden');
         }
@@ -68,11 +68,11 @@ const Register = () => {
                 <div className="bg-white rounded-3xl shadow-2xl p-8 border border-white">
                     {/* Header */}
                     <div className="text-center mb-10">
-                        <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-orange-500 to-red-600 rounded-3xl text-white mb-6 shadow-xl transform rotate-3">
-                            <Pizza size={40} />
+                        <div className="inline-flex items-center justify-center w-20 h-20 bg-white rounded-3xl mb-6 shadow-xl transform rotate-3 overflow-hidden p-3 border border-gray-100">
+                            <img src="https://i.ibb.co/bjwG4tSv/logo-nexus.png" alt="Nexus Logo" className="w-full h-full object-contain" />
                         </div>
-                        <h1 className="text-3xl font-black text-gray-900 tracking-tight">Sumá tu <span className="text-orange-600">Pizzería</span></h1>
-                        <p className="text-gray-500 mt-2 font-medium">Unite a la red más grande de pizzerías online.</p>
+                        <h1 className="text-3xl font-black text-gray-900 tracking-tight">Sumá tu <span className="text-orange-600">Empresa</span></h1>
+                        <p className="text-gray-500 mt-2 font-medium">Unite a la red más grande de ecommerce sin comisiones.</p>
                     </div>
 
                     {/* Mensaje de Error */}
