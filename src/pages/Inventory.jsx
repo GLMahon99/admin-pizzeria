@@ -11,6 +11,7 @@ const Inventory = () => {
     const [editingId, setEditingId] = useState(null);
     const [imageFile, setImageFile] = useState(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [categories, setCategories] = useState([]);
 
     // Estado para la receta que estamos armando
     const [recetaItems, setRecetaItems] = useState([]);
@@ -28,12 +29,14 @@ const Inventory = () => {
     const fetchData = async () => {
         try {
             setLoading(true);
-            const [prodRes, insRes] = await Promise.all([
+            const [prodRes, insRes, catRes] = await Promise.all([
                 api.get('/productos'),
-                api.get('/insumos')
+                api.get('/insumos'),
+                api.get('/productos/categorias')
             ]);
             setProducts(prodRes.data);
             setInsumosDisponibles(insRes.data);
+            setCategories(catRes.data);
         } catch (error) {
             console.error('Error al cargar datos:', error);
             alert('Hubo un error al cargar los datos de la base de datos.');
@@ -252,17 +255,25 @@ const Inventory = () => {
                                         <div className="grid grid-cols-2 gap-4">
                                             <div>
                                                 <label className="text-xs font-black text-gray-400 uppercase tracking-widest">Categoría</label>
-                                                <select
+                                                <input
+                                                    list="categories-list"
                                                     name="categoria"
                                                     value={formData.categoria}
                                                     className="w-full mt-1 p-3 bg-gray-100 border-none rounded-xl focus:ring-2 focus:ring-orange-500 outline-none font-bold"
+                                                    placeholder="Elegí o escribí..."
                                                     onChange={handleChange}
-                                                >
-                                                    <option value="Pizzas">Pizzas</option>
-                                                    <option value="Empanadas">Empanadas</option>
-                                                    <option value="Bebidas">Bebidas</option>
-                                                    <option value="Postres">Postres</option>
-                                                </select>
+                                                    autoComplete="off"
+                                                />
+                                                <datalist id="categories-list">
+                                                    {categories.map(cat => (
+                                                        <option key={cat} value={cat} />
+                                                    ))}
+                                                    {/* Sugerencias base si no hay nada en la DB */}
+                                                    {!categories.includes('Pizzas') && <option value="Pizzas" />}
+                                                    {!categories.includes('Empanadas') && <option value="Empanadas" />}
+                                                    {!categories.includes('Bebidas') && <option value="Bebidas" />}
+                                                    {!categories.includes('Postres') && <option value="Postres" />}
+                                                </datalist>
                                             </div>
                                             <div>
                                                 <label className="text-xs font-black text-gray-400 uppercase tracking-widest">{formData.categoria === 'Pizzas' ? 'Precio (Grande)' : 'Precio'}</label>
