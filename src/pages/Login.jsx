@@ -59,10 +59,10 @@ const Login = () => {
 
                     {/* Header */}
                     <div className="text-center mb-10">
-                        <div className="inline-flex items-center justify-center w-20 h-20 bg-white rounded-3xl mb-6 shadow-2xl rotate-12 transition-transform hover:rotate-0 duration-500 overflow-hidden p-3 border border-gray-100">
-                            <img src="https://i.ibb.co/bjwG4tSv/logo-nexus.png" alt="Nexus Logo" className="w-full h-full object-contain" />
+                        <div className="mb-8 flex justify-center transform hover:scale-105 transition-transform duration-500">
+                            <img src="https://i.ibb.co/bjwG4tSv/logo-nexus.png" alt="Nexus Logo" className="h-24 w-auto object-contain drop-shadow-xl" />
                         </div>
-                        <h1 className="text-4xl font-extrabold text-gray-900 tracking-tighter">Panel <span className="text-orange-600">Admin</span></h1>
+
                         <p className="text-gray-500 font-medium mt-2 italic">Gestioná tu ecommerce en un solo lugar.</p>
                     </div>
 

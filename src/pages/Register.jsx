@@ -68,8 +68,8 @@ const Register = () => {
                 <div className="bg-white rounded-3xl shadow-2xl p-8 border border-white">
                     {/* Header */}
                     <div className="text-center mb-10">
-                        <div className="inline-flex items-center justify-center w-20 h-20 bg-white rounded-3xl mb-6 shadow-xl transform rotate-3 overflow-hidden p-3 border border-gray-100">
-                            <img src="https://i.ibb.co/bjwG4tSv/logo-nexus.png" alt="Nexus Logo" className="w-full h-full object-contain" />
+                        <div className="mb-8 flex justify-center transform hover:scale-105 transition-transform duration-500">
+                            <img src="https://i.ibb.co/bjwG4tSv/logo-nexus.png" alt="Nexus Logo" className="h-20 w-auto object-contain drop-shadow-xl" />
                         </div>
                         <h1 className="text-3xl font-black text-gray-900 tracking-tight">Sumá tu <span className="text-orange-600">Empresa</span></h1>
                         <p className="text-gray-500 mt-2 font-medium">Unite a la red más grande de ecommerce sin comisiones.</p>
