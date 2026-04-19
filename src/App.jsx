@@ -11,6 +11,8 @@ import Orders from './pages/Orders';
 import Layout from './components/Layout';
 import Supplies from './pages/Supplies';
 import Settings from './pages/Settings';
+import SubscriptionPlans from './pages/SubscriptionPlans';
+import SubscriptionSuccess from './pages/SubscriptionSuccess';
 
 function App() {
   const { token, loading: authLoading } = useAuth();
@@ -30,6 +32,8 @@ function App() {
         {/* Rutas públicas: Login y Registro */}
         <Route path="login" element={!token ? <Login /> : <Navigate to="/" />} />
         <Route path="register" element={!token ? <Register /> : <Navigate to="/" />} />
+        <Route path="subscription-plans/:companyId" element={<SubscriptionPlans />} />
+        <Route path="subscription-success" element={<SubscriptionSuccess />} />
 
         {/* Rutas privadas: Todo lo que esté dentro de Layout requiere Token */}
         <Route path="/" element={token ? <Layout /> : <Navigate to="/login" />}>

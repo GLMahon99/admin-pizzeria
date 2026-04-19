@@ -46,9 +46,9 @@ const Register = () => {
         setLoading(true);
 
         try {
-            await api.post('/auth/register-company', formData);
-            // Redirigir al login tras registro exitoso
-            navigate('/login', { state: { message: '¡Registro exitoso! Ya podés iniciar sesión.' } });
+            const res = await api.post('/auth/register-company', formData);
+            // Redirigir a la elección de planes
+            navigate(`/subscription-plans/${res.data.id}`);
         } catch (err) {
             setError(err.response?.data?.message || 'Error al intentar registrar la empresa.');
         } finally {
