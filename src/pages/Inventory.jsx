@@ -287,7 +287,7 @@ const Inventory = () => {
                                                     <input
                                                         type="number"
                                                         name="precio"
-                                                        required
+                                                        required={formData.categoria !== 'Helados'}
                                                         step="0.01"
                                                         value={formData.precio}
                                                         className="w-full pl-9 p-3 bg-gray-100 border-none rounded-xl focus:ring-2 focus:ring-orange-500 outline-none font-black text-orange-600"
@@ -326,6 +326,7 @@ const Inventory = () => {
                                                     <input
                                                         type="number"
                                                         name="precio_cuarto"
+                                                        required={formData.categoria === 'Helados'}
                                                         step="0.01"
                                                         value={formData.precio_cuarto}
                                                         className="w-full pl-9 p-3 bg-gray-100 border-none rounded-xl focus:ring-2 focus:ring-slate-500 outline-none font-black text-slate-700"
