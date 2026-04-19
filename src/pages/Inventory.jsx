@@ -20,9 +20,10 @@ const Inventory = () => {
     const initialFormState = {
         nombre: '',
         descripcion: '',
-        categoria: 'Principales',
+        categoria: 'Pizzas', // Restauramos Pizzas por defecto
         precio: '',
-        precio_chica: ''
+        precio_chica: '',
+        precio_cuarto: ''
     };
     const [formData, setFormData] = useState(initialFormState);
 
@@ -75,9 +76,10 @@ const Inventory = () => {
             setFormData({
                 nombre: data.nombre,
                 descripcion: data.descripcion || '',
-                categoria: data.categoria || 'Principales',
+                categoria: data.categoria || 'Pizzas',
                 precio: data.precio || '',
-                precio_chica: data.precio_chica || ''
+                precio_chica: data.precio_chica || '',
+                precio_cuarto: data.precio_cuarto || ''
             });
             
             // Mapeamos la receta del backend al estado local (con check de seguridad || [])
@@ -138,11 +140,12 @@ const Inventory = () => {
             dataToUpload.append('categoria', formData.categoria);
             dataToUpload.append('precio', parseFloat(formData.precio));
             
-            if (formData.categoria === 'Principales') {
+            if (formData.categoria === 'Pizzas' || formData.categoria === 'Helados') {
                 if (formData.precio_chica !== '') {
                     dataToUpload.append('precio_chica', parseFloat(formData.precio_chica));
-                } else {
-                    dataToUpload.append('precio_chica', '');
+                }
+                if (formData.categoria === 'Helados' && formData.precio_cuarto !== '') {
+                    dataToUpload.append('precio_cuarto', parseFloat(formData.precio_cuarto));
                 }
             }
 
@@ -268,15 +271,17 @@ const Inventory = () => {
                                                     {categories.map(cat => (
                                                         <option key={cat} value={cat} />
                                                     ))}
-                                                    {/* Sugerencias base si no hay nada en la DB */}
-                                                    {!categories.includes('Principales') && <option value="Principales" />}
+                                                    {!categories.includes('Pizzas') && <option value="Pizzas" />}
+                                                    {!categories.includes('Helados') && <option value="Helados" />}
                                                     {!categories.includes('Entradas') && <option value="Entradas" />}
                                                     {!categories.includes('Bebidas') && <option value="Bebidas" />}
                                                     {!categories.includes('Postres') && <option value="Postres" />}
                                                 </datalist>
                                             </div>
                                             <div>
-                                                <label className="text-xs font-black text-gray-400 uppercase tracking-widest">{formData.categoria === 'Principales' ? 'Precio (Grande)' : 'Precio'}</label>
+                                                <label className="text-xs font-black text-gray-400 uppercase tracking-widest">
+                                                    {formData.categoria === 'Pizzas' ? 'Precio (Grande)' : formData.categoria === 'Helados' ? 'Precio (1 kg)' : 'Precio'}
+                                                </label>
                                                 <div className="relative mt-1">
                                                     <DollarSign className="absolute left-3 top-3.5 text-gray-400" size={16} />
                                                     <input
@@ -293,9 +298,11 @@ const Inventory = () => {
                                             </div>
                                         </div>
 
-                                        {formData.categoria === 'Principales' && (
+                                        {(formData.categoria === 'Pizzas' || formData.categoria === 'Helados') && (
                                             <div className="animate-in fade-in slide-in-from-top-2">
-                                                <label className="text-xs font-black text-gray-400 uppercase tracking-widest">Precio (Opción 2)</label>
+                                                <label className="text-xs font-black text-gray-400 uppercase tracking-widest">
+                                                    {formData.categoria === 'Pizzas' ? 'Precio (Chica)' : 'Precio (1/2 kg)'}
+                                                </label>
                                                 <div className="relative mt-1">
                                                     <DollarSign className="absolute left-3 top-3.5 text-gray-400" size={16} />
                                                     <input
@@ -303,6 +310,24 @@ const Inventory = () => {
                                                         name="precio_chica"
                                                         step="0.01"
                                                         value={formData.precio_chica}
+                                                        className="w-full pl-9 p-3 bg-gray-100 border-none rounded-xl focus:ring-2 focus:ring-slate-500 outline-none font-black text-slate-700"
+                                                        placeholder="0.00"
+                                                        onChange={handleChange}
+                                                    />
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {formData.categoria === 'Helados' && (
+                                            <div className="animate-in fade-in slide-in-from-top-2">
+                                                <label className="text-xs font-black text-gray-400 uppercase tracking-widest">Precio (1/4 kg)</label>
+                                                <div className="relative mt-1">
+                                                    <DollarSign className="absolute left-3 top-3.5 text-gray-400" size={16} />
+                                                    <input
+                                                        type="number"
+                                                        name="precio_cuarto"
+                                                        step="0.01"
+                                                        value={formData.precio_cuarto}
                                                         className="w-full pl-9 p-3 bg-gray-100 border-none rounded-xl focus:ring-2 focus:ring-slate-500 outline-none font-black text-slate-700"
                                                         placeholder="0.00"
                                                         onChange={handleChange}
@@ -493,16 +518,28 @@ const Inventory = () => {
                                     <td className="px-8 py-6">
                                         <div className="flex flex-col justify-center">
                                             <div className="flex items-baseline gap-1">
-                                                <span className="text-xs font-bold text-gray-400">G:</span>
+                                                <span className="text-xs font-bold text-gray-400">
+                                                    {prod.categoria === 'Pizzas' ? 'G:' : prod.categoria === 'Helados' ? '1k:' : 'P:'}
+                                                </span>
                                                 <span className="font-black text-gray-900 text-2xl tracking-tighter">
                                                     ${parseFloat(prod.precio).toLocaleString()}
                                                 </span>
                                             </div>
                                             {prod.precio_chica && (
                                                 <div className="flex items-baseline gap-1 mt-1 opacity-60">
-                                                    <span className="text-[10px] font-bold text-gray-400 uppercase">CH:</span>
+                                                    <span className="text-[10px] font-bold text-gray-400 uppercase">
+                                                        {prod.categoria === 'Pizzas' ? 'CH:' : prod.categoria === 'Helados' ? '1/2:' : 'V:'}
+                                                    </span>
                                                     <span className="font-black text-slate-700 text-sm">
                                                         ${parseFloat(prod.precio_chica).toLocaleString()}
+                                                    </span>
+                                                </div>
+                                            )}
+                                            {prod.precio_cuarto && (
+                                                <div className="flex items-baseline gap-1 mt-1 opacity-60">
+                                                    <span className="text-[10px] font-bold text-gray-400 uppercase">1/4:</span>
+                                                    <span className="font-black text-slate-700 text-sm">
+                                                        ${parseFloat(prod.precio_cuarto).toLocaleString()}
                                                     </span>
                                                 </div>
                                             )}
