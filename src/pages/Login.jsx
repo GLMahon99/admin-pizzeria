@@ -87,7 +87,7 @@ const Login = () => {
                         <div className="space-y-2">
                             <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-2">Identificador (CUIT)</label>
                             <div className="relative group">
-                                <Hash className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-orange-600 transition-colors" size={20} />
+                                <Hash className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#f9804d] transition-colors" size={20} />
                                 <input
                                     type="text"
                                     name="cuit"
@@ -103,7 +103,7 @@ const Login = () => {
                         <div className="space-y-2">
                             <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-2">Contraseña</label>
                             <div className="relative group">
-                                <Lock className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-orange-600 transition-colors" size={20} />
+                                <Lock className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#f9804d] transition-colors" size={20} />
                                 <input
                                     type="password"
                                     name="password"
@@ -118,7 +118,7 @@ const Login = () => {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full py-5 bg-orange-600 hover:bg-orange-700 text-white rounded-[1.5rem] font-black text-lg shadow-2xl shadow-orange-200 transition-all active:scale-95 flex items-center justify-center gap-3"
+                            className="w-full py-5 bg-[#f9804d] hover:bg-[#37386d] text-white rounded-[1.5rem] font-black text-lg shadow-2xl shadow-orange-200 transition-all active:scale-95 flex items-center justify-center gap-3"
                         >
                             {loading ? 'Verificando...' : (
                                 <>
@@ -130,11 +130,11 @@ const Login = () => {
 
                     <div className="mt-12 pt-8 border-t border-gray-100 flex flex-col gap-4 items-center">
                         <p className="text-sm text-gray-500 font-medium">
-                            ¿Aún no tenés tu pizzería registrada?
+                            ¿Aún no tenés tu comercio registrado?
                         </p>
                         <Link
                             to="/register"
-                            className="bg-gray-900 text-white px-8 py-3 rounded-full text-xs font-black uppercase tracking-widest hover:bg-orange-600 transition-colors shadow-lg shadow-gray-200"
+                            className="bg-gray-900 text-white px-8 py-3 rounded-full text-xs font-black uppercase tracking-widest hover:bg-[#f9804d] transition-colors shadow-lg shadow-gray-200"
                         >
                             Registrar Empresa
                         </Link>

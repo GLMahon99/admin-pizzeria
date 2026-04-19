@@ -1,16 +1,58 @@
 /* src/index.css */
 @import "tailwindcss";
 
-:root {
-  --color-primary: #ef4444; /* Rojo por defecto */
-  --color-secondary: #f97316; /* Naranja por defecto */
-  --color-tertiary: #1f2937; /* Negro/Gris oscuro por defecto */
+@theme {
+  /* Naranja principal y sus variantes */
+  --color-orange-50: #fff7ed;
+  --color-orange-100: #ffedd5;
+  --color-orange-200: #fed7aa;
+  --color-orange-300: #fdba74;
+  --color-orange-400: #fb923c;
+  --color-orange-500: #f9804d; /* Base */
+  --color-orange-600: #f9804d; /* Base principal */
+  --color-orange-700: #ea580c;
+  --color-orange-800: #9a3412;
+  --color-orange-900: #7c2d12;
+  --color-orange-950: #431407;
+
+  /* Violeta (reemplazando slate/gray oscuro) */
+  --color-slate-950: #1a1b3a;
+  --color-slate-900: #37386d; /* Base Violeta */
+  --color-gray-900: #37386d;
+
+  /* Gris Azulado (reemplazando slate/gray intermedio) */
+  --color-slate-800: #384a62; /* Base Gris Azulado */
+  --color-gray-800: #384a62;
+  --color-slate-700: #4b5e78;
+  --color-gray-700: #4b5e78;
 }
 
-/* Opcional: un reset básico para que el body ocupe toda la pantalla */
+:root {
+  --color-primary: #f9804d;
+  --color-secondary: #37386d;
+  --color-tertiary: #384a62;
+}
+
 body {
   margin: 0;
   font-family: 'Inter', sans-serif;
   background-color: #f9fafb;
-  /* Un gris muy clarito para el fondo */
+}
+
+/* Scrollbar personalizada */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #384a62;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #37386d;
 }

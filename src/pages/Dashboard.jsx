@@ -72,7 +72,7 @@ const Dashboard = () => {
                                 <XAxis dataKey="dia" axisLine={false} tickLine={false} tick={{ fill: '#9ca3af', fontSize: 12 }} />
                                 <YAxis axisLine={false} tickLine={false} tick={{ fill: '#9ca3af', fontSize: 12 }} />
                                 <Tooltip contentStyle={{ borderRadius: '15px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }} />
-                                <Line type="monotone" dataKey="ventas" stroke="#ea580c" strokeWidth={4} dot={{ r: 6, fill: '#ea580c', strokeWidth: 2, stroke: '#fff' }} activeDot={{ r: 8 }} />
+                                <Line type="monotone" dataKey="ventas" stroke="#f9804d" strokeWidth={4} dot={{ r: 6, fill: '#f9804d', strokeWidth: 2, stroke: '#fff' }} activeDot={{ r: 8 }} />
                             </LineChart>
                         </ResponsiveContainer>
                     </div>
@@ -134,7 +134,7 @@ const Dashboard = () => {
                                 />
                                 <Bar
                                     dataKey="unidades"
-                                    fill="#ea580c"
+                                    fill="#f9804d"
                                     radius={[0, 10, 10, 0]} 
                                     barSize={20}
                                 />
