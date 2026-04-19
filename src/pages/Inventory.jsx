@@ -138,7 +138,9 @@ const Inventory = () => {
             dataToUpload.append('nombre', formData.nombre);
             dataToUpload.append('descripcion', formData.descripcion);
             dataToUpload.append('categoria', formData.categoria);
-            dataToUpload.append('precio', parseFloat(formData.precio));
+            if (formData.precio !== '') {
+                dataToUpload.append('precio', parseFloat(formData.precio));
+            }
             
             if (formData.categoria === 'Pizzas' || formData.categoria === 'Helados') {
                 if (formData.precio_chica !== '') {
