@@ -4,7 +4,8 @@ import { useTenant } from './context/TenantContext';
 
 // Importamos tus páginas
 import Login from './pages/Login';
-import Register from './pages/Register'; // Importamos la nueva página
+import Register from './pages/Register';
+import Landing from './pages/Landing';
 import Dashboard from './pages/Dashboard';
 import Inventory from './pages/Inventory';
 import Orders from './pages/Orders';
@@ -36,12 +37,16 @@ function App() {
         <Route path="subscription-success" element={<SubscriptionSuccess />} />
 
         {/* Rutas privadas: Todo lo que esté dentro de Layout requiere Token */}
-        <Route path="/" element={token ? <Layout /> : <Navigate to="/login" />}>
-          <Route index element={<Dashboard />} />
-          <Route path="pedidos" element={<Orders />} />
-          <Route path="inventario" element={<Inventory />} />
-          <Route path="insumos" element={<Supplies />} />
-          <Route path="configuracion" element={<Settings />} />
+        <Route path="/" element={!token ? <Landing /> : <Layout />}>
+          {token && (
+            <>
+              <Route index element={<Dashboard />} />
+              <Route path="pedidos" element={<Orders />} />
+              <Route path="inventario" element={<Inventory />} />
+              <Route path="insumos" element={<Supplies />} />
+              <Route path="configuracion" element={<Settings />} />
+            </>
+          )}
         </Route>
 
         {/* Redirección por defecto si la ruta no existe */}
