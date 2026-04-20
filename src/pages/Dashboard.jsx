@@ -16,11 +16,12 @@ const COLORS = ['#f9804d', '#37386d', '#384a62', '#10b981', '#f59e0b', '#6366f1'
 const Dashboard = () => {
     const [stats, setStats] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [rango, setRango] = useState('14dias');
 
     const fetchStats = async () => {
         try {
             setLoading(true);
-            const response = await api.get('/admin/stats');
+            const response = await api.get(`/admin/stats?rango=${rango}`);
             setStats(response.data);
         } catch (error) {
             console.error('Error al cargar estadísticas:', error);
@@ -31,7 +32,7 @@ const Dashboard = () => {
 
     useEffect(() => {
         fetchStats();
-    }, []);
+    }, [rango]);
 
     const handleDownloadExcel = async () => {
         try {
@@ -110,8 +111,20 @@ const Dashboard = () => {
                     <div className="flex justify-between items-center mb-6">
                         <div>
                             <h2 className="text-xl font-black text-gray-800">Crecimiento de Ventas</h2>
-                            <p className="text-sm text-gray-500 font-medium">Últimos 14 días analizados</p>
+                            <p className="text-sm text-gray-500 font-medium">Evolución temporal del negocio</p>
                         </div>
+                        <select 
+                            value={rango}
+                            onChange={(e) => setRango(e.target.value)}
+                            className="text-sm bg-gray-50 border border-gray-100 rounded-xl px-4 py-2 outline-none font-bold text-[#384a62] cursor-pointer hover:border-[#f9804d] transition-colors"
+                        >
+                            <option value="hoy">Hoy</option>
+                            <option value="14dias">Últimos 14 días</option>
+                            <option value="30dias">Últimos 30 días</option>
+                            <option value="6meses">Últimos 6 meses</option>
+                            <option value="1ano">Último año</option>
+                            <option value="todo">Histórico completo</option>
+                        </select>
                     </div>
                     <div className="h-80 w-full">
                         <ResponsiveContainer width="100%" height="100%">
@@ -126,7 +139,7 @@ const Dashboard = () => {
                                 <XAxis dataKey="dia" axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 12, fontWeight: 'bold' }} />
                                 <YAxis axisLine={false} tickLine={false} tickFormatter={(val) => `$${val/1000}k`} tick={{ fill: '#64748b', fontSize: 12, fontWeight: 'bold' }} />
                                 <Tooltip contentStyle={{ borderRadius: '15px', border: 'none', boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)' }} />
-                                <Area type="monotone" dataKey="ventas" stroke="#f9804d" strokeWidth={4} fillOpacity={1} fill="url(#colorVentas)" activeDot={{ r: 8, strokeWidth: 0 }} />
+                                <Area type="monotone" dataKey="ventas" stroke="#f9804d" strokeWidth={4} fillOpacity={1} fill="url(#colorVentas)" dot={{ r: 4, fill: '#fff', stroke: '#f9804d', strokeWidth: 2 }} activeDot={{ r: 8, strokeWidth: 0 }} />
                             </AreaChart>
                         </ResponsiveContainer>
                     </div>
