@@ -3,7 +3,7 @@ import { ArrowRight, ShoppingBag, BarChart3, Store, CheckCircle2, Zap } from 'lu
 
 const Landing = () => {
     return (
-        <div className="min-h-screen bg-white font-sans selection:bg-orange-200">
+        <div className="min-h-screen bg-slate-50 font-sans selection:bg-orange-200">
             {/* Navbar (Landing) */}
             <nav className="flex items-center justify-between p-6 max-w-7xl mx-auto">
                 <div className="flex items-center gap-3">
@@ -54,22 +54,22 @@ const Landing = () => {
 
                 {/* Features */}
                 <div className="max-w-7xl mx-auto px-6 mt-32 grid md:grid-cols-3 gap-12">
-                    <div className="bg-white p-8 rounded-[2rem] shadow-xl shadow-gray-100 hover:shadow-2xl transition-shadow border border-gray-50">
+                    <div className="bg-white p-8 rounded-[2rem] shadow-xl shadow-gray-200/50 hover:shadow-2xl transition-shadow border border-white">
                         <div className="w-16 h-16 bg-orange-100 rounded-2xl flex items-center justify-center mb-6 text-[#f9804d]">
                             <Store size={32} />
                         </div>
                         <h3 className="text-2xl font-black text-[#242f3d] mb-4">Tienda Propia</h3>
-                        <p className="text-[#384a62] font-medium leading-relaxed">Tu propio e-commerce con tu logo y tus colores. Recibí pedidos directamente a WhatsApp sin pagar comisiones por venta.</p>
+                        <p className="text-[#384a62] font-medium leading-relaxed">Tu propio e-commerce con tu logo y tus colores. Recibí pedidos en tiempo real, sin comisiones por venta y con integración directa de Mercado Pago Checkout Pro.</p>
                     </div>
-                    <div className="bg-white p-8 rounded-[2rem] shadow-xl shadow-gray-100 hover:shadow-2xl transition-shadow border border-gray-50 relative">
+                    <div className="bg-white p-8 rounded-[2rem] shadow-xl shadow-gray-200/50 hover:shadow-2xl transition-shadow border border-white relative">
                         <div className="absolute -top-4 -right-4 bg-[#37386d] text-white text-[10px] font-black uppercase tracking-widest px-4 py-2 rounded-full transform rotate-12">Popular</div>
                         <div className="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mb-6 text-[#37386d]">
                             <ShoppingBag size={32} />
                         </div>
                         <h3 className="text-2xl font-black text-[#242f3d] mb-4">Gestión Inteligente</h3>
-                        <p className="text-[#384a62] font-medium leading-relaxed">Control de inventario en tiempo real, gestión de recetas, control de insumos y actualización rápida de precios.</p>
+                        <p className="text-[#384a62] font-medium leading-relaxed">Control de inventario en tiempo real, gestión de recetas, automatización de emisión de facturas y actualización rápida de precios.</p>
                     </div>
-                    <div className="bg-white p-8 rounded-[2rem] shadow-xl shadow-gray-100 hover:shadow-2xl transition-shadow border border-gray-50">
+                    <div className="bg-white p-8 rounded-[2rem] shadow-xl shadow-gray-200/50 hover:shadow-2xl transition-shadow border border-white">
                         <div className="w-16 h-16 bg-green-50 rounded-2xl flex items-center justify-center mb-6 text-green-600">
                             <BarChart3 size={32} />
                         </div>
