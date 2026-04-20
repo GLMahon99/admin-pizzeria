@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react';
 import api from '../api/axiosConfig';
 import {
     TrendingUp, Users, ShoppingCart, DollarSign,
-    UserPlus, Star, ArrowUpRight
+    UserPlus, Star, ArrowUpRight, DownloadCloud
 } from 'lucide-react';
+import * as XLSX from 'xlsx';
 import {
     BarChart, Bar, XAxis, YAxis, CartesianGrid,
     Tooltip, ResponsiveContainer, LineChart, Line
@@ -29,6 +30,34 @@ const Dashboard = () => {
         fetchStats();
     }, []);
 
+    const handleDownloadExcel = async () => {
+        try {
+            const response = await api.get('/pedidos');
+            const orders = response.data;
+            
+            // Format data for excel
+            const excelData = orders.map(order => ({
+                'ID Pedido': order.id_pedido,
+                'Fecha': new Date(order.fecha).toLocaleString(),
+                'Cliente': order.cliente_nombre || 'Mostrador',
+                'Teléfono': order.telefono || '-',
+                'Total ($)': parseFloat(order.total),
+                'Estado': order.estado || 'ENTREGADO'
+            }));
+
+            // Create worksheet and workbook
+            const worksheet = XLSX.utils.json_to_sheet(excelData);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, 'Balance Ventas');
+            
+            // Generate and download
+            XLSX.writeFile(workbook, `Balance_Ventas_${new Date().toLocaleDateString().replace(/\//g, '-')}.xlsx`);
+        } catch (error) {
+            console.error('Error al descargar el Excel:', error);
+            alert('Hubo un error al generar el balance.');
+        }
+    };
+
     if (loading || !stats) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-gray-50 uppercase tracking-[0.3em] font-black text-xs text-orange-600">
@@ -42,9 +71,18 @@ const Dashboard = () => {
     return (
         <div className="space-y-8 pb-10">
             {/* Header */}
-            <header>
-                <h1 className="text-3xl font-extrabold text-gray-800">Panel de <span className="text-orange-600">Control</span></h1>
-                <p className="text-gray-500">Bienvenido, acá tenés el pulso de la pizzería hoy.</p>
+            <header className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h1 className="text-3xl font-extrabold text-gray-800">Panel de <span className="text-orange-600">Control</span></h1>
+                    <p className="text-gray-500">Bienvenido, acá tenés el pulso de la pizzería hoy.</p>
+                </div>
+                <button
+                    onClick={handleDownloadExcel}
+                    className="flex items-center gap-2 px-6 py-3 bg-[#384a62] hover:bg-[#242f3d] text-white rounded-2xl font-bold shadow-lg shadow-slate-200 transition-all active:scale-95"
+                >
+                    <DownloadCloud size={20} />
+                    Descargar Balance
+                </button>
             </header>
 
             {/* 1. KPIs Cards */}
