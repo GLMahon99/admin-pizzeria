@@ -8,13 +8,32 @@ const SubscriptionPlans = () => {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [isAnnual, setIsAnnual] = useState(false);
+    const [dbPlans, setDbPlans] = useState([]);
+
+    useEffect(() => {
+        const fetchPlanes = async () => {
+            try {
+                const response = await api.get('/subscriptions/planes');
+                setDbPlans(response.data);
+            } catch (error) {
+                console.error('Error fetched planes db:', error);
+            }
+        };
+        fetchPlanes();
+    }, []);
+
+    // Helpers para obtener precio dinámico
+    const getPrice = (idPlan) => {
+        const plan = dbPlans.find(p => p.id_plan === idPlan);
+        return plan ? parseFloat(plan.precio) : 0;
+    };
 
     const plans = [
         {
             id: 'STANDARD',
             name: 'Plan Estándar',
-            monthlyPrice: 40000,
-            annualPrice: 384000,
+            monthlyPrice: getPrice('STANDARD_MONTHLY') || 40000,
+            annualPrice: getPrice('STANDARD_ANNUAL') || 384000,
             description: 'Ideal para negocios que buscan controlar todo sin emitir facturas automáticas.',
             features: [
                 'Tienda Online Personalizada',
@@ -29,8 +48,8 @@ const SubscriptionPlans = () => {
         {
             id: 'PRO',
             name: 'Pizzería Pro',
-            monthlyPrice: 60000,
-            annualPrice: 576000,
+            monthlyPrice: getPrice('PRO_MONTHLY') || 60000,
+            annualPrice: getPrice('PRO_ANNUAL') || 576000,
             description: 'La opción recomendada para quienes necesitan facturación a consumidor final directo a AFIP.',
             features: [
                 'TODO lo del Plan Estándar',
