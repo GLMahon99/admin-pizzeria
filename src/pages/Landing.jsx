@@ -84,39 +84,43 @@ const Landing = () => {
                     <p className="text-[#384a62] mb-16 font-medium">Elegí la opción que mejor se adapte al tamaño de tu negocio.</p>
                     
                     <div className="grid md:grid-cols-2 gap-8">
-                        {/* Mensual */}
+                        {/* Estandar */}
                         <div className="bg-white border-2 border-gray-100 rounded-[3rem] p-10 hover:border-[#f9804d] transition-colors relative overflow-hidden group">
                             <div className="absolute top-0 right-0 p-8 opacity-5 text-gray-900 group-hover:text-[#f9804d] transition-colors">
                                 <Zap size={120} />
                             </div>
-                            <h3 className="text-2xl font-black text-gray-400 uppercase tracking-widest text-left mb-2">Mensual</h3>
-                            <div className="flex items-baseline gap-2 mb-8 text-left">
+                            <h3 className="text-2xl font-black text-gray-400 uppercase tracking-widest text-left mb-2">Estándar</h3>
+                            <div className="flex items-baseline gap-2 mb-2 text-left">
                                 <span className="text-5xl font-black text-[#242f3d]">$40.000</span>
                                 <span className="text-gray-500 font-bold">/mes</span>
                             </div>
+                            <p className="text-sm font-bold text-[#f9804d] mb-8 text-left">*Ahorrá 20% pagando anual ($384.000)</p>
+                            
                             <ul className="space-y-4 text-left relative z-10">
-                                <li className="flex items-center gap-3 font-bold text-[#384a62]"><CheckCircle2 className="text-green-500" size={20} /> Todas las funciones pro</li>
-                                <li className="flex items-center gap-3 font-bold text-[#384a62]"><CheckCircle2 className="text-green-500" size={20} /> Tienda y Panel activo</li>
+                                <li className="flex items-center gap-3 font-bold text-[#384a62]"><CheckCircle2 className="text-green-500" size={20} /> Todas las funciones operativas conectadas</li>
+                                <li className="flex items-center gap-3 font-bold text-[#384a62]"><CheckCircle2 className="text-green-500" size={20} /> Tienda E-commerce y Panel Activo</li>
                                 <li className="flex items-center gap-3 font-bold text-[#384a62]"><CheckCircle2 className="text-green-500" size={20} /> Soporte garantizado</li>
                             </ul>
                         </div>
 
-                        {/* Anual */}
+                        {/* Pro */}
                         <div className="bg-[#242f3d] rounded-[3rem] p-10 relative overflow-hidden group transform md:-translate-y-4 shadow-2xl">
                             <div className="absolute top-0 right-0 p-8 opacity-10 text-white">
                                 <Store size={120} />
                             </div>
                             <div className="absolute top-6 right-8 bg-[#f9804d] text-white text-[10px] font-black uppercase tracking-widest px-4 py-2 rounded-full">
-                                Ahorrá 20%
+                                Recomendado
                             </div>
-                            <h3 className="text-2xl font-black text-orange-200 uppercase tracking-widest text-left mb-2">Anual</h3>
-                            <div className="flex items-baseline gap-2 mb-8 text-left">
-                                <span className="text-5xl font-black text-white">$380.000</span>
-                                <span className="text-gray-400 font-bold">/año</span>
+                            <h3 className="text-2xl font-black text-orange-200 uppercase tracking-widest text-left mb-2">Pizzería Pro</h3>
+                            <div className="flex items-baseline gap-2 mb-2 text-left">
+                                <span className="text-5xl font-black text-white">$60.000</span>
+                                <span className="text-gray-400 font-bold">/mes</span>
                             </div>
+                            <p className="text-sm font-bold text-orange-200 mb-8 text-left">*Ahorrá 20% pagando anual ($576.000)</p>
+                            
                             <ul className="space-y-4 text-left relative z-10">
-                                <li className="flex items-center gap-3 font-bold text-gray-300"><CheckCircle2 className="text-[#f9804d]" size={20} /> TODO lo del plan mensual</li>
-                                <li className="flex items-center gap-3 font-bold text-gray-300"><CheckCircle2 className="text-[#f9804d]" size={20} /> Ahorro de $100.000 totales</li>
+                                <li className="flex items-center gap-3 font-bold text-gray-300"><CheckCircle2 className="text-[#f9804d]" size={20} /> TODO lo del plan estándar</li>
+                                <li className="flex items-center gap-3 font-bold text-white"><CheckCircle2 className="text-[#f9804d]" size={40} /> Facturación electrónica automatizada con ARCA (AFIP) a consumidor final</li>
                                 <li className="flex items-center gap-3 font-bold text-white"><CheckCircle2 className="text-[#f9804d]" size={20} /> Prioridad máxima en soporte</li>
                             </ul>
                         </div>

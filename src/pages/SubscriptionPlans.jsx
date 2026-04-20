@@ -7,49 +7,50 @@ const SubscriptionPlans = () => {
     const { companyId } = useParams();
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
-    const [selectedPlan, setSelectedPlan] = useState(null);
+    const [isAnnual, setIsAnnual] = useState(false);
 
     const plans = [
         {
-            id: 'MONTHLY',
-            name: 'Plan Mensual',
-            price: '$40.000',
-            period: '/ mes',
-            description: 'Ideal para negocios que están empezando y quieren flexibilidad total.',
+            id: 'STANDARD',
+            name: 'Plan Estándar',
+            monthlyPrice: 40000,
+            annualPrice: 384000,
+            description: 'Ideal para negocios que buscan controlar todo sin emitir facturas automáticas.',
             features: [
                 'Tienda Online Personalizada',
                 'Gestión de Inventario y Recetas',
                 'Panel de Estadísticas Pro',
-                'Soporte vía WhatsApp',
-                'Pedidos Ilimitados'
+                'Pedidos Ilimitados',
+                'Soporte estándar'
             ],
             icon: <Zap className="text-orange-500" />,
             badge: null
         },
         {
-            id: 'YEARLY',
-            name: 'Plan Anual',
-            price: '$380.000',
-            period: '/ año',
-            description: 'La mejor opción para escalar tu negocio ahorrando más del 20%.',
+            id: 'PRO',
+            name: 'Pizzería Pro',
+            monthlyPrice: 60000,
+            annualPrice: 576000,
+            description: 'La opción recomendada para quienes necesitan facturación a consumidor final directo a AFIP.',
             features: [
-                'TODO lo del Plan Mensual',
-                'Prioridad en Soporte',
-                'Capacitación inicial personalizada',
-                'Ahorro de $100.000 anuales',
-                'Actualizaciones premium incluidas'
+                'TODO lo del Plan Estándar',
+                'Facturación ARCA (AFIP) Automática',
+                'Descarga automática de PDF Tícket',
+                'Soporte Prioritario',
+                'Funciones de Alta Gerencia'
             ],
             icon: <Crown className="text-yellow-500" />,
-            badge: 'Ahorro Máximo'
+            badge: 'Recomendado'
         }
     ];
 
     const handleSubscribe = async (planType) => {
         setLoading(true);
         try {
+            const finalPlanType = `${planId}_${isAnnual ? 'ANNUAL' : 'MONTHLY'}`;
             const response = await api.post('/subscriptions/create', {
                 empresaId: companyId,
-                planType: planType
+                planType: finalPlanType
             });
 
             if (response.data.init_point) {
@@ -76,15 +77,32 @@ const SubscriptionPlans = () => {
                         <img src="https://i.ibb.co/bjwG4tSv/logo-nexus.png" alt="Nexus Logo" className="h-16 brightness-0 invert" />
                     </div>
                     <h1 className="text-4xl md:text-5xl font-black text-white mb-4 tracking-tight">Elegí tu plan y empezá a <span className="text-orange-500">vender</span></h1>
-                    <p className="text-gray-400 text-lg max-w-2xl mx-auto">Tu cuenta ha sido creada. Ahora activa tu suscripción para acceder al panel de control y configurar tu tienda.</p>
+                    <p className="text-gray-400 text-lg max-w-2xl mx-auto mb-8">Seleccioná las herramientas que mejor se adapten a tu operatoria diaria.</p>
+                    
+                    {/* Toggle de facturación */}
+                    <div className="flex items-center justify-center gap-4">
+                        <span className={`text-sm font-bold ${!isAnnual ? 'text-white' : 'text-gray-400'}`}>Pago Mensual</span>
+                        <button 
+                            className="w-16 h-8 bg-gray-700 rounded-full p-1 transition-colors relative"
+                            onClick={() => setIsAnnual(!isAnnual)}
+                        >
+                            <div className={`w-6 h-6 bg-orange-500 rounded-full transition-transform ${isAnnual ? 'translate-x-8' : 'translate-x-0'}`}></div>
+                        </button>
+                        <span className={`text-sm font-bold flex items-center gap-2 ${isAnnual ? 'text-white' : 'text-gray-400'}`}>
+                            Pago Anual <span className="bg-orange-500/20 text-orange-400 text-[10px] px-2 py-1 rounded-full">-20% OFF</span>
+                        </span>
+                    </div>
                 </div>
 
                 {/* Grilla de Planes */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-                    {plans.map((plan) => (
+                    {plans.map((plan) => {
+                        const isSelected = selectedPlan === plan.id;
+                        const finalPrice = isAnnual ? plan.annualPrice : plan.monthlyPrice;
+                        return (
                         <div 
                             key={plan.id}
-                            className={`relative bg-white rounded-[2.5rem] p-8 md:p-10 shadow-2xl transition-all duration-500 border-2 ${selectedPlan === plan.id ? 'border-orange-500 scale-[1.02]' : 'border-transparent'}`}
+                            className={`relative bg-white rounded-[2.5rem] p-8 md:p-10 shadow-2xl transition-all duration-500 border-2 ${isSelected ? 'border-orange-500 scale-[1.02]' : 'border-transparent'}`}
                             onClick={() => setSelectedPlan(plan.id)}
                         >
                             {plan.badge && (
@@ -99,13 +117,13 @@ const SubscriptionPlans = () => {
                                 </div>
                                 <div>
                                     <h3 className="text-2xl font-black text-gray-900">{plan.name}</h3>
-                                    <p className="text-gray-400 text-xs font-bold uppercase tracking-wider">{plan.id === 'MONTHLY' ? 'Flexibilidad total' : 'Compromiso y Ahorro'}</p>
+                                    <p className="text-gray-400 text-xs font-bold uppercase tracking-wider">{plan.id === 'STANDARD' ? 'Core Operativo' : 'Kit Completo'}</p>
                                 </div>
                             </div>
 
                             <div className="mb-8">
-                                <span className="text-5xl font-black text-gray-900 tracking-tighter">{plan.price}</span>
-                                <span className="text-gray-400 font-bold ml-1">{plan.period}</span>
+                                <span className="text-5xl font-black text-gray-900 tracking-tighter">${finalPrice.toLocaleString()}</span>
+                                <span className="text-gray-400 font-bold ml-1">/ {isAnnual ? 'año' : 'mes'}</span>
                             </div>
 
                             <p className="text-gray-500 mb-8 leading-relaxed font-medium">
@@ -126,16 +144,17 @@ const SubscriptionPlans = () => {
                             <button
                                 onClick={() => handleSubscribe(plan.id)}
                                 disabled={loading}
-                                className={`w-full py-5 rounded-2xl font-black text-lg transition-all flex items-center justify-center gap-3 shadow-xl ${plan.id === 'YEARLY' ? 'bg-[#242f3d] text-white hover:bg-black shadow-gray-200' : 'bg-orange-600 text-white hover:bg-orange-700 shadow-orange-100 hover:-translate-y-1'}`}
+                                className={`w-full py-5 rounded-2xl font-black text-lg transition-all flex items-center justify-center gap-3 shadow-xl ${plan.id === 'PRO' ? 'bg-[#242f3d] text-white hover:bg-black shadow-gray-200' : 'bg-orange-600 text-white hover:bg-orange-700 shadow-orange-100 hover:-translate-y-1'}`}
                             >
                                 {loading ? 'Cargando MP...' : (
                                     <>
-                                        Seleccionar Plan <ArrowRight size={20} />
+                                        Continuar con {plan.name} <ArrowRight size={20} />
                                     </>
                                 )}
                             </button>
                         </div>
-                    ))}
+                        );
+                    })}
                 </div>
 
                 {/* Footer del selector */}
