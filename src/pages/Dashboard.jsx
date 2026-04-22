@@ -17,11 +17,17 @@ const Dashboard = () => {
     const [stats, setStats] = useState(null);
     const [loading, setLoading] = useState(true);
     const [rango, setRango] = useState('14dias');
+    const [fechaDesde, setFechaDesde] = useState('');
+    const [fechaHasta, setFechaHasta] = useState('');
 
     const fetchStats = async () => {
         try {
             setLoading(true);
-            const response = await api.get(`/admin/stats?rango=${rango}`);
+            let url = `/admin/stats?rango=${rango}`;
+            if (rango === 'personalizado' && fechaDesde && fechaHasta) {
+                url += `&fecha_desde=${fechaDesde}&fecha_hasta=${fechaHasta}`;
+            }
+            const response = await api.get(url);
             setStats(response.data);
         } catch (error) {
             console.error('Error al cargar estadísticas:', error);
@@ -31,8 +37,10 @@ const Dashboard = () => {
     };
 
     useEffect(() => {
-        fetchStats();
-    }, [rango]);
+        if (rango !== 'personalizado' || (rango === 'personalizado' && fechaDesde && fechaHasta)) {
+            fetchStats();
+        }
+    }, [rango, fechaDesde, fechaHasta]);
 
     const handleDownloadExcel = async () => {
         try {
@@ -87,13 +95,45 @@ const Dashboard = () => {
                     <h1 className="text-3xl font-extrabold text-gray-800">Panel de <span className="text-gold-600">Alta Gerencia</span></h1>
                     <p className="text-gray-500">Métricas clave, comportamiento de usuarios y pronóstico de ventas.</p>
                 </div>
-                <button
-                    onClick={handleDownloadExcel}
-                    className="flex items-center gap-2 px-6 py-3 bg-[#52677c] hover:bg-[#25323f] text-white rounded-2xl font-bold shadow-lg shadow-slate-200 transition-all active:scale-95 hover:-translate-y-1"
-                >
-                    <DownloadCloud size={20} />
-                    Exportar Balance (.xlsx)
-                </button>
+                <div className="flex flex-col sm:flex-row items-center gap-3">
+                    {rango === 'personalizado' && (
+                        <div className="flex items-center gap-2">
+                            <input 
+                                type="date" 
+                                value={fechaDesde}
+                                onChange={(e) => setFechaDesde(e.target.value)}
+                                className="w-full sm:w-auto text-sm bg-white border border-gray-200 rounded-2xl px-4 py-3 outline-none font-bold text-[#52677c] focus:border-[#c79f63] focus:ring-2 focus:ring-[#c79f63]/20 transition-all"
+                            />
+                            <span className="text-gray-400 font-bold">-</span>
+                            <input 
+                                type="date" 
+                                value={fechaHasta}
+                                onChange={(e) => setFechaHasta(e.target.value)}
+                                className="w-full sm:w-auto text-sm bg-white border border-gray-200 rounded-2xl px-4 py-3 outline-none font-bold text-[#52677c] focus:border-[#c79f63] focus:ring-2 focus:ring-[#c79f63]/20 transition-all"
+                            />
+                        </div>
+                    )}
+                    <select 
+                        value={rango}
+                        onChange={(e) => setRango(e.target.value)}
+                        className="w-full sm:w-auto text-sm bg-white border border-gray-200 rounded-2xl px-5 py-3 outline-none font-bold text-[#52677c] cursor-pointer hover:border-[#c79f63] shadow-sm transition-colors focus:ring-2 focus:ring-[#c79f63]/20"
+                    >
+                        <option value="hoy">Hoy</option>
+                        <option value="14dias">Últimos 14 días</option>
+                        <option value="30dias">Últimos 30 días</option>
+                        <option value="6meses">Últimos 6 meses</option>
+                        <option value="1ano">Último año</option>
+                        <option value="todo">Histórico completo</option>
+                        <option value="personalizado">Rango Personalizado...</option>
+                    </select>
+                    <button
+                        onClick={handleDownloadExcel}
+                        className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-[#52677c] hover:bg-[#25323f] text-white rounded-2xl font-bold shadow-lg shadow-slate-200 transition-all active:scale-95 hover:-translate-y-1"
+                    >
+                        <DownloadCloud size={20} />
+                        Exportar Balance (.xlsx)
+                    </button>
+                </div>
             </header>
 
             {/* 1. KPIs Cards */}
@@ -113,18 +153,6 @@ const Dashboard = () => {
                             <h2 className="text-xl font-black text-gray-800">Crecimiento de Ventas</h2>
                             <p className="text-sm text-gray-500 font-medium">Evolución temporal del negocio</p>
                         </div>
-                        <select 
-                            value={rango}
-                            onChange={(e) => setRango(e.target.value)}
-                            className="text-sm bg-gray-50 border border-gray-100 rounded-xl px-4 py-2 outline-none font-bold text-[#52677c] cursor-pointer hover:border-[#c79f63] transition-colors"
-                        >
-                            <option value="hoy">Hoy</option>
-                            <option value="14dias">Últimos 14 días</option>
-                            <option value="30dias">Últimos 30 días</option>
-                            <option value="6meses">Últimos 6 meses</option>
-                            <option value="1ano">Último año</option>
-                            <option value="todo">Histórico completo</option>
-                        </select>
                     </div>
                     <div className="h-80 w-full">
                         <ResponsiveContainer width="100%" height="100%">
