@@ -35,12 +35,12 @@ const Sidebar = () => {
                 {user?.logo_url ? (
                     <img src={user.logo_url} alt={user.nombre} className="h-10 w-auto object-contain rounded-lg" />
                 ) : (
-                    <div className="bg-orange-600 p-2 rounded-xl shadow-lg shadow-orange-900/20">
+                    <div className="bg-gold-600 p-2 rounded-xl shadow-lg shadow-gold-900/20">
                         <Store className="text-white" size={24} />
                     </div>
                 )}
                 <span className="text-xl font-black text-white tracking-tighter italic truncate">
-                    {user?.nombre?.split(' ')[0]}<span className="text-orange-500">ADMIN</span>
+                    {user?.nombre?.split(' ')[0]}<span className="text-gold-500">ADMIN</span>
                 </span>
             </div>
 
@@ -53,7 +53,7 @@ const Sidebar = () => {
                         className={({ isActive }) => `
               flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition-all duration-200
               ${isActive
-                                ? 'bg-orange-600 text-white shadow-lg shadow-orange-600/20'
+                                ? 'bg-gold-600 text-white shadow-lg shadow-gold-600/20'
                                 : 'hover:bg-slate-800 hover:text-white'}
             `}
                     >
@@ -71,7 +71,7 @@ const Sidebar = () => {
                     className={({ isActive }) => `
                         flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition-all duration-200
                         ${isActive
-                            ? 'bg-orange-600 text-white shadow-lg shadow-orange-600/20'
+                            ? 'bg-gold-600 text-white shadow-lg shadow-gold-600/20'
                             : 'text-slate-400 hover:bg-slate-800 hover:text-white'}
                     `}
                 >
@@ -80,7 +80,7 @@ const Sidebar = () => {
                 </NavLink>
 
                 <div className="flex items-center gap-3 px-4 py-2 pt-2">
-                    <div className="w-10 h-10 bg-slate-800/50 rounded-full flex items-center justify-center text-orange-500 border border-slate-700">
+                    <div className="w-10 h-10 bg-slate-800/50 rounded-full flex items-center justify-center text-gold-500 border border-slate-700">
                         <User size={20} />
                     </div>
                     <div className="overflow-hidden">

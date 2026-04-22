@@ -60,8 +60,8 @@ const Register = () => {
         <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
             {/* Fondo con decoraciones abstractas */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                <div className="absolute -top-24 -left-24 w-96 h-96 bg-[#f9804d]/10 rounded-full blur-3xl opacity-50"></div>
-                <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-[#37386d]/10 rounded-full blur-3xl opacity-50"></div>
+                <div className="absolute -top-24 -left-24 w-96 h-96 bg-[#c79f63]/10 rounded-full blur-3xl opacity-50"></div>
+                <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-[#415161]/10 rounded-full blur-3xl opacity-50"></div>
             </div>
 
             <div className="max-w-md w-full relative">
@@ -69,9 +69,9 @@ const Register = () => {
                     {/* Header */}
                     <div className="text-center mb-10">
                         <div className="mb-8 flex justify-center transform hover:scale-105 transition-transform duration-500">
-                            <img src="https://i.ibb.co/bjwG4tSv/logo-nexus.png" alt="Nexus Logo" className="h-20 w-auto object-contain drop-shadow-xl" />
+                            <div className="flex items-center justify-center gap-2"><span className="text-3xl font-black tracking-tighter text-[#415161]">e-commensal<span className="text-[#c79f63]">.</span></span></div>
                         </div>
-                        <h1 className="text-3xl font-black text-gray-900 tracking-tight">Sumá tu <span className="text-[#f9804d]">Empresa</span></h1>
+                        <h1 className="text-3xl font-black text-gray-900 tracking-tight">Sumá tu <span className="text-[#c79f63]">Empresa</span></h1>
                         <p className="text-gray-500 mt-2 font-medium">Unite a la red más grande de ecommerce sin comisiones.</p>
                     </div>
 
@@ -94,7 +94,7 @@ const Register = () => {
                                     name="nombre"
                                     required
                                     value={formData.nombre}
-                                    className="w-full pl-12 pr-4 py-4 bg-gray-50 border-2 border-transparent rounded-2xl focus:bg-white focus:border-orange-500 ring-0 outline-none transition-all font-bold text-gray-800"
+                                    className="w-full pl-12 pr-4 py-4 bg-gray-50 border-2 border-transparent rounded-2xl focus:bg-white focus:border-gold-500 ring-0 outline-none transition-all font-bold text-gray-800"
                                     placeholder="Ej: La Posta del Horno"
                                     onChange={handleChange}
                                 />
@@ -111,7 +111,7 @@ const Register = () => {
                                     name="email_contacto"
                                     required
                                     value={formData.email_contacto}
-                                    className="w-full pl-12 pr-4 py-4 bg-gray-50 border-2 border-transparent rounded-2xl focus:bg-white focus:border-orange-500 ring-0 outline-none transition-all font-bold text-gray-800"
+                                    className="w-full pl-12 pr-4 py-4 bg-gray-50 border-2 border-transparent rounded-2xl focus:bg-white focus:border-gold-500 ring-0 outline-none transition-all font-bold text-gray-800"
                                     placeholder="contacto@pizzeria.com"
                                     onChange={handleChange}
                                 />
@@ -128,7 +128,7 @@ const Register = () => {
                                         type="text"
                                         name="cuit"
                                         required
-                                        className="w-full pl-12 pr-4 py-4 bg-gray-50 border-2 border-transparent rounded-2xl focus:bg-white focus:border-orange-500 ring-0 outline-none transition-all font-bold text-gray-800"
+                                        className="w-full pl-12 pr-4 py-4 bg-gray-50 border-2 border-transparent rounded-2xl focus:bg-white focus:border-gold-500 ring-0 outline-none transition-all font-bold text-gray-800"
                                         placeholder="20-XXXXXXXX-X"
                                         onChange={handleChange}
                                     />
@@ -158,7 +158,7 @@ const Register = () => {
                                     type="password"
                                     name="password"
                                     required
-                                    className="w-full pl-12 pr-4 py-4 bg-gray-50 border-2 border-transparent rounded-2xl focus:bg-white focus:border-orange-500 ring-0 outline-none transition-all font-bold text-gray-800"
+                                    className="w-full pl-12 pr-4 py-4 bg-gray-50 border-2 border-transparent rounded-2xl focus:bg-white focus:border-gold-500 ring-0 outline-none transition-all font-bold text-gray-800"
                                     placeholder="••••••••"
                                     onChange={handleChange}
                                 />
@@ -174,7 +174,7 @@ const Register = () => {
                                     type="password"
                                     name="confirmPassword"
                                     required
-                                    className="w-full pl-12 pr-4 py-4 bg-gray-50 border-2 border-transparent rounded-2xl focus:bg-white focus:border-orange-500 ring-0 outline-none transition-all font-bold text-gray-800"
+                                    className="w-full pl-12 pr-4 py-4 bg-gray-50 border-2 border-transparent rounded-2xl focus:bg-white focus:border-gold-500 ring-0 outline-none transition-all font-bold text-gray-800"
                                     placeholder="••••••••"
                                     onChange={handleChange}
                                 />
@@ -184,7 +184,7 @@ const Register = () => {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full py-5 bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white rounded-2xl font-black shadow-xl shadow-orange-200 transition-all active:scale-95 flex items-center justify-center gap-3 disabled:opacity-50"
+                            className="w-full py-5 bg-gradient-to-r from-gold-600 to-red-600 hover:from-gold-700 hover:to-red-700 text-white rounded-2xl font-black shadow-xl shadow-gold-200 transition-all active:scale-95 flex items-center justify-center gap-3 disabled:opacity-50"
                         >
                             {loading ? 'Creando Empresa...' : (
                                 <>
@@ -197,7 +197,7 @@ const Register = () => {
                     <div className="mt-10 pt-6 border-t border-gray-100 text-center">
                         <p className="text-sm text-gray-500 font-medium">
                             ¿Ya tenés una cuenta?{' '}
-                            <Link to="/login" className="text-[#f9804d] font-black hover:underline underline-offset-4">
+                            <Link to="/login" className="text-[#c79f63] font-black hover:underline underline-offset-4">
                                 Iniciar Sesión
                             </Link>
                         </p>

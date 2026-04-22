@@ -98,7 +98,7 @@ const Supplies = () => {
             <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                 <div>
                     <h1 className="text-3xl font-extrabold text-gray-800">
-                        Control de <span className="text-orange-600">Insumos</span>
+                        Control de <span className="text-gold-600">Insumos</span>
                     </h1>
                     <p className="text-gray-500 text-sm font-medium flex items-center gap-1">
                         <Database size={14} /> Gestión de materia prima y abastecimiento
@@ -121,7 +121,7 @@ const Supplies = () => {
                         {/* Header del Modal */}
                         <div className="bg-slate-900 p-6 text-white flex justify-between items-center">
                             <div className="flex items-center gap-2">
-                                <Database className="text-orange-500" size={20} />
+                                <Database className="text-gold-500" size={20} />
                                 <h2 className="text-xl font-bold">Nuevo Insumo</h2>
                             </div>
                             <button
@@ -146,7 +146,7 @@ const Supplies = () => {
                                     onChange={handleChange}
                                     placeholder="Ej: Harina 000"
                                     required
-                                    className="w-full p-3 bg-gray-100 border-none rounded-xl focus:ring-2 focus:ring-orange-500 outline-none font-medium"
+                                    className="w-full p-3 bg-gray-100 border-none rounded-xl focus:ring-2 focus:ring-gold-500 outline-none font-medium"
                                 />
                             </div>
 
@@ -158,7 +158,7 @@ const Supplies = () => {
                                         name="categoria" 
                                         value={formData.categoria} 
                                         onChange={handleChange}
-                                        className="w-full p-3 bg-gray-100 border-none rounded-xl focus:ring-2 focus:ring-orange-500 outline-none font-medium"
+                                        className="w-full p-3 bg-gray-100 border-none rounded-xl focus:ring-2 focus:ring-gold-500 outline-none font-medium"
                                     >
                                         <option value="Secos">Secos</option>
                                         <option value="Lácteos">Lácteos</option>
@@ -176,7 +176,7 @@ const Supplies = () => {
                                         name="unidad_medida" 
                                         value={formData.unidad_medida} 
                                         onChange={handleChange}
-                                        className="w-full p-3 bg-gray-100 border-none rounded-xl focus:ring-2 focus:ring-orange-500 outline-none font-medium"
+                                        className="w-full p-3 bg-gray-100 border-none rounded-xl focus:ring-2 focus:ring-gold-500 outline-none font-medium"
                                     >
                                         <option value="kg">kg</option>
                                         <option value="gr">gramos</option>
@@ -200,7 +200,7 @@ const Supplies = () => {
                                         onChange={handleChange}
                                         required
                                         placeholder="0"
-                                        className="w-full p-3 bg-gray-100 border-none rounded-xl focus:ring-2 focus:ring-orange-500 outline-none font-bold"
+                                        className="w-full p-3 bg-gray-100 border-none rounded-xl focus:ring-2 focus:ring-gold-500 outline-none font-bold"
                                     />
                                 </div>
                                 {/* Stock Mínimo */}
@@ -214,7 +214,7 @@ const Supplies = () => {
                                         onChange={handleChange}
                                         required
                                         placeholder="Alerta en..."
-                                        className="w-full p-3 bg-gray-100 border-none rounded-xl focus:ring-2 focus:ring-orange-500 outline-none font-bold text-red-600"
+                                        className="w-full p-3 bg-gray-100 border-none rounded-xl focus:ring-2 focus:ring-gold-500 outline-none font-bold text-red-600"
                                     />
                                 </div>
                             </div>
@@ -232,7 +232,7 @@ const Supplies = () => {
                                         onChange={handleChange}
                                         required
                                         placeholder="0.00"
-                                        className="w-full pl-10 p-3 bg-gray-100 border-none rounded-xl focus:ring-2 focus:ring-orange-500 outline-none font-bold text-green-700"
+                                        className="w-full pl-10 p-3 bg-gray-100 border-none rounded-xl focus:ring-2 focus:ring-gold-500 outline-none font-bold text-green-700"
                                     />
                                 </div>
                             </div>
@@ -240,7 +240,7 @@ const Supplies = () => {
                             {/* Botón de Guardar */}
                             <button
                                 type="submit"
-                                className="w-full bg-orange-600 hover:bg-orange-700 text-white py-4 rounded-2xl font-bold shadow-lg shadow-orange-200 transition-all flex items-center justify-center gap-2 mt-4"
+                                className="w-full bg-gold-600 hover:bg-gold-700 text-white py-4 rounded-2xl font-bold shadow-lg shadow-gold-200 transition-all flex items-center justify-center gap-2 mt-4"
                             >
                                 <Save size={20} /> Guardar Insumo
                             </button>
@@ -332,7 +332,7 @@ const Supplies = () => {
                                             <td className="px-6 py-4 text-right">
                                                 <div className="flex justify-end gap-2">
                                                     {/* Opción para editar - Futura implementación */}
-                                                    <button className="p-2 text-slate-400 hover:text-orange-600 hover:bg-orange-50 rounded-xl transition-all">
+                                                    <button className="p-2 text-slate-400 hover:text-gold-600 hover:bg-gold-50 rounded-xl transition-all">
                                                         <Edit3 size={18} />
                                                     </button>
                                                     <button 
@@ -354,9 +354,9 @@ const Supplies = () => {
 
             {/* Footer para el Analista - Solo si hay elementos críticos */}
             {masCritico && (
-                <div className="p-6 bg-orange-50 rounded-3xl border border-orange-100 flex items-center gap-4">
-                    <div className="text-orange-600"><Scale size={32} /></div>
-                    <p className="text-sm text-orange-800 leading-relaxed">
+                <div className="p-6 bg-gold-50 rounded-3xl border border-gold-100 flex items-center gap-4">
+                    <div className="text-gold-600"><Scale size={32} /></div>
+                    <p className="text-sm text-gold-800 leading-relaxed">
                         <span className="font-bold">Alerta Crítica Automática:</span> Tu insumo más crítico es el <span className="font-black underline">{masCritico.nombre}</span>.
                         El stock actual ({masCritico.stock_actual} {masCritico.unidad_medida}) no cubre el mínimo sugerido de {masCritico.stock_minimo} {masCritico.unidad_medida}.
                         Considerá realizar un pedido a tu proveedor hoy mismo.

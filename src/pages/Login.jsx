@@ -50,7 +50,7 @@ const Login = () => {
         <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4 relative overflow-hidden">
             {/* Elementos decorativos animados */}
             <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-                <div className="absolute top-[10%] left-[5%] w-72 h-72 bg-orange-200/40 rounded-full blur-[100px] animate-pulse"></div>
+                <div className="absolute top-[10%] left-[5%] w-72 h-72 bg-gold-200/40 rounded-full blur-[100px] animate-pulse"></div>
                 <div className="absolute bottom-[10%] right-[5%] w-72 h-72 bg-red-200/40 rounded-full blur-[100px] animate-pulse"></div>
             </div>
 
@@ -60,7 +60,7 @@ const Login = () => {
                     {/* Header */}
                     <div className="text-center mb-10">
                         <div className="mb-8 flex justify-center transform hover:scale-105 transition-transform duration-500">
-                            <img src="https://i.ibb.co/bjwG4tSv/logo-nexus.png" alt="Nexus Logo" className="h-24 w-auto object-contain drop-shadow-xl" />
+                            <div className="flex items-center justify-center gap-2"><span className="text-3xl font-black tracking-tighter text-[#415161]">e-commensal<span className="text-[#c79f63]">.</span></span></div>
                         </div>
 
                         <p className="text-gray-500 font-medium mt-2 italic">Gestioná tu ecommerce en un solo lugar.</p>
@@ -87,12 +87,12 @@ const Login = () => {
                         <div className="space-y-2">
                             <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-2">Identificador (CUIT)</label>
                             <div className="relative group">
-                                <Hash className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#f9804d] transition-colors" size={20} />
+                                <Hash className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#c79f63] transition-colors" size={20} />
                                 <input
                                     type="text"
                                     name="cuit"
                                     required
-                                    className="w-full pl-14 pr-6 py-5 bg-gray-100/50 border-2 border-transparent rounded-[1.5rem] focus:bg-white focus:border-orange-500 ring-0 outline-none transition-all font-bold text-gray-800 placeholder:text-gray-400"
+                                    className="w-full pl-14 pr-6 py-5 bg-gray-100/50 border-2 border-transparent rounded-[1.5rem] focus:bg-white focus:border-gold-500 ring-0 outline-none transition-all font-bold text-gray-800 placeholder:text-gray-400"
                                     placeholder="20-XXXXXXXX-X"
                                     onChange={handleChange}
                                 />
@@ -103,12 +103,12 @@ const Login = () => {
                         <div className="space-y-2">
                             <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-2">Contraseña</label>
                             <div className="relative group">
-                                <Lock className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#f9804d] transition-colors" size={20} />
+                                <Lock className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#c79f63] transition-colors" size={20} />
                                 <input
                                     type="password"
                                     name="password"
                                     required
-                                    className="w-full pl-14 pr-6 py-5 bg-gray-100/50 border-2 border-transparent rounded-[1.5rem] focus:bg-white focus:border-orange-500 ring-0 outline-none transition-all font-bold text-gray-800 placeholder:text-gray-400"
+                                    className="w-full pl-14 pr-6 py-5 bg-gray-100/50 border-2 border-transparent rounded-[1.5rem] focus:bg-white focus:border-gold-500 ring-0 outline-none transition-all font-bold text-gray-800 placeholder:text-gray-400"
                                     placeholder="••••••••"
                                     onChange={handleChange}
                                 />
@@ -118,7 +118,7 @@ const Login = () => {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full py-5 bg-[#f9804d] hover:bg-[#37386d] text-white rounded-[1.5rem] font-black text-lg shadow-2xl shadow-orange-200 transition-all active:scale-95 flex items-center justify-center gap-3"
+                            className="w-full py-5 bg-[#c79f63] hover:bg-[#415161] text-white rounded-[1.5rem] font-black text-lg shadow-2xl shadow-gold-200 transition-all active:scale-95 flex items-center justify-center gap-3"
                         >
                             {loading ? 'Verificando...' : (
                                 <>
@@ -134,7 +134,7 @@ const Login = () => {
                         </p>
                         <Link
                             to="/register"
-                            className="bg-gray-900 text-white px-8 py-3 rounded-full text-xs font-black uppercase tracking-widest hover:bg-[#f9804d] transition-colors shadow-lg shadow-gray-200"
+                            className="bg-gray-900 text-white px-8 py-3 rounded-full text-xs font-black uppercase tracking-widest hover:bg-[#c79f63] transition-colors shadow-lg shadow-gray-200"
                         >
                             Registrar Empresa
                         </Link>

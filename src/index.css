@@ -2,33 +2,34 @@
 @import "tailwindcss";
 
 @theme {
-  /* Naranja principal y sus variantes */
-  --color-orange-50: #fff7ed;
-  --color-orange-100: #ffedd5;
-  --color-orange-200: #fed7aa;
-  --color-orange-300: #fdba74;
-  --color-orange-400: #fb923c;
-  --color-orange-500: #f9804d; 
-  --color-orange-600: #f9804d; /* Base principal */
-  --color-orange-700: #ea580c;
-  --color-orange-800: #9a3412;
-  --color-orange-900: #7c2d12;
-  --color-orange-950: #431407;
+  /* E-commensal Gold/Copper colors */
+  --color-gold-50: #fbf8f2;
+  --color-gold-100: #f5eedf;
+  --color-gold-200: #ebd6b5;
+  --color-gold-300: #ddbc84;
+  --color-gold-400: #c79f63; /* Main image color */
+  --color-gold-500: #b98344; 
+  --color-gold-600: #a26837;
+  --color-gold-700: #86502f;
+  --color-gold-800: #6e4128;
+  --color-gold-900: #593522;
+  --color-gold-950: #301a10;
 
-  /* Colores Nexus para el Sidebar y UI Oscura */
-  --color-slate-950: #1a222e; /* Gris azulado MUY oscuro */
-  --color-slate-900: #242f3d; /* Sidebar (Darker Gray Blue) */
-  --color-slate-800: #384a62; /* Hover (Original Gray Blue) */
-  --color-slate-700: #4b5e78;
+  /* E-commensal Slate colors */
+  --color-slate-950: #1a232c; 
+  --color-slate-900: #25323f; 
+  --color-slate-800: #314252; 
+  --color-slate-700: #415161; /* Main text color from image */
+  --color-slate-600: #52677c;
   
-  --color-gray-900: #242f3d;
-  --color-gray-800: #384a62;
+  --color-gray-900: #25323f;
+  --color-gray-800: #314252;
 }
 
 :root {
-  --color-primary: #f9804d;
-  --color-secondary: #242f3d;
-  --color-tertiary: #384a62;
+  --color-primary: #c79f63;
+  --color-secondary: #25323f;
+  --color-tertiary: #314252;
 }
 
 body {

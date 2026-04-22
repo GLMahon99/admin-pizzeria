@@ -210,19 +210,19 @@ const Orders = () => {
             <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                 <div>
                     <h1 className="text-4xl font-black text-gray-800 tracking-tight">
-                        Gestión de <span className="text-orange-600">Pedidos</span>
+                        Gestión de <span className="text-gold-600">Pedidos</span>
                     </h1>
                     <p className="text-gray-500 font-medium">Control total de ventas y despachos</p>
                 </div>
 
                 <div className="flex items-center gap-4">
                     <div className="flex items-center gap-2 bg-slate-100 text-slate-600 px-5 py-3 rounded-2xl font-black text-sm uppercase tracking-widest border border-slate-200 shadow-sm">
-                        <Package size={18} className="text-orange-500" />
+                        <Package size={18} className="text-gold-500" />
                         {filteredOrders.length} {filter === 'Hoy' ? 'hoy' : 'encontrados'}
                     </div>
                     <button 
                         onClick={() => setShowNewOrderModal(true)}
-                        className="flex items-center gap-2 bg-orange-600 hover:bg-orange-700 text-white px-8 py-4 rounded-[2rem] font-black shadow-xl shadow-orange-100 transition-all hover:-translate-y-1 active:scale-95"
+                        className="flex items-center gap-2 bg-gold-600 hover:bg-gold-700 text-white px-8 py-4 rounded-[2rem] font-black shadow-xl shadow-gold-100 transition-all hover:-translate-y-1 active:scale-95"
                     >
                         <Plus size={24} /> Nuevo Pedido
                     </button>
@@ -234,14 +234,14 @@ const Orders = () => {
                 <div className="fixed inset-0 bg-slate-900/70 backdrop-blur-md z-50 flex items-center justify-center p-4">
                     <div className="bg-white rounded-[3rem] shadow-2xl w-full max-w-6xl overflow-hidden animate-in fade-in zoom-in duration-300 h-[90vh] flex flex-col border border-white/20">
                         {/* Modal Header */}
-                        <div className="bg-orange-600 p-8 text-white flex justify-between items-center shrink-0">
+                        <div className="bg-gold-600 p-8 text-white flex justify-between items-center shrink-0">
                             <div className="flex items-center gap-4">
                                 <div className="bg-white/20 p-3 rounded-2xl backdrop-blur-sm">
                                     <ShoppingCart size={24} />
                                 </div>
                                 <div>
                                     <h2 className="text-2xl font-black">Cargar Nuevo Pedido</h2>
-                                    <p className="text-orange-100 text-sm font-bold opacity-80 uppercase tracking-widest">Venta por mostrador / Mesa</p>
+                                    <p className="text-gold-100 text-sm font-bold opacity-80 uppercase tracking-widest">Venta por mostrador / Mesa</p>
                                 </div>
                             </div>
                             <button onClick={() => setShowNewOrderModal(false)} className="bg-black/10 hover:bg-black/20 p-2 rounded-xl transition-all"><X size={24}/></button>
@@ -256,7 +256,7 @@ const Orders = () => {
                                         <input 
                                             type="text" 
                                             placeholder="Buscar producto..." 
-                                            className="w-full pl-12 p-4 bg-gray-100 border-none rounded-2xl focus:ring-2 focus:ring-orange-500 outline-none font-bold"
+                                            className="w-full pl-12 p-4 bg-gray-100 border-none rounded-2xl focus:ring-2 focus:ring-gold-500 outline-none font-bold"
                                             value={searchTerm}
                                             onChange={(e) => setSearchTerm(e.target.value)}
                                         />
@@ -284,7 +284,7 @@ const Orders = () => {
                                         <button 
                                             key={prod.id_producto}
                                             onClick={() => addItemToOrder(prod)}
-                                            className="group bg-white border border-gray-100 p-4 rounded-3xl hover:border-orange-500 hover:shadow-lg transition-all text-left flex flex-col gap-3 active:scale-95"
+                                            className="group bg-white border border-gray-100 p-4 rounded-3xl hover:border-gold-500 hover:shadow-lg transition-all text-left flex flex-col gap-3 active:scale-95"
                                         >
                                             {prod.img ? (
                                                 <img src={prod.img} className="w-full h-24 object-cover rounded-2xl" alt={prod.nombre} />
@@ -292,8 +292,8 @@ const Orders = () => {
                                                 <div className="w-full h-24 bg-gray-50 flex items-center justify-center rounded-2xl text-gray-300"><Package size={24}/></div>
                                             )}
                                             <div>
-                                                <p className="font-black text-gray-800 leading-tight group-hover:text-orange-600 transition-colors uppercase text-sm">{prod.nombre}</p>
-                                                <p className="text-orange-600 font-black mt-1">${parseFloat(prod.precio).toLocaleString()}</p>
+                                                <p className="font-black text-gray-800 leading-tight group-hover:text-gold-600 transition-colors uppercase text-sm">{prod.nombre}</p>
+                                                <p className="text-gold-600 font-black mt-1">${parseFloat(prod.precio).toLocaleString()}</p>
                                             </div>
                                         </button>
                                     ))}
@@ -313,7 +313,7 @@ const Orders = () => {
                                             <ShoppingCart size={80} className="text-gray-100 mb-8 animate-pulse" />
                                             <p className="text-xs font-black text-gray-300 uppercase tracking-[0.3em] leading-loose">
                                                 Tu pedido está<br/>
-                                                <span className="text-orange-200 font-black">esperando</span>
+                                                <span className="text-gold-200 font-black">esperando</span>
                                             </p>
                                         </div>
                                     ) : (
@@ -323,7 +323,7 @@ const Orders = () => {
                                                     <div className="flex flex-col flex-1">
                                                         <span className="text-base font-black text-gray-800 uppercase tracking-tighter line-clamp-1">{item.nombre}</span>
                                                         <div className="flex items-center gap-2 mt-1">
-                                                            <span className="bg-orange-100 text-orange-600 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter">x{item.cantidad}</span>
+                                                            <span className="bg-gold-100 text-gold-600 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter">x{item.cantidad}</span>
                                                             <span className="text-xs font-bold text-gray-400">Total: <span className="text-slate-800">${(parseFloat(item.precio) * item.cantidad).toLocaleString()}</span></span>
                                                         </div>
                                                     </div>
@@ -347,7 +347,7 @@ const Orders = () => {
                                     </div>
                                     <div className="flex justify-between items-center border-t border-gray-50 pt-4">
                                         <span className="text-gray-800 font-black text-[10px] uppercase tracking-widest">Total</span>
-                                        <span className="text-2xl font-black text-orange-600 tracking-tight">${calculateTotal().toLocaleString()}</span>
+                                        <span className="text-2xl font-black text-gold-600 tracking-tight">${calculateTotal().toLocaleString()}</span>
                                     </div>
                                     <button 
                                         onClick={handleConfirmOrder}
@@ -355,7 +355,7 @@ const Orders = () => {
                                         className={`w-full py-4 rounded-2xl font-black text-base transition-all shadow-xl flex items-center justify-center gap-2 ${
                                             newOrder.items.length === 0 || isSubmitting
                                             ? 'bg-gray-100 text-gray-300 cursor-not-allowed shadow-none' 
-                                            : 'bg-orange-600 text-white hover:bg-orange-700 shadow-orange-100'
+                                            : 'bg-gold-600 text-white hover:bg-gold-700 shadow-gold-100'
                                         }`}
                                     >
                                         <DollarSign size={20} /> {isSubmitting ? 'Procesando...' : 'Confirmar Pedido'}
@@ -374,7 +374,7 @@ const Orders = () => {
                         key={opt.value}
                         onClick={() => setFilter(opt.value)}
                         className={`px-8 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all ${filter === opt.value
-                                ? 'bg-orange-600 text-white shadow-xl shadow-orange-100'
+                                ? 'bg-gold-600 text-white shadow-xl shadow-gold-100'
                                 : 'text-gray-400 hover:bg-gray-50 hover:text-gray-600'
                             }`}
                     >
@@ -387,12 +387,12 @@ const Orders = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {loading ? (
                     <div className="col-span-full py-32 text-center text-gray-400">
-                         <div className="animate-bounce mb-4 text-orange-500"><ShoppingCart size={40} className="mx-auto" /></div>
+                         <div className="animate-bounce mb-4 text-gold-500"><ShoppingCart size={40} className="mx-auto" /></div>
                          <p className="font-black uppercase tracking-widest text-sm text-gray-400">Cargando las ventas...</p>
                     </div>
                 ) : filteredOrders.length > 0 ? (
                     filteredOrders.map((pedido) => (
-                        <div key={pedido.id_pedido} className="group bg-white rounded-[2.5rem] shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-2xl hover:shadow-gray-200/50 transition-all duration-300 border-t-8 border-t-orange-500">
+                        <div key={pedido.id_pedido} className="group bg-white rounded-[2.5rem] shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-2xl hover:shadow-gray-200/50 transition-all duration-300 border-t-8 border-t-gold-500">
                             <div className="p-8 flex-1">
                                 <div className="flex justify-between items-start mb-6">
                                     <div className="flex flex-col">
@@ -409,12 +409,12 @@ const Orders = () => {
                                         </div>
                                     </div>
                                     <div className="flex items-center text-slate-500 text-[10px] font-black bg-slate-50 px-3 py-1.5 rounded-full uppercase tracking-tighter">
-                                        <Clock size={12} className="mr-1.5 text-orange-500" /> {new Date(pedido.fecha).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Argentina/Buenos_Aires' })}
+                                        <Clock size={12} className="mr-1.5 text-gold-500" /> {new Date(pedido.fecha).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Argentina/Buenos_Aires' })}
                                     </div>
                                 </div>
 
                                 <div className="flex items-center gap-4 mb-6">
-                                    <div className="w-12 h-12 bg-orange-100 rounded-2xl flex items-center justify-center text-orange-600">
+                                    <div className="w-12 h-12 bg-gold-100 rounded-2xl flex items-center justify-center text-gold-600">
                                         <User size={24} />
                                     </div>
                                     <div>
@@ -429,7 +429,7 @@ const Orders = () => {
                                     <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Resumen de Productos</p>
                                     {pedido.detalle && pedido.detalle.map((item, idx) => (
                                         <div key={idx} className="flex justify-between items-center text-sm">
-                                            <span className="text-gray-600 font-bold"><span className="text-orange-600">x{item.cantidad}</span> {item.producto_nombre}</span>
+                                            <span className="text-gray-600 font-bold"><span className="text-gold-600">x{item.cantidad}</span> {item.producto_nombre}</span>
                                             <span className="text-gray-400 font-bold text-xs">${parseFloat(item.precio_unitario).toLocaleString()}</span>
                                         </div>
                                     ))}

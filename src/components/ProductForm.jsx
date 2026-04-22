@@ -33,7 +33,7 @@ const ProductForm = ({ productToEdit, onSave, onCancel }) => {
 
     return (
         <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 max-w-2xl mx-auto">
-            <div className="flex items-center gap-2 mb-6 text-orange-600">
+            <div className="flex items-center gap-2 mb-6 text-gold-600">
                 <Pizza size={24} />
                 <h2 className="text-xl font-bold">
                     {productToEdit ? 'Editar Producto' : 'Nueva Pizza / Producto'}
@@ -49,7 +49,7 @@ const ProductForm = ({ productToEdit, onSave, onCancel }) => {
                         name="nombre"
                         value={formData.nombre}
                         onChange={handleChange}
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 p-2 border"
+                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-gold-500 focus:ring-gold-500 p-2 border"
                         placeholder="Ej: Muzza con aceitunas"
                         required
                     />
@@ -63,7 +63,7 @@ const ProductForm = ({ productToEdit, onSave, onCancel }) => {
                         value={formData.descripcion}
                         onChange={handleChange}
                         rows="3"
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 p-2 border"
+                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-gold-500 focus:ring-gold-500 p-2 border"
                         placeholder="Mozzarella, salsa de tomate, orégano..."
                     />
                 </div>
@@ -77,7 +77,7 @@ const ProductForm = ({ productToEdit, onSave, onCancel }) => {
                             name="precio"
                             value={formData.precio}
                             onChange={handleChange}
-                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 p-2 border"
+                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-gold-500 focus:ring-gold-500 p-2 border"
                             placeholder="0.00"
                             step="0.01"
                             required
@@ -91,7 +91,7 @@ const ProductForm = ({ productToEdit, onSave, onCancel }) => {
                             name="categoria"
                             value={formData.categoria}
                             onChange={handleChange}
-                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 p-2 border"
+                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-gold-500 focus:ring-gold-500 p-2 border"
                         >
                             <option value="Pizzas">Pizzas</option>
                             <option value="Bebidas">Bebidas</option>
@@ -112,7 +112,7 @@ const ProductForm = ({ productToEdit, onSave, onCancel }) => {
                     </button>
                     <button
                         type="submit"
-                        className="flex items-center gap-1 px-4 py-2 text-sm font-medium text-white bg-orange-600 rounded-lg hover:bg-orange-700 transition shadow-md"
+                        className="flex items-center gap-1 px-4 py-2 text-sm font-medium text-white bg-gold-600 rounded-lg hover:bg-gold-700 transition shadow-md"
                     >
                         <Save size={18} /> Guardar Producto
                     </button>

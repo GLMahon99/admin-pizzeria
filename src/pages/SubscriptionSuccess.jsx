@@ -35,7 +35,7 @@ const SubscriptionSuccess = () => {
                 {verifying ? (
                     <div className="space-y-6">
                         <div className="flex justify-center">
-                            <Loader2 className="h-20 w-20 text-orange-600 animate-spin" />
+                            <Loader2 className="h-20 w-20 text-gold-600 animate-spin" />
                         </div>
                         <h2 className="text-2xl font-black text-gray-900">Procesando tu suscripción...</h2>
                         <p className="text-gray-500">Estamos confirmando tu pago con Mercado Pago. No cierres esta ventana.</p>
@@ -48,7 +48,7 @@ const SubscriptionSuccess = () => {
                             </div>
                         </div>
                         
-                        <h1 className="text-3xl font-black text-gray-900 mb-4 tracking-tight">¡Bienvenido a la red <span className="text-orange-600">Nexus</span>!</h1>
+                        <h1 className="text-3xl font-black text-gray-900 mb-4 tracking-tight">¡Bienvenido a la red <span className="text-gold-600">e-commensal</span>!</h1>
                         <p className="text-gray-500 mb-10 font-medium leading-relaxed">
                             Tu suscripción <span className="font-black text-gray-800">{plan === 'MONTHLY' ? 'Mensual' : 'Anual'}</span> ha sido activada con éxito. Ya podés empezar a gestionar tu negocio.
                         </p>

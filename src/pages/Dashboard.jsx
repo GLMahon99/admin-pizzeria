@@ -11,7 +11,7 @@ import {
     PieChart, Pie, Cell, Legend
 } from 'recharts';
 
-const COLORS = ['#f9804d', '#37386d', '#384a62', '#10b981', '#f59e0b', '#6366f1'];
+const COLORS = ['#c79f63', '#415161', '#52677c', '#10b981', '#f59e0b', '#6366f1'];
 
 const Dashboard = () => {
     const [stats, setStats] = useState(null);
@@ -64,8 +64,8 @@ const Dashboard = () => {
 
     if (loading || !stats) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-gray-50 uppercase tracking-[0.3em] font-black text-xs text-orange-600">
-                <div className="w-12 h-12 border-4 border-orange-600 border-t-transparent rounded-full animate-spin mr-4"></div>
+            <div className="min-h-screen flex items-center justify-center bg-gray-50 uppercase tracking-[0.3em] font-black text-xs text-gold-600">
+                <div className="w-12 h-12 border-4 border-gold-600 border-t-transparent rounded-full animate-spin mr-4"></div>
                 Analizando el negocio...
             </div>
         );
@@ -84,12 +84,12 @@ const Dashboard = () => {
             {/* Header */}
             <header className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-extrabold text-gray-800">Panel de <span className="text-orange-600">Alta Gerencia</span></h1>
+                    <h1 className="text-3xl font-extrabold text-gray-800">Panel de <span className="text-gold-600">Alta Gerencia</span></h1>
                     <p className="text-gray-500">Métricas clave, comportamiento de usuarios y pronóstico de ventas.</p>
                 </div>
                 <button
                     onClick={handleDownloadExcel}
-                    className="flex items-center gap-2 px-6 py-3 bg-[#384a62] hover:bg-[#242f3d] text-white rounded-2xl font-bold shadow-lg shadow-slate-200 transition-all active:scale-95 hover:-translate-y-1"
+                    className="flex items-center gap-2 px-6 py-3 bg-[#52677c] hover:bg-[#25323f] text-white rounded-2xl font-bold shadow-lg shadow-slate-200 transition-all active:scale-95 hover:-translate-y-1"
                 >
                     <DownloadCloud size={20} />
                     Exportar Balance (.xlsx)
@@ -99,9 +99,9 @@ const Dashboard = () => {
             {/* 1. KPIs Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <StatCard title="Ventas Hoy (Bruto)" value={`$${Math.round(kpis.ventas_hoy).toLocaleString() || 0}`} icon={<DollarSign className="text-[#10b981]" />} trend="+15%" color="bg-[#10b981]/10" />
-                <StatCard title="Ventas del Mes" value={`$${Math.round(kpis.ventas_mes || 0).toLocaleString()}`} icon={<ShoppingCart className="text-[#37386d]" />} trend="Estable" color="bg-[#37386d]/10" />
-                <StatCard title="Ticket Promedio" value={`$${Math.round(kpis.ticket_promedio).toLocaleString() || 0}`} icon={<TrendingUp className="text-[#f9804d]" />} trend="+8%" color="bg-[#f9804d]/10" />
-                <StatCard title="Últimos 30 días" value={`${kpis.clientes_recientes || 0} Clientes`} icon={<UserPlus className="text-[#384a62]" />} trend="+12%" color="bg-[#384a62]/10" />
+                <StatCard title="Ventas del Mes" value={`$${Math.round(kpis.ventas_mes || 0).toLocaleString()}`} icon={<ShoppingCart className="text-[#415161]" />} trend="Estable" color="bg-[#415161]/10" />
+                <StatCard title="Ticket Promedio" value={`$${Math.round(kpis.ticket_promedio).toLocaleString() || 0}`} icon={<TrendingUp className="text-[#c79f63]" />} trend="+8%" color="bg-[#c79f63]/10" />
+                <StatCard title="Últimos 30 días" value={`${kpis.clientes_recientes || 0} Clientes`} icon={<UserPlus className="text-[#52677c]" />} trend="+12%" color="bg-[#52677c]/10" />
             </div>
 
             {/* 2. Main Charts Section */}
@@ -116,7 +116,7 @@ const Dashboard = () => {
                         <select 
                             value={rango}
                             onChange={(e) => setRango(e.target.value)}
-                            className="text-sm bg-gray-50 border border-gray-100 rounded-xl px-4 py-2 outline-none font-bold text-[#384a62] cursor-pointer hover:border-[#f9804d] transition-colors"
+                            className="text-sm bg-gray-50 border border-gray-100 rounded-xl px-4 py-2 outline-none font-bold text-[#52677c] cursor-pointer hover:border-[#c79f63] transition-colors"
                         >
                             <option value="hoy">Hoy</option>
                             <option value="14dias">Últimos 14 días</option>
@@ -131,15 +131,15 @@ const Dashboard = () => {
                             <AreaChart data={ventasSemanales} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                                 <defs>
                                     <linearGradient id="colorVentas" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor="#f9804d" stopOpacity={0.4}/>
-                                        <stop offset="95%" stopColor="#f9804d" stopOpacity={0}/>
+                                        <stop offset="5%" stopColor="#c79f63" stopOpacity={0.4}/>
+                                        <stop offset="95%" stopColor="#c79f63" stopOpacity={0}/>
                                     </linearGradient>
                                 </defs>
                                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                                 <XAxis dataKey="dia" axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 12, fontWeight: 'bold' }} />
                                 <YAxis axisLine={false} tickLine={false} tickFormatter={(val) => `$${val/1000}k`} tick={{ fill: '#64748b', fontSize: 12, fontWeight: 'bold' }} />
                                 <Tooltip contentStyle={{ borderRadius: '15px', border: 'none', boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)' }} />
-                                <Area type="monotone" dataKey="ventas" stroke="#f9804d" strokeWidth={4} fillOpacity={1} fill="url(#colorVentas)" dot={{ r: 4, fill: '#fff', stroke: '#f9804d', strokeWidth: 2 }} activeDot={{ r: 8, strokeWidth: 0 }} />
+                                <Area type="monotone" dataKey="ventas" stroke="#c79f63" strokeWidth={4} fillOpacity={1} fill="url(#colorVentas)" dot={{ r: 4, fill: '#fff', stroke: '#c79f63', strokeWidth: 2 }} activeDot={{ r: 8, strokeWidth: 0 }} />
                             </AreaChart>
                         </ResponsiveContainer>
                     </div>
@@ -179,7 +179,7 @@ const Dashboard = () => {
             {/* 3. Secondary Analytics Section */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* 3A. Horas Pico (Bar Chart) */}
-                <div className="lg:col-span-2 bg-[#242f3d] p-6 rounded-[2rem] shadow-xl shadow-gray-200/40 border border-[#384a62]/50">
+                <div className="lg:col-span-2 bg-[#25323f] p-6 rounded-[2rem] shadow-xl shadow-gray-200/40 border border-[#52677c]/50">
                     <div>
                         <h2 className="text-xl font-black text-white">Mapa de Horas Pico</h2>
                         <p className="text-sm text-gray-400 font-medium">Volumen de pedidos según franja horaria (hace 30 días)</p>
@@ -187,10 +187,10 @@ const Dashboard = () => {
                     <div className="h-80 w-full mt-6">
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={dataHorarios} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#384a62" opacity={0.3} />
+                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#52677c" opacity={0.3} />
                                 <XAxis dataKey="hora" axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 12 }} />
                                 <YAxis axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 12 }} />
-                                <Tooltip cursor={{ fill: '#384a62', opacity: 0.2 }} contentStyle={{ backgroundColor: '#1e293b', border: 'none', borderRadius: '12px', color: '#fff' }} />
+                                <Tooltip cursor={{ fill: '#52677c', opacity: 0.2 }} contentStyle={{ backgroundColor: '#1e293b', border: 'none', borderRadius: '12px', color: '#fff' }} />
                                 <Bar dataKey="pedidos" fill="#6366f1" radius={[8, 8, 0, 0]} />
                             </BarChart>
                         </ResponsiveContainer>
@@ -227,7 +227,7 @@ const Dashboard = () => {
             <div className="bg-white p-6 rounded-[2rem] shadow-xl shadow-gray-200/40 border border-gray-100">
                 <div className="flex justify-between items-center mb-6">
                     <h2 className="text-xl font-black text-gray-800">Transacciones Recientes</h2>
-                    <button onClick={() => window.location.href='/pedidos'} className="text-sm font-bold text-[#f9804d] hover:text-[#ea580c] transition-colors">
+                    <button onClick={() => window.location.href='/pedidos'} className="text-sm font-bold text-[#c79f63] hover:text-[#b98344] transition-colors">
                         Ver todo el historial
                     </button>
                 </div>
@@ -246,7 +246,7 @@ const Dashboard = () => {
                                 <tr key={venta.id} className="border-b border-gray-50 hover:bg-gray-50 transition-colors">
                                     <td className="py-4">
                                         <div className="flex items-center gap-3">
-                                            <div className="w-10 h-10 rounded-full flex items-center justify-center bg-[#384a62]/10 text-[#384a62]">
+                                            <div className="w-10 h-10 rounded-full flex items-center justify-center bg-[#52677c]/10 text-[#52677c]">
                                                 <Users size={16} />
                                             </div>
                                             <span className="font-bold text-gray-800">{venta.cliente}</span>
@@ -256,7 +256,7 @@ const Dashboard = () => {
                                         {new Date(venta.hora).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })}
                                     </td>
                                     <td className="py-4">
-                                        <span className={`text-xs font-bold px-3 py-1 rounded-full ${venta.estado === 'ENTREGADO' ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'}`}>
+                                        <span className={`text-xs font-bold px-3 py-1 rounded-full ${venta.estado === 'ENTREGADO' ? 'bg-green-100 text-green-700' : 'bg-gold-100 text-gold-700'}`}>
                                             {venta.estado || 'PENDIENTE'}
                                         </span>
                                     </td>

@@ -55,7 +55,7 @@ const Settings = () => {
     if (loading) {
         return (
             <div className="h-full flex items-center justify-center">
-                <Loader2 className="animate-spin text-orange-600" size={32} />
+                <Loader2 className="animate-spin text-gold-600" size={32} />
             </div>
         );
     }
@@ -81,7 +81,7 @@ const Settings = () => {
                 {/* Branding */}
                 <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100 space-y-6">
                     <h2 className="text-xl font-black text-gray-800 flex items-center gap-2">
-                        <Palette className="text-orange-600" size={20} /> Branding y Diseño
+                        <Palette className="text-gold-600" size={20} /> Branding y Diseño
                     </h2>
                     
                     <div className="space-y-4">
@@ -89,7 +89,7 @@ const Settings = () => {
                             <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Nombre del Local</label>
                             <input
                                 type="text"
-                                className="w-full bg-gray-50 border-2 border-gray-100 p-4 rounded-2xl focus:border-orange-600 outline-none font-bold"
+                                className="w-full bg-gray-50 border-2 border-gray-100 p-4 rounded-2xl focus:border-gold-600 outline-none font-bold"
                                 value={config.nombre}
                                 onChange={(e) => setConfig({...config, nombre: e.target.value})}
                                 required
@@ -102,7 +102,7 @@ const Settings = () => {
                                 <ImageIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300" size={18} />
                                 <input
                                     type="text"
-                                    className="w-full bg-gray-50 border-2 border-gray-100 p-4 pl-12 rounded-2xl focus:border-orange-600 outline-none font-bold"
+                                    className="w-full bg-gray-50 border-2 border-gray-100 p-4 pl-12 rounded-2xl focus:border-gold-600 outline-none font-bold"
                                     value={config.logo_url}
                                     onChange={(e) => setConfig({...config, logo_url: e.target.value})}
                                 />
@@ -116,10 +116,10 @@ const Settings = () => {
                                     <input
                                         type="color"
                                         className="w-12 h-12 rounded-xl border-2 border-gray-100 p-1 cursor-pointer"
-                                        value={config.color_primario || '#EA580C'}
+                                        value={config.color_primario || '#b98344'}
                                         onChange={(e) => setConfig({...config, color_primario: e.target.value})}
                                     />
-                                    <span className="font-mono font-bold text-gray-500 text-xs">{config.color_primario || '#EA580C'}</span>
+                                    <span className="font-mono font-bold text-gray-500 text-xs">{config.color_primario || '#b98344'}</span>
                                 </div>
                             </div>
                             <div className="space-y-2">
@@ -224,7 +224,7 @@ const Settings = () => {
                     <button
                         type="submit"
                         disabled={saving}
-                        className="bg-orange-600 hover:bg-orange-700 text-white px-10 py-4 rounded-2xl font-black text-lg shadow-xl shadow-orange-100 transition-all active:scale-95 flex items-center gap-3 disabled:opacity-50"
+                        className="bg-gold-600 hover:bg-gold-700 text-white px-10 py-4 rounded-2xl font-black text-lg shadow-xl shadow-gold-100 transition-all active:scale-95 flex items-center gap-3 disabled:opacity-50"
                     >
                         {saving ? <Loader2 className="animate-spin" /> : <Save />}
                         {saving ? 'Guardando...' : 'Guardar Cambios'}

@@ -203,7 +203,7 @@ const Inventory = () => {
             {/* Header */}
             <header className="flex justify-between items-center">
                 <div>
-                    <h1 className="text-3xl font-extrabold text-gray-800">Inventario de <span className="text-orange-600">Productos</span></h1>
+                    <h1 className="text-3xl font-extrabold text-gray-800">Inventario de <span className="text-gold-600">Productos</span></h1>
                     <p className="text-gray-500">Gestioná el menú y los precios de tu local</p>
                 </div>
                 <button
@@ -215,7 +215,7 @@ const Inventory = () => {
                         setImageFile(null);
                         setShowForm(true);
                     }}
-                    className="flex items-center gap-2 bg-orange-600 hover:bg-orange-700 text-white px-6 py-3 rounded-2xl font-bold shadow-lg shadow-orange-200 transition-all active:scale-95"
+                    className="flex items-center gap-2 bg-gold-600 hover:bg-gold-700 text-white px-6 py-3 rounded-2xl font-bold shadow-lg shadow-gold-200 transition-all active:scale-95"
                 >
                     <Plus size={20} /> Nuevo Producto
                 </button>
@@ -225,7 +225,7 @@ const Inventory = () => {
             {showForm && (
                 <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
                     <div className="bg-white rounded-3xl shadow-2xl w-full max-w-4xl overflow-hidden animate-in fade-in zoom-in duration-200 h-auto max-h-[95vh] flex flex-col">
-                        <div className="bg-orange-600 p-6 text-white flex justify-between items-center shrink-0">
+                        <div className="bg-gold-600 p-6 text-white flex justify-between items-center shrink-0">
                             <h2 className="text-xl font-bold flex items-center gap-2"><Utensils /> {editingId ? 'Editar Producto' : 'Cargar Nuevo Producto'}</h2>
                             <button onClick={() => {
                                 setShowForm(false);
@@ -234,7 +234,7 @@ const Inventory = () => {
                                 setRecetaItems([]);
                                 setImagePreview(null);
                                 setImageFile(null);
-                            }} className="hover:bg-orange-500 p-1 rounded-full"><X /></button>
+                            }} className="hover:bg-gold-500 p-1 rounded-full"><X /></button>
                         </div>
 
                         <div className="overflow-y-auto p-8">
@@ -242,7 +242,7 @@ const Inventory = () => {
                                 {/* Columna Izquierda: Datos Básicos */}
                                 <div className="space-y-6">
                                     <div className="space-y-4">
-                                        <h3 className="text-lg font-black text-gray-800 border-b pb-2 flex items-center gap-2"><Tag size={20} className="text-orange-500"/> Información General</h3>
+                                        <h3 className="text-lg font-black text-gray-800 border-b pb-2 flex items-center gap-2"><Tag size={20} className="text-gold-500"/> Información General</h3>
                                         
                                         <div>
                                             <label className="text-xs font-black text-gray-400 uppercase tracking-widest">Nombre</label>
@@ -251,7 +251,7 @@ const Inventory = () => {
                                                 name="nombre"
                                                 required
                                                 value={formData.nombre}
-                                                className="w-full mt-1 p-3 bg-gray-100 border-none rounded-xl focus:ring-2 focus:ring-orange-500 outline-none font-bold"
+                                                className="w-full mt-1 p-3 bg-gray-100 border-none rounded-xl focus:ring-2 focus:ring-gold-500 outline-none font-bold"
                                                 placeholder="Ej: Napolitana con Ajo"
                                                 onChange={handleChange}
                                             />
@@ -264,7 +264,7 @@ const Inventory = () => {
                                                     list="categories-list"
                                                     name="categoria"
                                                     value={formData.categoria}
-                                                    className="w-full mt-1 p-3 bg-gray-100 border-none rounded-xl focus:ring-2 focus:ring-orange-500 outline-none font-bold"
+                                                    className="w-full mt-1 p-3 bg-gray-100 border-none rounded-xl focus:ring-2 focus:ring-gold-500 outline-none font-bold"
                                                     placeholder="Elegí o escribí..."
                                                     onChange={handleChange}
                                                     autoComplete="off"
@@ -292,7 +292,7 @@ const Inventory = () => {
                                                         required={formData.categoria !== 'Helados'}
                                                         step="0.01"
                                                         value={formData.precio}
-                                                        className="w-full pl-9 p-3 bg-gray-100 border-none rounded-xl focus:ring-2 focus:ring-orange-500 outline-none font-black text-orange-600"
+                                                        className="w-full pl-9 p-3 bg-gray-100 border-none rounded-xl focus:ring-2 focus:ring-gold-500 outline-none font-black text-gold-600"
                                                         placeholder="0.00"
                                                         onChange={handleChange}
                                                     />
@@ -345,7 +345,7 @@ const Inventory = () => {
                                                 name="descripcion"
                                                 rows="2"
                                                 value={formData.descripcion || ''}
-                                                className="w-full mt-1 p-3 bg-gray-100 border-none rounded-xl focus:ring-2 focus:ring-orange-500 outline-none"
+                                                className="w-full mt-1 p-3 bg-gray-100 border-none rounded-xl focus:ring-2 focus:ring-gold-500 outline-none"
                                                 placeholder="Ingredientes principales..."
                                                 onChange={handleChange}
                                             ></textarea>
@@ -354,7 +354,7 @@ const Inventory = () => {
 
                                     <div className="space-y-4">
                                         <label className="text-xs font-black text-gray-400 uppercase tracking-widest">Imagen del Producto</label>
-                                        <div className="relative group border-2 border-dashed border-gray-200 rounded-3xl h-44 flex flex-col items-center justify-center bg-gray-50/50 overflow-hidden hover:border-orange-400 transition-all">
+                                        <div className="relative group border-2 border-dashed border-gray-200 rounded-3xl h-44 flex flex-col items-center justify-center bg-gray-50/50 overflow-hidden hover:border-gold-400 transition-all">
                                             {imagePreview ? (
                                                 <div className="relative w-full h-full">
                                                     <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
@@ -379,14 +379,14 @@ const Inventory = () => {
                                 {/* Columna Derecha: Receta / Insumos */}
                                 <div className="space-y-6">
                                     <div className="space-y-4">
-                                        <h3 className="text-lg font-black text-gray-800 border-b pb-2 flex items-center gap-2"><Utensils size={20} className="text-orange-500"/> Receta (Descuento de Stock)</h3>
+                                        <h3 className="text-lg font-black text-gray-800 border-b pb-2 flex items-center gap-2"><Utensils size={20} className="text-gold-500"/> Receta (Descuento de Stock)</h3>
                                         
                                         {/* Selector de Insumos */}
-                                        <div className="bg-orange-50 p-4 rounded-2xl space-y-3">
-                                            <p className="text-[10px] font-black text-orange-800 uppercase tracking-widest">Agregar ingrediente a la receta</p>
+                                        <div className="bg-gold-50 p-4 rounded-2xl space-y-3">
+                                            <p className="text-[10px] font-black text-gold-800 uppercase tracking-widest">Agregar ingrediente a la receta</p>
                                             <div className="flex gap-2">
                                                 <select 
-                                                    className="flex-1 p-2.5 bg-white border-none rounded-xl text-sm font-bold outline-none ring-1 ring-orange-100 focus:ring-2 focus:ring-orange-500 transition-all"
+                                                    className="flex-1 p-2.5 bg-white border-none rounded-xl text-sm font-bold outline-none ring-1 ring-gold-100 focus:ring-2 focus:ring-gold-500 transition-all"
                                                     value={nuevoIngrediente.id_insumo}
                                                     onChange={(e) => setNuevoIngrediente({...nuevoIngrediente, id_insumo: e.target.value})}
                                                 >
@@ -401,7 +401,7 @@ const Inventory = () => {
                                                     <input 
                                                         type="number"
                                                         placeholder="Cant."
-                                                        className="w-full p-2.5 bg-white border-none rounded-xl text-sm font-black outline-none ring-1 ring-orange-100 focus:ring-2 focus:ring-orange-500 transition-all"
+                                                        className="w-full p-2.5 bg-white border-none rounded-xl text-sm font-black outline-none ring-1 ring-gold-100 focus:ring-2 focus:ring-gold-500 transition-all"
                                                         value={nuevoIngrediente.cantidad}
                                                         onChange={(e) => setNuevoIngrediente({...nuevoIngrediente, cantidad: e.target.value})}
                                                     />
@@ -409,7 +409,7 @@ const Inventory = () => {
                                                 <button 
                                                     type="button"
                                                     onClick={agregarIngrediente}
-                                                    className="bg-orange-600 text-white p-2.5 rounded-xl hover:bg-orange-700 active:scale-95 transition-all shadow-md shadow-orange-100"
+                                                    className="bg-gold-600 text-white p-2.5 rounded-xl hover:bg-gold-700 active:scale-95 transition-all shadow-md shadow-gold-100"
                                                 >
                                                     <Plus size={20} />
                                                 </button>
@@ -428,7 +428,7 @@ const Inventory = () => {
                                                     <div key={item.id_insumo} className="flex items-center justify-between p-3 bg-white border border-gray-100 rounded-2xl hover:shadow-sm transition-all animate-in slide-in-from-right-2">
                                                         <div className="flex flex-col">
                                                             <span className="text-sm font-bold text-gray-700">{item.nombre}</span>
-                                                            <span className="text-[10px] font-black text-orange-500 uppercase">Gasto: {item.cantidad_usada} {item.unidad}</span>
+                                                            <span className="text-[10px] font-black text-gold-500 uppercase">Gasto: {item.cantidad_usada} {item.unidad}</span>
                                                         </div>
                                                         <button 
                                                             type="button" 
@@ -448,7 +448,7 @@ const Inventory = () => {
                                     <button 
                                         type="submit" 
                                         disabled={isSubmitting}
-                                        className={`w-full text-white py-4 rounded-3xl font-black text-lg shadow-xl transition-all flex items-center justify-center gap-2 ${isSubmitting ? 'bg-orange-400 cursor-not-allowed' : 'bg-orange-600 hover:bg-orange-700 shadow-orange-100 hover:-translate-y-1'}`}
+                                        className={`w-full text-white py-4 rounded-3xl font-black text-lg shadow-xl transition-all flex items-center justify-center gap-2 ${isSubmitting ? 'bg-gold-400 cursor-not-allowed' : 'bg-gold-600 hover:bg-gold-700 shadow-gold-100 hover:-translate-y-1'}`}
                                     >
                                         {isSubmitting ? (
                                             <>
@@ -475,7 +475,7 @@ const Inventory = () => {
             <div className="bg-white rounded-[2rem] shadow-xl shadow-gray-200/50 border border-gray-100 overflow-hidden">
                 {loading ? (
                     <div className="p-20 text-center text-gray-400">
-                         <div className="animate-bounce mb-4 text-orange-500"><Utensils size={40} className="mx-auto" /></div>
+                         <div className="animate-bounce mb-4 text-gold-500"><Utensils size={40} className="mx-auto" /></div>
                          <p className="font-black uppercase tracking-widest text-sm">Cocinando tu lista de productos...</p>
                     </div>
                 ) : products.length === 0 ? (
@@ -495,7 +495,7 @@ const Inventory = () => {
                         </thead>
                         <tbody className="divide-y divide-gray-100">
                             {products.map((prod) => (
-                                <tr key={prod.id_producto} className="group hover:bg-orange-50/20 transition-all duration-300">
+                                <tr key={prod.id_producto} className="group hover:bg-gold-50/20 transition-all duration-300">
                                     <td className="px-8 py-6">
                                         <div className="flex items-center gap-5">
                                             {prod.img ? (
@@ -508,13 +508,13 @@ const Inventory = () => {
                                                 </div>
                                             )}
                                             <div className="flex flex-col">
-                                                <span className="font-black text-gray-800 text-xl leading-tight group-hover:text-orange-600 transition-colors">{prod.nombre}</span>
+                                                <span className="font-black text-gray-800 text-xl leading-tight group-hover:text-gold-600 transition-colors">{prod.nombre}</span>
                                                 <span className="text-xs text-gray-400 max-w-[250px] line-clamp-2 mt-2 font-medium leading-relaxed">{prod.descripcion}</span>
                                             </div>
                                         </div>
                                     </td>
                                     <td className="px-8 py-6">
-                                        <span className="bg-slate-100 group-hover:bg-orange-100 group-hover:text-orange-700 text-slate-500 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-colors">
+                                        <span className="bg-slate-100 group-hover:bg-gold-100 group-hover:text-gold-700 text-slate-500 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-colors">
                                             {prod.categoria}
                                         </span>
                                     </td>
@@ -552,7 +552,7 @@ const Inventory = () => {
                                         <div className="flex justify-center gap-3">
                                             <button 
                                                 onClick={() => openEditForm(prod)} 
-                                                className="p-3 text-slate-400 hover:text-orange-600 hover:bg-white hover:shadow-lg hover:shadow-orange-100 rounded-2xl transition-all active:scale-95"
+                                                className="p-3 text-slate-400 hover:text-gold-600 hover:bg-white hover:shadow-lg hover:shadow-gold-100 rounded-2xl transition-all active:scale-95"
                                                 title="Editar Receta y Datos"
                                             >
                                                 <Edit size={22} />
