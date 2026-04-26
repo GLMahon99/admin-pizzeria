@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Save, ShieldCheck, Key, Palette, Image as ImageIcon, Loader2, Phone } from 'lucide-react';
+import { Save, ShieldCheck, Key, Palette, Image as ImageIcon, Loader2, Phone, Truck } from 'lucide-react';
 import api from '../api/axiosConfig';
 
 const Settings = () => {
@@ -14,7 +14,9 @@ const Settings = () => {
         instagram: '',
         facebook: '',
         mp_public_key: '',
-        mp_access_token: ''
+        mp_access_token: '',
+        costo_envio: 0,
+        envio_gratis_desde: ''
     });
     const [message, setMessage] = useState({ type: '', text: '' });
 
@@ -215,6 +217,48 @@ const Settings = () => {
                                 value={config.mp_access_token}
                                 onChange={(e) => setConfig({...config, mp_access_token: e.target.value})}
                                 placeholder="APP_USR-xxxxxxxxxxxxxxxxxxxxxxxx"
+                            />
+                        </div>
+                    </div>
+                </div>
+
+                {/* Envío y Logística */}
+                <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100 space-y-6">
+                    <h2 className="text-xl font-black text-gray-800 flex items-center gap-2">
+                        <Truck className="text-purple-600" size={20} /> Envío y Logística
+                    </h2>
+                    
+                    <div className="bg-purple-50 p-4 rounded-2xl border border-purple-100 space-y-2">
+                        <p className="text-[10px] font-bold text-purple-600 uppercase tracking-widest flex items-center gap-1">
+                            Opciones de Delivery
+                        </p>
+                        <p className="text-xs text-purple-700 leading-relaxed font-medium">
+                            Si dejas el costo en 0, se mostrará como "Envío Gratis". También podes bonificar el envío superando cierto monto.
+                        </p>
+                    </div>
+
+                    <div className="space-y-4">
+                        <div className="space-y-2">
+                            <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Costo Fijo de Envío ($)</label>
+                            <input
+                                type="number"
+                                className="w-full bg-gray-50 border-2 border-gray-100 p-4 rounded-2xl focus:border-purple-600 outline-none font-mono text-sm"
+                                value={config.costo_envio || 0}
+                                onChange={(e) => setConfig({...config, costo_envio: Number(e.target.value)})}
+                                placeholder="0"
+                                min="0"
+                            />
+                        </div>
+
+                        <div className="space-y-2">
+                            <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Envío Gratis Desde ($) (Opcional)</label>
+                            <input
+                                type="number"
+                                className="w-full bg-gray-50 border-2 border-gray-100 p-4 rounded-2xl focus:border-purple-600 outline-none font-mono text-sm"
+                                value={config.envio_gratis_desde || ''}
+                                onChange={(e) => setConfig({...config, envio_gratis_desde: e.target.value ? Number(e.target.value) : ''})}
+                                placeholder="Ej: 15000"
+                                min="0"
                             />
                         </div>
                     </div>
