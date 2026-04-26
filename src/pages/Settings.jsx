@@ -13,6 +13,7 @@ const Settings = () => {
         whatsapp: '',
         instagram: '',
         facebook: '',
+        horarios_atencion: '',
         mp_public_key: '',
         mp_access_token: '',
         costo_envio: 0,
@@ -180,6 +181,17 @@ const Settings = () => {
                             />
                         </div>
                     </div>
+
+                        <div className="space-y-2 mt-4">
+                            <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Días y Horarios de Atención</label>
+                            <input
+                                type="text"
+                                className="w-full bg-gray-50 border-2 border-gray-100 p-4 rounded-2xl focus:border-green-600 outline-none font-bold text-sm"
+                                value={config.horarios_atencion || ''}
+                                onChange={(e) => setConfig({...config, horarios_atencion: e.target.value})}
+                                placeholder="Ej: Lunes a Domingos de 19:30 a 23:30 hs"
+                            />
+                        </div>
                 </div>
 
                 {/* Mercado Pago */}
