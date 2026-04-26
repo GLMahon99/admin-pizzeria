@@ -69,7 +69,7 @@ const Register = () => {
                     {/* Header */}
                     <div className="text-center mb-10">
                         <div className="mb-8 flex justify-center transform hover:scale-105 transition-transform duration-500">
-                            <div className="flex items-center justify-center gap-2"><span className="text-3xl font-black tracking-tighter text-[#415161]">e-commensal<span className="text-[#c79f63]">.</span></span></div>
+                            <div className="flex items-center justify-center gap-2"><img src="/logo-acommerr.png" alt="A-commerr Logo" className="h-10 object-contain" /></div>
                         </div>
                         <h1 className="text-3xl font-black text-gray-900 tracking-tight">Sumá tu <span className="text-[#c79f63]">Empresa</span></h1>
                         <p className="text-gray-500 mt-2 font-medium">Unite a la red más grande de ecommerce sin comisiones.</p>

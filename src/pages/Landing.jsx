@@ -7,7 +7,7 @@ const Landing = () => {
             {/* Navbar (Landing) */}
             <nav className="flex items-center justify-between p-6 max-w-7xl mx-auto">
                 <div className="flex items-center gap-3">
-                    <span className="text-3xl font-black tracking-tighter text-[#415161]">e-commensal<span className="text-[#c79f63]">.</span></span>
+                    <img src="/logo-acommerr.png" alt="A-commerr Logo" className="h-8 object-contain" />
                 </div>
                 <div className="flex items-center gap-4">
                     <Link to="/login" className="font-bold text-[#52677c] hover:text-[#c79f63] transition-colors">
@@ -38,7 +38,7 @@ const Landing = () => {
                         </span>
                     </h1>
                     <p className="text-xl text-[#52677c] mb-12 max-w-2xl mx-auto font-medium">
-                        e-commensal ERP es el software integral que conecta tu e-commerce con tu gestión diaria. Ventas, inventario y estadísticas en un solo lugar.
+                        A-commerr ERP es el software integral que conecta tu e-commerce con tu gestión diaria. Ventas, inventario y estadísticas en un solo lugar.
                     </p>
                     
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -130,7 +130,7 @@ const Landing = () => {
             {/* Footer Pequeño */}
             <footer className="border-t border-gray-100 py-10 text-center">
                 <p className="text-xs font-black uppercase tracking-widest text-gray-400">
-                    © 2026 e-commensal ERP - UNA SOLUCIÓN MULTI-TENANT
+                    © 2026 A-commerr ERP - UNA SOLUCIÓN MULTI-TENANT
                 </p>
             </footer>
         </div>

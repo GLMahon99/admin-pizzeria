@@ -2,34 +2,34 @@
 @import "tailwindcss";
 
 @theme {
-  /* E-commensal Gold/Copper colors */
-  --color-gold-50: #fbf8f2;
-  --color-gold-100: #f5eedf;
-  --color-gold-200: #ebd6b5;
-  --color-gold-300: #ddbc84;
-  --color-gold-400: #c79f63; /* Main image color */
-  --color-gold-500: #b98344; 
-  --color-gold-600: #a26837;
-  --color-gold-700: #86502f;
-  --color-gold-800: #6e4128;
-  --color-gold-900: #593522;
-  --color-gold-950: #301a10;
+  /* A-commerr Orange colors (Replacing Gold) */
+  --color-gold-50: #fff4ed;
+  --color-gold-100: #ffe6d4;
+  --color-gold-200: #ffcba3;
+  --color-gold-300: #ffaa66;
+  --color-gold-400: #ff802b; 
+  --color-gold-500: #ff5b00; /* Main orange color */
+  --color-gold-600: #ef4c00;
+  --color-gold-700: #c63800;
+  --color-gold-800: #9d2c08;
+  --color-gold-900: #7e270c;
+  --color-gold-950: #441004;
 
-  /* E-commensal Slate colors */
-  --color-slate-950: #1a232c; 
-  --color-slate-900: #25323f; 
-  --color-slate-800: #314252; 
-  --color-slate-700: #415161; /* Main text color from image */
-  --color-slate-600: #52677c;
+  /* A-commerr Navy colors (Replacing Slate) */
+  --color-slate-950: #1a3249; 
+  --color-slate-900: #083d5a; /* Main navy color from logo */
+  --color-slate-800: #2a4c6d; 
+  --color-slate-700: #305a83; 
+  --color-slate-600: #3b719f;
   
-  --color-gray-900: #25323f;
-  --color-gray-800: #314252;
+  --color-gray-900: #083d5a;
+  --color-gray-800: #2a4c6d;
 }
 
 :root {
-  --color-primary: #c79f63;
-  --color-secondary: #25323f;
-  --color-tertiary: #314252;
+  --color-primary: #ff5b00;
+  --color-secondary: #083d5a;
+  --color-tertiary: #2a4c6d;
 }
 
 body {

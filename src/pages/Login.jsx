@@ -60,7 +60,7 @@ const Login = () => {
                     {/* Header */}
                     <div className="text-center mb-10">
                         <div className="mb-8 flex justify-center transform hover:scale-105 transition-transform duration-500">
-                            <div className="flex items-center justify-center gap-2"><span className="text-3xl font-black tracking-tighter text-[#415161]">e-commensal<span className="text-[#c79f63]">.</span></span></div>
+                            <div className="flex items-center justify-center gap-2"><img src="/logo-acommerr.png" alt="A-commerr Logo" className="h-10 object-contain" /></div>
                         </div>
 
                         <p className="text-gray-500 font-medium mt-2 italic">Gestioná tu ecommerce en un solo lugar.</p>
