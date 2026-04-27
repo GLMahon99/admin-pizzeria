@@ -155,7 +155,7 @@ const Orders = () => {
                 </style>
             </head>
             <body onload="window.print(); window.close();">
-                <div class="center bold" style="font-size: 18px;">PIZZERÍA APP</div>
+                <div class="center bold" style="font-size: 18px;">A-COMMERR ERP</div>
                 <div class="center text-gray-500">Florida, Vicente López</div>
                 <div class="divider"></div>
                 <div class="bold">ORDEN: #${pedido.id_pedido}</div>

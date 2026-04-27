@@ -87,7 +87,7 @@ const Login = () => {
                         <div className="space-y-2">
                             <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-2">Identificador (CUIT)</label>
                             <div className="relative group">
-                                <Hash className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#c79f63] transition-colors" size={20} />
+                                <Hash className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#ff5b00] transition-colors" size={20} />
                                 <input
                                     type="text"
                                     name="cuit"
@@ -103,7 +103,7 @@ const Login = () => {
                         <div className="space-y-2">
                             <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-2">Contraseña</label>
                             <div className="relative group">
-                                <Lock className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#c79f63] transition-colors" size={20} />
+                                <Lock className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#ff5b00] transition-colors" size={20} />
                                 <input
                                     type="password"
                                     name="password"
@@ -118,7 +118,7 @@ const Login = () => {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full py-5 bg-[#c79f63] hover:bg-[#415161] text-white rounded-[1.5rem] font-black text-lg shadow-2xl shadow-gold-200 transition-all active:scale-95 flex items-center justify-center gap-3"
+                            className="w-full py-5 bg-[#ff5b00] hover:bg-[#083d5a] text-white rounded-[1.5rem] font-black text-lg shadow-2xl shadow-gold-200 transition-all active:scale-95 flex items-center justify-center gap-3"
                         >
                             {loading ? 'Verificando...' : (
                                 <>
@@ -134,7 +134,7 @@ const Login = () => {
                         </p>
                         <Link
                             to="/register"
-                            className="bg-gray-900 text-white px-8 py-3 rounded-full text-xs font-black uppercase tracking-widest hover:bg-[#c79f63] transition-colors shadow-lg shadow-gray-200"
+                            className="bg-gray-900 text-white px-8 py-3 rounded-full text-xs font-black uppercase tracking-widest hover:bg-[#ff5b00] transition-colors shadow-lg shadow-gray-200"
                         >
                             Registrar Empresa
                         </Link>

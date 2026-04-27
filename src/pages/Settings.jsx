@@ -119,10 +119,10 @@ const Settings = () => {
                                     <input
                                         type="color"
                                         className="w-12 h-12 rounded-xl border-2 border-gray-100 p-1 cursor-pointer"
-                                        value={config.color_primario || '#b98344'}
+                                        value={config.color_primario || '#ff5b00'}
                                         onChange={(e) => setConfig({...config, color_primario: e.target.value})}
                                     />
-                                    <span className="font-mono font-bold text-gray-500 text-xs">{config.color_primario || '#b98344'}</span>
+                                    <span className="font-mono font-bold text-gray-500 text-xs">{config.color_primario || '#ff5b00'}</span>
                                 </div>
                             </div>
                             <div className="space-y-2">
@@ -131,10 +131,10 @@ const Settings = () => {
                                     <input
                                         type="color"
                                         className="w-12 h-12 rounded-xl border-2 border-gray-100 p-1 cursor-pointer"
-                                        value={config.color_secundario || '#1F2937'}
+                                        value={config.color_secundario || '#083d5a'}
                                         onChange={(e) => setConfig({...config, color_secundario: e.target.value})}
                                     />
-                                    <span className="font-mono font-bold text-gray-500 text-xs">{config.color_secundario || '#1F2937'}</span>
+                                    <span className="font-mono font-bold text-gray-500 text-xs">{config.color_secundario || '#083d5a'}</span>
                                 </div>
                             </div>
                         </div>

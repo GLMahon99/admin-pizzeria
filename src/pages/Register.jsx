@@ -60,8 +60,8 @@ const Register = () => {
         <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
             {/* Fondo con decoraciones abstractas */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                <div className="absolute -top-24 -left-24 w-96 h-96 bg-[#c79f63]/10 rounded-full blur-3xl opacity-50"></div>
-                <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-[#415161]/10 rounded-full blur-3xl opacity-50"></div>
+                <div className="absolute -top-24 -left-24 w-96 h-96 bg-[#ff5b00]/10 rounded-full blur-3xl opacity-50"></div>
+                <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-[#083d5a]/10 rounded-full blur-3xl opacity-50"></div>
             </div>
 
             <div className="max-w-md w-full relative">
@@ -71,7 +71,7 @@ const Register = () => {
                         <div className="mb-8 flex justify-center transform hover:scale-105 transition-transform duration-500">
                             <div className="flex items-center justify-center gap-2"><img src="/logo-acommerr.png" alt="A-commerr Logo" className="h-10 object-contain" /></div>
                         </div>
-                        <h1 className="text-3xl font-black text-gray-900 tracking-tight">Sumá tu <span className="text-[#c79f63]">Empresa</span></h1>
+                        <h1 className="text-3xl font-black text-gray-900 tracking-tight">Sumá tu <span className="text-[#ff5b00]">Empresa</span></h1>
                         <p className="text-gray-500 mt-2 font-medium">Unite a la red más grande de ecommerce sin comisiones.</p>
                     </div>
 
@@ -197,7 +197,7 @@ const Register = () => {
                     <div className="mt-10 pt-6 border-t border-gray-100 text-center">
                         <p className="text-sm text-gray-500 font-medium">
                             ¿Ya tenés una cuenta?{' '}
-                            <Link to="/login" className="text-[#c79f63] font-black hover:underline underline-offset-4">
+                            <Link to="/login" className="text-[#ff5b00] font-black hover:underline underline-offset-4">
                                 Iniciar Sesión
                             </Link>
                         </p>

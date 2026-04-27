@@ -11,7 +11,7 @@ import {
     PieChart, Pie, Cell, Legend
 } from 'recharts';
 
-const COLORS = ['#c79f63', '#415161', '#52677c', '#10b981', '#f59e0b', '#6366f1'];
+const COLORS = ['#ff5b00', '#083d5a', '#305a83', '#10b981', '#f59e0b', '#6366f1'];
 
 const Dashboard = () => {
     const [stats, setStats] = useState(null);
@@ -102,21 +102,21 @@ const Dashboard = () => {
                                 type="date" 
                                 value={fechaDesde}
                                 onChange={(e) => setFechaDesde(e.target.value)}
-                                className="w-full sm:w-auto text-sm bg-white border border-gray-200 rounded-2xl px-4 py-3 outline-none font-bold text-[#52677c] focus:border-[#c79f63] focus:ring-2 focus:ring-[#c79f63]/20 transition-all"
+                                className="w-full sm:w-auto text-sm bg-white border border-gray-200 rounded-2xl px-4 py-3 outline-none font-bold text-[#305a83] focus:border-[#ff5b00] focus:ring-2 focus:ring-[#ff5b00]/20 transition-all"
                             />
                             <span className="text-gray-400 font-bold">-</span>
                             <input 
                                 type="date" 
                                 value={fechaHasta}
                                 onChange={(e) => setFechaHasta(e.target.value)}
-                                className="w-full sm:w-auto text-sm bg-white border border-gray-200 rounded-2xl px-4 py-3 outline-none font-bold text-[#52677c] focus:border-[#c79f63] focus:ring-2 focus:ring-[#c79f63]/20 transition-all"
+                                className="w-full sm:w-auto text-sm bg-white border border-gray-200 rounded-2xl px-4 py-3 outline-none font-bold text-[#305a83] focus:border-[#ff5b00] focus:ring-2 focus:ring-[#ff5b00]/20 transition-all"
                             />
                         </div>
                     )}
                     <select 
                         value={rango}
                         onChange={(e) => setRango(e.target.value)}
-                        className="w-full sm:w-auto text-sm bg-white border border-gray-200 rounded-2xl px-5 py-3 outline-none font-bold text-[#52677c] cursor-pointer hover:border-[#c79f63] shadow-sm transition-colors focus:ring-2 focus:ring-[#c79f63]/20"
+                        className="w-full sm:w-auto text-sm bg-white border border-gray-200 rounded-2xl px-5 py-3 outline-none font-bold text-[#305a83] cursor-pointer hover:border-[#ff5b00] shadow-sm transition-colors focus:ring-2 focus:ring-[#ff5b00]/20"
                     >
                         <option value="hoy">Hoy</option>
                         <option value="14dias">Últimos 14 días</option>
@@ -128,7 +128,7 @@ const Dashboard = () => {
                     </select>
                     <button
                         onClick={handleDownloadExcel}
-                        className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-[#52677c] hover:bg-[#25323f] text-white rounded-2xl font-bold shadow-lg shadow-slate-200 transition-all active:scale-95 hover:-translate-y-1"
+                        className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-[#305a83] hover:bg-[#25323f] text-white rounded-2xl font-bold shadow-lg shadow-slate-200 transition-all active:scale-95 hover:-translate-y-1"
                     >
                         <DownloadCloud size={20} />
                         Exportar Balance (.xlsx)
@@ -139,9 +139,9 @@ const Dashboard = () => {
             {/* 1. KPIs Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <StatCard title="Ventas Hoy (Bruto)" value={`$${Math.round(kpis.ventas_hoy).toLocaleString() || 0}`} icon={<DollarSign className="text-[#10b981]" />} trend="+15%" color="bg-[#10b981]/10" />
-                <StatCard title="Ventas del Mes" value={`$${Math.round(kpis.ventas_mes || 0).toLocaleString()}`} icon={<ShoppingCart className="text-[#415161]" />} trend="Estable" color="bg-[#415161]/10" />
-                <StatCard title="Ticket Promedio" value={`$${Math.round(kpis.ticket_promedio).toLocaleString() || 0}`} icon={<TrendingUp className="text-[#c79f63]" />} trend="+8%" color="bg-[#c79f63]/10" />
-                <StatCard title="Últimos 30 días" value={`${kpis.clientes_recientes || 0} Clientes`} icon={<UserPlus className="text-[#52677c]" />} trend="+12%" color="bg-[#52677c]/10" />
+                <StatCard title="Ventas del Mes" value={`$${Math.round(kpis.ventas_mes || 0).toLocaleString()}`} icon={<ShoppingCart className="text-[#083d5a]" />} trend="Estable" color="bg-[#083d5a]/10" />
+                <StatCard title="Ticket Promedio" value={`$${Math.round(kpis.ticket_promedio).toLocaleString() || 0}`} icon={<TrendingUp className="text-[#ff5b00]" />} trend="+8%" color="bg-[#ff5b00]/10" />
+                <StatCard title="Últimos 30 días" value={`${kpis.clientes_recientes || 0} Clientes`} icon={<UserPlus className="text-[#305a83]" />} trend="+12%" color="bg-[#305a83]/10" />
             </div>
 
             {/* 2. Main Charts Section */}
@@ -159,15 +159,15 @@ const Dashboard = () => {
                             <AreaChart data={ventasSemanales} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                                 <defs>
                                     <linearGradient id="colorVentas" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor="#c79f63" stopOpacity={0.4}/>
-                                        <stop offset="95%" stopColor="#c79f63" stopOpacity={0}/>
+                                        <stop offset="5%" stopColor="#ff5b00" stopOpacity={0.4}/>
+                                        <stop offset="95%" stopColor="#ff5b00" stopOpacity={0}/>
                                     </linearGradient>
                                 </defs>
                                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                                 <XAxis dataKey="dia" axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 12, fontWeight: 'bold' }} />
                                 <YAxis axisLine={false} tickLine={false} tickFormatter={(val) => `$${val/1000}k`} tick={{ fill: '#64748b', fontSize: 12, fontWeight: 'bold' }} />
                                 <Tooltip contentStyle={{ borderRadius: '15px', border: 'none', boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)' }} />
-                                <Area type="monotone" dataKey="ventas" stroke="#c79f63" strokeWidth={4} fillOpacity={1} fill="url(#colorVentas)" dot={{ r: 4, fill: '#fff', stroke: '#c79f63', strokeWidth: 2 }} activeDot={{ r: 8, strokeWidth: 0 }} />
+                                <Area type="monotone" dataKey="ventas" stroke="#ff5b00" strokeWidth={4} fillOpacity={1} fill="url(#colorVentas)" dot={{ r: 4, fill: '#fff', stroke: '#ff5b00', strokeWidth: 2 }} activeDot={{ r: 8, strokeWidth: 0 }} />
                             </AreaChart>
                         </ResponsiveContainer>
                     </div>
@@ -207,7 +207,7 @@ const Dashboard = () => {
             {/* 3. Secondary Analytics Section */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* 3A. Horas Pico (Bar Chart) */}
-                <div className="lg:col-span-2 bg-[#25323f] p-6 rounded-[2rem] shadow-xl shadow-gray-200/40 border border-[#52677c]/50">
+                <div className="lg:col-span-2 bg-[#25323f] p-6 rounded-[2rem] shadow-xl shadow-gray-200/40 border border-[#305a83]/50">
                     <div>
                         <h2 className="text-xl font-black text-white">Mapa de Horas Pico</h2>
                         <p className="text-sm text-gray-400 font-medium">Volumen de pedidos según franja horaria (hace 30 días)</p>
@@ -215,10 +215,10 @@ const Dashboard = () => {
                     <div className="h-80 w-full mt-6">
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={dataHorarios} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#52677c" opacity={0.3} />
+                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#305a83" opacity={0.3} />
                                 <XAxis dataKey="hora" axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 12 }} />
                                 <YAxis axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 12 }} />
-                                <Tooltip cursor={{ fill: '#52677c', opacity: 0.2 }} contentStyle={{ backgroundColor: '#1e293b', border: 'none', borderRadius: '12px', color: '#fff' }} />
+                                <Tooltip cursor={{ fill: '#305a83', opacity: 0.2 }} contentStyle={{ backgroundColor: '#1e293b', border: 'none', borderRadius: '12px', color: '#fff' }} />
                                 <Bar dataKey="pedidos" fill="#6366f1" radius={[8, 8, 0, 0]} />
                             </BarChart>
                         </ResponsiveContainer>
@@ -255,7 +255,7 @@ const Dashboard = () => {
             <div className="bg-white p-6 rounded-[2rem] shadow-xl shadow-gray-200/40 border border-gray-100">
                 <div className="flex justify-between items-center mb-6">
                     <h2 className="text-xl font-black text-gray-800">Transacciones Recientes</h2>
-                    <button onClick={() => window.location.href='/pedidos'} className="text-sm font-bold text-[#c79f63] hover:text-[#b98344] transition-colors">
+                    <button onClick={() => window.location.href='/pedidos'} className="text-sm font-bold text-[#ff5b00] hover:text-[#ef4c00] transition-colors">
                         Ver todo el historial
                     </button>
                 </div>
@@ -274,7 +274,7 @@ const Dashboard = () => {
                                 <tr key={venta.id} className="border-b border-gray-50 hover:bg-gray-50 transition-colors">
                                     <td className="py-4">
                                         <div className="flex items-center gap-3">
-                                            <div className="w-10 h-10 rounded-full flex items-center justify-center bg-[#52677c]/10 text-[#52677c]">
+                                            <div className="w-10 h-10 rounded-full flex items-center justify-center bg-[#305a83]/10 text-[#305a83]">
                                                 <Users size={16} />
                                             </div>
                                             <span className="font-bold text-gray-800">{venta.cliente}</span>
