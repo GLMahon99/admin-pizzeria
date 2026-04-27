@@ -10,18 +10,23 @@ const SubscriptionPlans = () => {
     const [isAnnual, setIsAnnual] = useState(false);
     const [dbPlans, setDbPlans] = useState([]);
     const [selectedPlan, setSelectedPlan] = useState('STANDARD');
+    const [plansLoaded, setPlansLoaded] = useState(false);
 
     useEffect(() => {
+        console.log("SubscriptionPlans mounted for companyId:", companyId);
         const fetchPlanes = async () => {
             try {
                 const response = await api.get('/subscriptions/planes');
+                console.log("Planes fetched:", response.data);
                 setDbPlans(response.data);
             } catch (error) {
-                console.error('Error fetched planes db:', error);
+                console.error('Error fetching planes db:', error);
+            } finally {
+                setPlansLoaded(true);
             }
         };
         fetchPlanes();
-    }, []);
+    }, [companyId]);
 
     // Helpers para obtener precio dinámico
     const getPrice = (idPlan) => {
@@ -51,10 +56,10 @@ const SubscriptionPlans = () => {
             name: 'Pizzería Pro',
             monthlyPrice: getPrice('PRO_MONTHLY') || 60000,
             annualPrice: getPrice('PRO_ANNUAL') || 576000,
-            description: 'La opción recomendada para quienes necesitan facturación a consumidor final directo a AFIP.',
+            description: 'La opción recomendada para quienes necesitan facturación a consumidor final directo a ARCA.',
             features: [
                 'TODO lo del Plan Estándar',
-                'Facturación ARCA (AFIP) Automática',
+                'Facturación ARCA (Ex-AFIP) Automática',
                 'Descarga automática de PDF Tícket',
                 'Soporte Prioritario',
                 'Funciones de Alta Gerencia'

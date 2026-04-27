@@ -40,6 +40,10 @@ const Login = () => {
             // Navegamos al Dashboard
             navigate('/');
         } catch (err) {
+            if (err.response?.status === 403 && err.response?.data?.status === 'INACTIVE') {
+                navigate(`/subscription-plans/${err.response.data.empresaId}`);
+                return;
+            }
             setError(err.response?.data?.message || 'Cuit o contraseña incorrectos. Revisá tus datos.');
         } finally {
             setLoading(false);
