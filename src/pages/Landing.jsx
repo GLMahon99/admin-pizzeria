@@ -7,7 +7,7 @@ const Landing = () => {
             {/* Navbar (Landing) */}
             <nav className="flex items-center justify-between p-6 max-w-7xl mx-auto">
                 <div className="flex items-center gap-3">
-                    <img src="/logo-acommerr.png" alt="A-commerr Logo" className="h-8 object-contain" />
+                    <img src="/logo-acommerr.png" alt="A-commerr Logo" className="h-12 object-contain" />
                 </div>
                 <div className="flex items-center gap-4">
                     <Link to="/login" className="font-bold text-[#305a83] hover:text-[#ff5b00] transition-colors">

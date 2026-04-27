@@ -33,7 +33,7 @@ const Sidebar = () => {
             {/* Logo Area */}
             <div className="p-8 flex items-center gap-3">
                 {user?.logo_url ? (
-                    <img src={user.logo_url} alt={user.nombre} className="h-10 w-auto object-contain rounded-lg" />
+                    <img src={user.logo_url} alt={user.nombre} className="h-14 w-auto object-contain rounded-lg" />
                 ) : (
                     <div className="bg-gold-600 p-2 rounded-xl shadow-lg shadow-gold-900/20">
                         <Store className="text-white" size={24} />
