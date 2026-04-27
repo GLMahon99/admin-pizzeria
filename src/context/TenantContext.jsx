@@ -74,6 +74,10 @@ export const TenantProvider = ({ children }) => {
                 }
 
                 setLoading(false);
+            } catch (err) {
+                console.error('Error crítico en fetchConfig:', err);
+                setLoading(false);
+            }
         };
 
         fetchConfig();
