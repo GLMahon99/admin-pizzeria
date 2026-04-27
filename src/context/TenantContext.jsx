@@ -59,18 +59,21 @@ export const TenantProvider = ({ children }) => {
                 }
 
                 if (slug) {
-                    axios.defaults.headers.common['x-tenant'] = slug;
-                    const response = await axios.get(`${import.meta.env.VITE_API_URL}/admin/config`);
-                    const config = response.data;
-                    setTenantConfig(config);
-                    applyBranding(config);
+                    try {
+                        axios.defaults.headers.common['x-tenant'] = slug;
+                        const response = await axios.get(`${import.meta.env.VITE_API_URL}/admin/config`);
+                        const config = response.data;
+                        setTenantConfig(config);
+                        applyBranding(config);
+                    } catch (err) {
+                        // Si da 404 es normal en el dominio principal de administración
+                        if (err.response?.status !== 404) {
+                            console.error('Error al cargar la configuración del tenant:', err);
+                        }
+                    }
                 }
 
                 setLoading(false);
-            } catch (err) {
-                console.error('Error al cargar la configuración del tenant:', err);
-                setLoading(false);
-            }
         };
 
         fetchConfig();

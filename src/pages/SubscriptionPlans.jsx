@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../api/axiosConfig';
 import { Check, Zap, Crown, ArrowLeft, ArrowRight, ShieldCheck } from 'lucide-react';
@@ -9,6 +9,7 @@ const SubscriptionPlans = () => {
     const [loading, setLoading] = useState(false);
     const [isAnnual, setIsAnnual] = useState(false);
     const [dbPlans, setDbPlans] = useState([]);
+    const [selectedPlan, setSelectedPlan] = useState('STANDARD');
 
     useEffect(() => {
         const fetchPlanes = async () => {
@@ -66,7 +67,7 @@ const SubscriptionPlans = () => {
     const handleSubscribe = async (planType) => {
         setLoading(true);
         try {
-            const finalPlanType = `${planId}_${isAnnual ? 'ANNUAL' : 'MONTHLY'}`;
+            const finalPlanType = `${planType}_${isAnnual ? 'ANNUAL' : 'MONTHLY'}`;
             const response = await api.post('/subscriptions/create', {
                 empresaId: companyId,
                 planType: finalPlanType
@@ -93,7 +94,7 @@ const SubscriptionPlans = () => {
                 {/* Header */}
                 <div className="text-center mb-16">
                     <div className="mb-4 flex justify-center">
-                        <img src="https://i.ibb.co/bjwG4tSv/logo-nexus.png" alt="Nexus Logo" className="h-16 brightness-0 invert" />
+                        <img src="/logo-acommerr.png" alt="A-commerr Logo" className="h-16 brightness-0 invert" />
                     </div>
                     <h1 className="text-4xl md:text-5xl font-black text-white mb-4 tracking-tight">Elegí tu plan y empezá a <span className="text-orange-500">vender</span></h1>
                     <p className="text-gray-400 text-lg max-w-2xl mx-auto mb-8">Seleccioná las herramientas que mejor se adapten a tu operatoria diaria.</p>
