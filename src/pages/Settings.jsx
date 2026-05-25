@@ -80,10 +80,20 @@ const Settings = () => {
     }
 
     return (
-        <div className="max-w-4xl mx-auto space-y-8 animate-in fade-in duration-500">
-            <div>
-                <h1 className="text-3xl font-black text-gray-800 tracking-tight italic uppercase">Configuración</h1>
-                <p className="text-gray-500 font-bold uppercase text-xs tracking-widest mt-1">Personalizá tu negocio/pizzería y métodos de pago</p>
+        <form onSubmit={handleSubmit} className="max-w-6xl mx-auto space-y-8 animate-in fade-in duration-500 pb-10">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm">
+                <div>
+                    <h1 className="text-3xl font-black text-gray-800 tracking-tight italic uppercase">Configuración</h1>
+                    <p className="text-gray-500 font-bold uppercase text-xs tracking-widest mt-1">Personalizá tu negocio/pizzería y métodos de pago</p>
+                </div>
+                <button
+                    type="submit"
+                    disabled={saving}
+                    className="bg-gold-600 hover:bg-gold-700 text-white px-8 py-3.5 rounded-2xl font-black text-base shadow-xl shadow-gold-100 transition-all active:scale-95 flex items-center gap-3 disabled:opacity-50 cursor-pointer"
+                >
+                    {saving ? <Loader2 className="animate-spin" size={18} /> : <Save size={18} />}
+                    {saving ? 'Guardando...' : 'Guardar Cambios'}
+                </button>
             </div>
 
             {message.text && (
@@ -95,7 +105,7 @@ const Settings = () => {
                 </div>
             )}
 
-            <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 
                 {/* Branding */}
                 <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100 space-y-6">
@@ -385,18 +395,8 @@ const Settings = () => {
                     </div>
                 </div>
 
-                <div className="md:col-span-2 flex justify-end">
-                    <button
-                        type="submit"
-                        disabled={saving}
-                        className="bg-gold-600 hover:bg-gold-700 text-white px-10 py-4 rounded-2xl font-black text-lg shadow-xl shadow-gold-100 transition-all active:scale-95 flex items-center gap-3 disabled:opacity-50"
-                    >
-                        {saving ? <Loader2 className="animate-spin" /> : <Save />}
-                        {saving ? 'Guardando...' : 'Guardar Cambios'}
-                    </button>
-                </div>
-            </form>
-        </div>
+            </div>
+        </form>
     );
 };
 
