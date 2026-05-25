@@ -53,7 +53,7 @@ const SubscriptionPlans = () => {
         },
         {
             id: 'PRO',
-            name: 'Pizzería Pro',
+            name: 'Pro',
             monthlyPrice: getPrice('PRO_MONTHLY') || 60000,
             annualPrice: getPrice('PRO_ANNUAL') || 576000,
             description: 'La opción recomendada para quienes necesitan facturación a consumidor final directo a ARCA.',

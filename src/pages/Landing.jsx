@@ -110,7 +110,7 @@ const Landing = () => {
                             <div className="absolute top-6 right-8 bg-[#ff5b00] text-white text-[10px] font-black uppercase tracking-widest px-4 py-2 rounded-full">
                                 Recomendado
                             </div>
-                            <h3 className="text-2xl font-black text-gold-200 uppercase tracking-widest text-left mb-2">Pizzería Pro</h3>
+                            <h3 className="text-2xl font-black text-gold-200 uppercase tracking-widest text-left mb-2">Pro</h3>
                             <div className="flex items-baseline gap-2 mb-2 text-left">
                                 <span className="text-5xl font-black text-white">$60.000</span>
                                 <span className="text-gray-400 font-bold">/mes</span>
