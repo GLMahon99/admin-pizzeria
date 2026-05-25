@@ -272,24 +272,24 @@ const Settings = () => {
                     </div>
                 </div>
 
-                {/* Transferencia Bancaria */}
+                {/* Transferencia a Mercado Pago */}
                 <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100 space-y-6">
                     <h2 className="text-xl font-black text-gray-800 flex items-center gap-2">
-                        <DollarSign className="text-green-600" size={20} /> Transferencia Bancaria
+                        <DollarSign className="text-green-600" size={20} /> Transferencia a Mercado Pago
                     </h2>
                     
                     <div className="bg-green-50 p-4 rounded-2xl border border-green-100 space-y-2">
                         <p className="text-[10px] font-bold text-green-600 uppercase tracking-widest flex items-center gap-1">
-                            Pagos Directos sin Comisión
+                            Transferencia Directa (Sin Comisión)
                         </p>
                         <p className="text-xs text-green-700 leading-relaxed font-medium">
-                            Configurá tus datos de transferencia para que tus clientes puedan abonar directamente y evitar las comisiones de pasarelas de pago.
+                            Configurá los datos de tu cuenta de Mercado Pago (CVU y Alias) para recibir transferencias directas de tus clientes y evitar la comisión del Checkout Pro.
                         </p>
                     </div>
 
                     <div className="space-y-4">
                         <div className="space-y-2">
-                            <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">CVU / CBU</label>
+                            <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">CVU de Mercado Pago</label>
                             <input
                                 type="text"
                                 className="w-full bg-gray-50 border-2 border-gray-100 p-4 rounded-2xl focus:border-green-600 outline-none font-mono text-sm"
@@ -300,13 +300,13 @@ const Settings = () => {
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Alias</label>
+                            <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Alias de Mercado Pago</label>
                             <input
                                 type="text"
                                 className="w-full bg-gray-50 border-2 border-gray-100 p-4 rounded-2xl focus:border-green-600 outline-none font-bold text-sm"
                                 value={config.alias || ''}
                                 onChange={(e) => setConfig({...config, alias: e.target.value})}
-                                placeholder="Ej: pizzeria.rojo.alias"
+                                placeholder="Ej: pizzeria.mp"
                             />
                         </div>
                     </div>
