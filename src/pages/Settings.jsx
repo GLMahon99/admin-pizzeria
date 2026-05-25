@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Save, ShieldCheck, Key, Palette, Image as ImageIcon, Loader2, Phone, Truck } from 'lucide-react';
+import { Save, ShieldCheck, Key, Palette, Image as ImageIcon, Loader2, Phone, Truck, Database } from 'lucide-react';
 import api from '../api/axiosConfig';
 import { useAuth } from '../context/AuthContext';
 
@@ -21,7 +21,8 @@ const Settings = () => {
         costo_envio: 0,
         envio_gratis_desde: '',
         direccion: '',
-        ciudad: ''
+        ciudad: '',
+        control_insumos: true
     });
     const [message, setMessage] = useState({ type: '', text: '' });
 
@@ -308,6 +309,37 @@ const Settings = () => {
                                 min="0"
                             />
                         </div>
+                    </div>
+                </div>
+
+                {/* Control de Inventario */}
+                <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100 space-y-6">
+                    <h2 className="text-xl font-black text-gray-800 flex items-center gap-2">
+                        <Database className="text-amber-600" size={20} /> Control de Inventario
+                    </h2>
+                    
+                    <div className="bg-amber-50 p-4 rounded-2xl border border-amber-100 space-y-2">
+                        <p className="text-[10px] font-bold text-amber-600 uppercase tracking-widest flex items-center gap-1">
+                            Control Automático de Insumos
+                        </p>
+                        <p className="text-xs text-amber-700 leading-relaxed font-medium">
+                            Si está activo, al aprobar o entregar pedidos desde el panel de órdenes se descontará automáticamente la cantidad de insumos definida en la receta de cada producto.
+                        </p>
+                    </div>
+
+                    <div className="space-y-4">
+                        <label className="flex items-center gap-3 bg-gray-50 p-4 rounded-2xl cursor-pointer hover:bg-gray-100/70 transition-all border-2 border-gray-100 select-none">
+                            <input
+                                type="checkbox"
+                                className="w-5 h-5 rounded text-gold-600 focus:ring-gold-500 border-gray-300 cursor-pointer"
+                                checked={!!config.control_insumos}
+                                onChange={(e) => setConfig({...config, control_insumos: e.target.checked})}
+                            />
+                            <div className="flex flex-col">
+                                <span className="font-bold text-gray-800 text-sm">Control de Insumos Activo</span>
+                                <span className="text-[10px] text-gray-400 font-bold uppercase">Descontar insumos automáticamente al vender</span>
+                            </div>
+                        </label>
                     </div>
                 </div>
 
