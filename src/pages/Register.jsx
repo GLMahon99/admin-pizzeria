@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import api from '../api/axiosConfig';
-import { Lock, Building, AlertCircle, Hash, ArrowRight } from 'lucide-react';
+import { Lock, Building, AlertCircle, Hash, ArrowRight, X, Shield } from 'lucide-react';
 
 const Register = () => {
     const [formData, setFormData] = useState({
@@ -10,10 +10,12 @@ const Register = () => {
         slug: '',
         email_contacto: '', // Nuevo campo
         password: '',
-        confirmPassword: ''
+        confirmPassword: '',
+        terminos_aceptados: false
     });
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    const [showTerms, setShowTerms] = useState(false);
 
     const navigate = useNavigate();
 
@@ -181,6 +183,38 @@ const Register = () => {
                             </div>
                         </div>
 
+                        {/* Aceptación de Términos y Condiciones */}
+                        <div className="flex items-start gap-3 py-2 px-1">
+                            <input
+                                type="checkbox"
+                                id="terminos_aceptados"
+                                name="terminos_aceptados"
+                                required
+                                checked={formData.terminos_aceptados}
+                                onChange={(e) => setFormData({ ...formData, terminos_aceptados: e.target.checked })}
+                                className="w-5 h-5 rounded border-gray-300 text-[#ff5b00] focus:ring-[#ff5b00]/30 mt-1 cursor-pointer accent-[#ff5b00]"
+                            />
+                            <label htmlFor="terminos_aceptados" className="text-xs font-bold text-gray-500 leading-normal cursor-pointer select-none">
+                                Acepto los{' '}
+                                <button
+                                    type="button"
+                                    onClick={() => setShowTerms(true)}
+                                    className="text-[#ff5b00] font-black hover:underline cursor-pointer"
+                                >
+                                    Términos y Condiciones
+                                </button>{' '}
+                                y la{' '}
+                                <button
+                                    type="button"
+                                    onClick={() => setShowTerms(true)}
+                                    className="text-[#ff5b00] font-black hover:underline cursor-pointer"
+                                >
+                                    Política de Privacidad
+                                </button>{' '}
+                                conforme a las Leyes N° 24.240 y N° 25.326.
+                            </label>
+                        </div>
+
                         <button
                             type="submit"
                             disabled={loading}
@@ -208,6 +242,67 @@ const Register = () => {
                     OMNIBUSINESS PRO - PLATAFORMA MULTI-TENANT
                 </p>
             </div>
+
+            {/* Modal de Términos y Condiciones */}
+            {showTerms && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+                    <div className="bg-white rounded-3xl max-w-2xl w-full max-h-[80vh] flex flex-col shadow-2xl border border-gray-100 text-left">
+                        {/* Header */}
+                        <div className="flex items-center justify-between p-6 border-b border-gray-100">
+                            <div className="flex items-center gap-2 text-[#ff5b00]">
+                                <Shield size={24} />
+                                <h2 className="text-xl font-black text-gray-900">Términos, Condiciones y Privacidad</h2>
+                            </div>
+                            <button
+                                type="button"
+                                onClick={() => setShowTerms(false)}
+                                className="text-gray-400 hover:text-gray-600 transition-colors p-2 hover:bg-gray-100 rounded-full"
+                            >
+                                <X size={20} />
+                            </button>
+                        </div>
+                        {/* Body */}
+                        <div className="flex-1 overflow-y-auto p-6 space-y-6 text-sm text-gray-600 leading-relaxed font-medium">
+                            <p className="text-xs text-gray-400 uppercase tracking-widest font-black">Última actualización: Mayo 2026</p>
+                            
+                            <div className="space-y-2">
+                                <h3 className="font-black text-gray-800 text-base">1. Marco Legal General (Leyes N° 24.240 y N° 25.326)</h3>
+                                <p>El presente contrato regula los términos de uso del software SaaS provisto por **A-commerr ERP**. Al registrarse, usted acepta este acuerdo de adhesión electrónica en los términos de la **Ley de Defensa del Consumidor N° 24.240** y la **Ley de Protección de Datos Personales N° 25.326** de la República Argentina.</p>
+                            </div>
+
+                            <div className="space-y-2">
+                                <h3 className="font-black text-gray-800 text-base">2. Privacidad y Tratamiento de Datos (Ley N° 25.326)</h3>
+                                <p>**A-commerr ERP** actúa en carácter de **Encargado de Tratamiento** ("Data Processor") respecto a la información cargada por usted (clientes finales, pedidos, direcciones, DNIs y teléfonos). La Empresa registrante asume el rol de **Responsable de la Base de Datos** ("Data Controller") y se compromete a contar con el consentimiento de sus clientes para procesar sus pedidos.</p>
+                                <p>Nos comprometemos a implementar medidas de seguridad técnicas y organizativas para proteger la confidencialidad de la información y no divulgarla ni venderla bajo ninguna circunstancia. Los titulares de los datos tienen derecho de acceso, rectificación y supresión conforme a la normativa de la **Agencia de Acceso a la Información Pública (AAIP)**.</p>
+                            </div>
+
+                            <div className="space-y-2">
+                                <h3 className="font-black text-gray-800 text-base">3. Integraciones de Terceros (Mercado Pago y AFIP/ARCA)</h3>
+                                <p>**Mercado Pago:** Los pagos en línea son procesados de forma directa entre sus clientes y su cuenta de Mercado Pago. A-commerr ERP no almacena tarjetas de crédito/débito ni retiene fondos de las transacciones.</p>
+                                <p>**AFIP/ARCA (Plan Pro):** La automatización de facturación electrónica requiere que usted preocione e integre sus credenciales y puntos de venta fiscales. La veracidad y adecuación de las declaraciones fiscales son responsabilidad exclusiva de la Empresa registrante. A-commerr ERP actúa meramente como un canal de integración técnica con los webservices estatales.</p>
+                            </div>
+
+                            <div className="space-y-2">
+                                <h3 className="font-black text-gray-800 text-base">4. Cargos, Suscripción y Recisión</h3>
+                                <p>El servicio se factura de manera recurrente (mensual o anual) según el plan seleccionado. Usted puede rescindir la suscripción o solicitar la baja del servicio en cualquier momento desde el panel de administración, aplicando los efectos de la baja para el próximo período de facturación sin cargos adicionales de cancelación.</p>
+                            </div>
+                        </div>
+                        {/* Footer */}
+                        <div className="p-6 border-t border-gray-100 flex justify-end">
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    setFormData(prev => ({ ...prev, terminos_aceptados: true }));
+                                    setShowTerms(false);
+                                }}
+                                className="bg-[#ff5b00] hover:bg-[#ef4c00] text-white px-8 py-3 rounded-2xl font-black transition-colors"
+                            >
+                                Aceptar y Continuar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
