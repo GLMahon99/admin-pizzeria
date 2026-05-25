@@ -98,9 +98,9 @@ const Sidebar = () => {
                 </button>
             </div>
 
-            <div className="p-6 text-center">
-                <p className="text-[10px] text-slate-600 font-bold uppercase tracking-widest">
-                    Florida, BA • 2026
+            <div className="p-6 text-center px-4">
+                <p className="text-[10px] text-slate-600 font-bold uppercase tracking-widest break-words leading-relaxed">
+                    {user?.direccion ? `${user.direccion}${user.ciudad ? `, ${user.ciudad}` : ''}` : 'Florida, BA • 2026'}
                 </p>
             </div>
         </aside>

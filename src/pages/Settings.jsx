@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Save, ShieldCheck, Key, Palette, Image as ImageIcon, Loader2, Phone, Truck } from 'lucide-react';
 import api from '../api/axiosConfig';
+import { useAuth } from '../context/AuthContext';
 
 const Settings = () => {
+    const { user, token, login } = useAuth();
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [config, setConfig] = useState({
@@ -17,7 +19,9 @@ const Settings = () => {
         mp_public_key: '',
         mp_access_token: '',
         costo_envio: 0,
-        envio_gratis_desde: ''
+        envio_gratis_desde: '',
+        direccion: '',
+        ciudad: ''
     });
     const [message, setMessage] = useState({ type: '', text: '' });
 
@@ -45,6 +49,15 @@ const Settings = () => {
         try {
             await api.put('/admin/config', config);
             setMessage({ type: 'success', text: '¡Configuración guardada con éxito!' });
+            login({
+                ...user,
+                nombre: config.nombre,
+                logo_url: config.logo_url,
+                color_primario: config.color_primario,
+                color_secundario: config.color_secundario,
+                direccion: config.direccion,
+                ciudad: config.ciudad
+            }, token);
             // Recargar la página para aplicar cambios visuales si los hay
             setTimeout(() => window.location.reload(), 1500);
         } catch (error) {
@@ -178,6 +191,28 @@ const Settings = () => {
                                 value={config.facebook}
                                 onChange={(e) => setConfig({...config, facebook: e.target.value})}
                                 placeholder="https://facebook.com/tu_pizzeria"
+                            />
+                        </div>
+
+                        <div className="space-y-2">
+                            <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Dirección del Local</label>
+                            <input
+                                type="text"
+                                className="w-full bg-gray-50 border-2 border-gray-100 p-4 rounded-2xl focus:border-green-600 outline-none font-bold text-sm"
+                                value={config.direccion || ''}
+                                onChange={(e) => setConfig({...config, direccion: e.target.value})}
+                                placeholder="Ej: Florida 550"
+                            />
+                        </div>
+
+                        <div className="space-y-2">
+                            <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Ciudad</label>
+                            <input
+                                type="text"
+                                className="w-full bg-gray-50 border-2 border-gray-100 p-4 rounded-2xl focus:border-green-600 outline-none font-bold text-sm"
+                                value={config.ciudad || ''}
+                                onChange={(e) => setConfig({...config, ciudad: e.target.value})}
+                                placeholder="Ej: Vicente López, Buenos Aires"
                             />
                         </div>
                     </div>
