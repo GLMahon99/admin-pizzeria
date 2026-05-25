@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Save, ShieldCheck, Key, Palette, Image as ImageIcon, Loader2, Phone, Truck, Database } from 'lucide-react';
+import { Save, ShieldCheck, Key, Palette, Image as ImageIcon, Loader2, Phone, Truck, Database, DollarSign } from 'lucide-react';
 import api from '../api/axiosConfig';
 import { useAuth } from '../context/AuthContext';
 
@@ -22,7 +22,9 @@ const Settings = () => {
         envio_gratis_desde: '',
         direccion: '',
         ciudad: '',
-        control_insumos: true
+        control_insumos: true,
+        cvu: '',
+        alias: ''
     });
     const [message, setMessage] = useState({ type: '', text: '' });
 
@@ -265,6 +267,46 @@ const Settings = () => {
                                 value={config.mp_access_token}
                                 onChange={(e) => setConfig({...config, mp_access_token: e.target.value})}
                                 placeholder="APP_USR-xxxxxxxxxxxxxxxxxxxxxxxx"
+                            />
+                        </div>
+                    </div>
+                </div>
+
+                {/* Transferencia Bancaria */}
+                <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100 space-y-6">
+                    <h2 className="text-xl font-black text-gray-800 flex items-center gap-2">
+                        <DollarSign className="text-green-600" size={20} /> Transferencia Bancaria
+                    </h2>
+                    
+                    <div className="bg-green-50 p-4 rounded-2xl border border-green-100 space-y-2">
+                        <p className="text-[10px] font-bold text-green-600 uppercase tracking-widest flex items-center gap-1">
+                            Pagos Directos sin Comisión
+                        </p>
+                        <p className="text-xs text-green-700 leading-relaxed font-medium">
+                            Configurá tus datos de transferencia para que tus clientes puedan abonar directamente y evitar las comisiones de pasarelas de pago.
+                        </p>
+                    </div>
+
+                    <div className="space-y-4">
+                        <div className="space-y-2">
+                            <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">CVU / CBU</label>
+                            <input
+                                type="text"
+                                className="w-full bg-gray-50 border-2 border-gray-100 p-4 rounded-2xl focus:border-green-600 outline-none font-mono text-sm"
+                                value={config.cvu || ''}
+                                onChange={(e) => setConfig({...config, cvu: e.target.value})}
+                                placeholder="Ej: 00000031000..."
+                            />
+                        </div>
+
+                        <div className="space-y-2">
+                            <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Alias</label>
+                            <input
+                                type="text"
+                                className="w-full bg-gray-50 border-2 border-gray-100 p-4 rounded-2xl focus:border-green-600 outline-none font-bold text-sm"
+                                value={config.alias || ''}
+                                onChange={(e) => setConfig({...config, alias: e.target.value})}
+                                placeholder="Ej: pizzeria.rojo.alias"
                             />
                         </div>
                     </div>
