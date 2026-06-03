@@ -285,47 +285,7 @@ const Settings = () => {
                             />
                         </div>
                     </div>
-                </div>
-
-                {/* Transferencia a Mercado Pago */}
-                <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100 space-y-6">
-                    <h2 className="text-xl font-black text-gray-800 flex items-center gap-2">
-                        <DollarSign className="text-green-600" size={20} /> Transferencia a Mercado Pago
-                    </h2>
-                    
-                    <div className="bg-green-50 p-4 rounded-2xl border border-green-100 space-y-2">
-                        <p className="text-[10px] font-bold text-green-600 uppercase tracking-widest flex items-center gap-1">
-                            Transferencia Directa (Sin Comisión)
-                        </p>
-                        <p className="text-xs text-green-700 leading-relaxed font-medium">
-                            Configurá los datos de tu cuenta de Mercado Pago (CVU y Alias) para recibir transferencias directas de tus clientes y evitar la comisión del Checkout Pro.
-                        </p>
-                    </div>
-
-                    <div className="space-y-4">
-                        <div className="space-y-2">
-                            <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">CVU de Mercado Pago</label>
-                            <input
-                                type="text"
-                                className="w-full bg-gray-50 border-2 border-gray-100 p-4 rounded-2xl focus:border-green-600 outline-none font-mono text-sm"
-                                value={config.cvu || ''}
-                                onChange={(e) => setConfig({...config, cvu: e.target.value})}
-                                placeholder="Ej: 00000031000..."
-                            />
-                        </div>
-
-                        <div className="space-y-2">
-                            <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Alias de Mercado Pago</label>
-                            <input
-                                type="text"
-                                className="w-full bg-gray-50 border-2 border-gray-100 p-4 rounded-2xl focus:border-green-600 outline-none font-bold text-sm"
-                                value={config.alias || ''}
-                                onChange={(e) => setConfig({...config, alias: e.target.value})}
-                                placeholder="Ej: pizzeria.mp"
-                            />
-                        </div>
-                    </div>
-                </div>
+                   </div>
 
                 {/* Envío y Logística */}
                 <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100 space-y-6">
@@ -397,52 +357,7 @@ const Settings = () => {
                                 <span className="text-[10px] text-gray-400 font-bold uppercase">Descontar insumos automáticamente al vender</span>
                             </div>
                         </label>
-                    </div>
-                </div>
-
-                {/* Mercado Pago Connect */}
-                <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100 space-y-6">
-                    <h2 className="text-xl font-black text-gray-800 flex items-center gap-2">
-                        <Link className="text-blue-600" size={20} /> Mercado Pago Connect
-                    </h2>
-                    
-                    <div className="bg-blue-50 p-4 rounded-2xl border border-blue-100 space-y-2">
-                        <p className="text-[10px] font-bold text-blue-600 uppercase tracking-widest flex items-center gap-1">
-                            Vinculación Oficial OAuth
-                        </p>
-                        <p className="text-xs text-blue-700 leading-relaxed font-medium">
-                            Conectá tu cuenta de Mercado Pago de forma oficial para automatizar la facturación de transferencias (CBU/CVU) y Checkout Pro.
-                        </p>
-                    </div>
-
-                    <div className="space-y-4">
-                        {config.mp_oauth_user_id ? (
-                            <div className="bg-green-50 border border-green-200 p-4 rounded-2xl space-y-3">
-                                <div className="flex items-center gap-2 text-green-700 font-bold text-sm">
-                                    <ShieldCheck size={18} />
-                                    <span>Cuenta Vinculada</span>
-                                </div>
-                                <p className="text-xs text-green-600 font-medium">
-                                    ID de Usuario: <strong className="font-mono">{config.mp_oauth_user_id}</strong>
-                                </p>
-                            </div>
-                        ) : (
-                            <div className="bg-amber-50 border border-amber-200 p-4 rounded-2xl">
-                                <p className="text-xs text-amber-700 font-medium">
-                                    Tu cuenta no está vinculada vía OAuth.
-                                </p>
-                            </div>
-                        )}
-
-                        <a
-                            href={`${import.meta.env.VITE_API_URL || 'http://localhost:3000/api'}/payments/connect?tenant=${user?.slug}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="w-full bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-2xl font-black text-sm text-center block shadow-lg shadow-blue-100 transition-all hover:scale-[1.02] active:scale-95 cursor-pointer uppercase tracking-wider"
-                        >
-                            {config.mp_oauth_user_id ? 'Re-vincular Cuenta' : 'Vincular Mercado Pago'}
-                        </a>
-                    </div>
+                         </div>
                 </div>
 
                 {/* AFIP/ARCA Facturación */}
