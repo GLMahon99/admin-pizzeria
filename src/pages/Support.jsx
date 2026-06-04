@@ -198,7 +198,7 @@ const Support = () => {
                     </div>
                 </div>
                 <a 
-                    href="https://wa.me/5491112345678" 
+                    href="https://wa.me/5491138054707" 
                     target="_blank" 
                     rel="noreferrer"
                     className="bg-amber-700 hover:bg-amber-800 text-white font-black text-sm uppercase tracking-widest px-6 py-4 rounded-2xl transition-all shadow-md active:scale-95 flex items-center gap-2 shrink-0"
