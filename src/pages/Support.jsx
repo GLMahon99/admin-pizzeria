@@ -28,6 +28,32 @@ const Support = () => {
                 'Pegá ambas claves en la tarjeta de **Mercado Pago** y hacé click en **Guardar Cambios**.',
                 'Una vez configurado, tu tienda ya está lista para cobrar automáticamente mediante Tarjeta de Crédito, Débito y Dinero en cuenta.'
             ]
+        },
+        {
+            id: 'facturacion',
+            title: '3. Facturación Electrónica Automática (AFIP / ARCA)',
+            icon: <FileText className="text-purple-600" size={24} />,
+            description: 'Configurá tus datos fiscales para emitir facturas electrónicas oficiales en piloto automático al confirmar cada cobro.',
+            steps: [
+                'Dirigite a la sección de **Configuración** en el menú lateral.',
+                'Buscá la tarjeta **AFIP / ARCA Facturación**.',
+                'Ingresá el **CUIT del Emisor**, el número de **Punto de Venta** habilitado para factura electrónica y tu **Condición Frente al IVA**.',
+                'Marcá la casilla **Habilitar Facturación Automática** y guardá los cambios.',
+                '**Importante:** Asegurate de haber delegado previamente tu CUIT en la AFIP hacia el servidor (si necesitás ayuda con este paso, contactá a soporte técnico).'
+            ]
+        },
+        {
+            id: 'repartidores',
+            title: '4. Carga de Repartidores y App de Reparto QR',
+            icon: <Bike className="text-emerald-600" size={24} />,
+            description: 'Gestioná tu plantel de cadetes y aprendé cómo funciona el portal de auto-asignación por escaneo de código QR.',
+            steps: [
+                'Ingresá a **Repartidores** en la barra lateral y creá un nuevo cadete completando su Nombre, Celular y un PIN de 4 dígitos.',
+                'Al imprimir el ticket de un pedido listo, el sistema estampará un **código QR dinámico** al pie de la factura.',
+                'El repartidor escanea el QR con la cámara de su celular y el sistema abrirá la app móvil de reparto.',
+                'Si el cadete no tiene sesión activa, ingresa su Teléfono y PIN una única vez. El pedido se auto-asignará al instante.',
+                'Desde su panel móvil, el cadete tiene accesos rápidos para llamar al cliente, abrir la ubicación en Google Maps, presionar "Iniciar Reparto" y finalmente marcarlo como "Entregado".'
+            ]
         }
     ];
 
