@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from 'react';
-import { Printer, Tag, Package, Clock, DollarSign, Calendar, Plus, X, Search, Trash2, ShoppingCart, User, Hash } from 'lucide-react';
+import { Printer, Tag, Package, Clock, DollarSign, Calendar, Plus, X, Search, Trash2, ShoppingCart, User, Hash, CheckCircle2 } from 'lucide-react';
 import api from '../api/axiosConfig';
 import { useAuth } from '../context/AuthContext';
 import { parseAddress } from '../utils/formatters';
@@ -177,12 +177,13 @@ const Orders = () => {
                 <div class="divider"></div>
                 <div class="bold">ORDEN: #${pedido.id_pedido}</div>
                 <div>FECHA: ${fechaFormat}</div>
+                <div class="bold">MÉTODO: ${pedido.metodo_entrega === 'takeaway' ? 'RETIRO POR LOCAL 🛍️' : 'ENVÍO A DOMICILIO 🛵'}</div>
                 <div class="divider"></div>
                 
                 <div class="bold">CLIENTE:</div>
                 <div>${pedido.cliente_nombre || 'Cliente Mostrador'}</div>
                 
-                ${pedido.cliente_direccion ? `
+                ${pedido.metodo_entrega !== 'takeaway' && pedido.cliente_direccion ? `
                     <div class="bold" style="margin-top: 5px;">DIRECCIÓN DE ENVÍO:</div>
                     <div>${addr.calle} ${addr.altura}</div>
                     ${(addr.piso || addr.depto) ? `<div>Piso: ${addr.piso || '-'} | Depto: ${addr.depto || '-'}</div>` : ''}
@@ -207,11 +208,17 @@ const Orders = () => {
                 
                 <div class="divider"></div>
                 
+                ${pedido.metodo_entrega === 'takeaway' ? `
+                <div class="center bold" style="margin-top: 15px; margin-bottom: 15px; border: 2px solid #000; padding: 12px; font-size: 14px; font-family: sans-serif;">
+                    RETIRO POR LOCAL 🛍️
+                </div>
+                ` : `
                 <!-- QR de Auto-Asignación para Repartidores -->
                 <div class="center" style="margin-top: 15px; margin-bottom: 15px; border: 1px dashed #000; padding: 8px;">
                     <img src="${qrUrl}" alt="QR Asignar Reparto" style="width: 130px; height: 130px;" />
                     <p style="font-size: 8px; margin: 5px 0 0 0; font-weight: bold; font-family: sans-serif;">ESCANEAR PARA ASIGNAR REPARTO</p>
                 </div>
+                `}
 
                 <div class="divider"></div>
                 <div class="afip-placeholder center">
@@ -227,6 +234,17 @@ const Orders = () => {
         
         printWindow.document.write(html);
         printWindow.document.close();
+    };
+
+    const handleUpdateStatus = async (id_pedido, nuevoEstado) => {
+        try {
+            await api.put(`/pedidos/${id_pedido}/estado`, { estado: nuevoEstado });
+            alert(`Pedido #${id_pedido} actualizado a: ${nuevoEstado}`);
+            fetchData();
+        } catch (error) {
+            console.error('Error al actualizar el estado del pedido:', error);
+            alert('No se pudo actualizar el estado del pedido.');
+        }
     };
 
     const filterOptions = [
@@ -432,12 +450,17 @@ const Orders = () => {
                                         <div className="flex items-center gap-2">
                                             <span className="text-sm font-black text-slate-800 tracking-tight">#{pedido.id_pedido}</span>
                                             <span className={`px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-tighter ${
-                                                pedido.estado === 'Aprobado' ? 'bg-green-100 text-green-700' :
+                                                pedido.estado === 'Aprobado' || pedido.estado === 'Listo para retirar' || pedido.estado === 'Entregado' ? 'bg-green-100 text-green-700' :
                                                 pedido.estado === 'Rechazado' ? 'bg-red-100 text-red-700' :
                                                 'bg-yellow-100 text-yellow-700'
                                             }`}>
                                                 {pedido.estado}
                                             </span>
+                                            {pedido.metodo_entrega === 'takeaway' && (
+                                                <span className="px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-tighter bg-purple-100 text-purple-700">
+                                                    Retiro 🛍️
+                                                </span>
+                                            )}
                                         </div>
                                     </div>
                                     <div className="flex items-center text-slate-500 text-[10px] font-black bg-slate-50 px-3 py-1.5 rounded-full uppercase tracking-tighter">
@@ -473,7 +496,28 @@ const Orders = () => {
                                 </div>
                             </div>
 
-                            <div className="p-6 bg-gray-50/30 border-t border-gray-100">
+                            <div className="p-6 bg-gray-50/30 border-t border-gray-100 space-y-2">
+                                {pedido.metodo_entrega === 'takeaway' && (
+                                    <>
+                                        {(pedido.estado === 'Pendiente' || pedido.estado === 'Preparando' || pedido.estado === 'Aprobado') && (
+                                            <button 
+                                                onClick={() => handleUpdateStatus(pedido.id_pedido, 'Listo para retirar')}
+                                                className="w-full flex items-center justify-center gap-2 bg-gold-600 hover:bg-gold-700 text-white py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 shadow-lg shadow-gold-100"
+                                            >
+                                                <Package size={16} /> Listo para retirar
+                                            </button>
+                                        )}
+                                        {pedido.estado === 'Listo para retirar' && (
+                                            <button 
+                                                onClick={() => handleUpdateStatus(pedido.id_pedido, 'Entregado')}
+                                                className="w-full flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 shadow-lg shadow-green-100"
+                                            >
+                                                <CheckCircle2 size={16} /> Entregar Pedido
+                                            </button>
+                                        )}
+                                    </>
+                                )}
+
                                 <button 
                                     onClick={() => handlePrintTicket(pedido)}
                                     className="w-full flex items-center justify-center gap-2 bg-slate-800 hover:bg-black text-white py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 shadow-lg shadow-slate-100"
