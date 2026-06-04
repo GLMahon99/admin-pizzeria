@@ -29,7 +29,8 @@ const Settings = () => {
         afip_punto_venta: '',
         afip_condicion_iva: '',
         afip_habilitado: false,
-        mp_oauth_user_id: ''
+        mp_oauth_user_id: '',
+        codigos_postales: ''
     });
     const [message, setMessage] = useState({ type: '', text: '' });
 
@@ -325,6 +326,18 @@ const Settings = () => {
                                 placeholder="Ej: 15000"
                                 min="0"
                             />
+                        </div>
+
+                        <div className="space-y-2">
+                            <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Códigos Postales Habilitados (separados por comas)</label>
+                            <input
+                                type="text"
+                                className="w-full bg-gray-50 border-2 border-gray-100 p-4 rounded-2xl focus:border-purple-600 outline-none font-mono text-sm"
+                                value={config.codigos_postales || ''}
+                                onChange={(e) => setConfig({...config, codigos_postales: e.target.value})}
+                                placeholder="Ej: 1602, 1603, 1640"
+                            />
+                            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-tight">Dejar vacío para permitir envíos a cualquier código postal.</p>
                         </div>
                     </div>
                 </div>
