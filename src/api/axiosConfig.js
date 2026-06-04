@@ -10,16 +10,24 @@ const api = axios.create({
     },
 });
 
-// Interceptor para inyectar el token y el tenant automáticamente
+// Interceptor para inyectar el token y el tenant automáticamente (soporta admin y repartidor)
 api.interceptors.request.use((config) => {
-    const token = localStorage.getItem('admin_token');
-    const userJson = localStorage.getItem('admin_user');
+    const isRepartidorPath = window.location.pathname.includes('/reparto');
+    const repartidorToken = localStorage.getItem('repartidor_token');
+    const adminToken = localStorage.getItem('admin_token');
 
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
+    if (isRepartidorPath && repartidorToken) {
+        config.headers.Authorization = `Bearer ${repartidorToken}`;
+    } else if (adminToken) {
+        config.headers.Authorization = `Bearer ${adminToken}`;
     }
 
-    if (userJson) {
+    const repartidorTenant = localStorage.getItem('repartidor_tenant_slug');
+    const userJson = localStorage.getItem('admin_user');
+
+    if (isRepartidorPath && repartidorTenant) {
+        config.headers['x-tenant'] = repartidorTenant;
+    } else if (userJson) {
         try {
             const user = JSON.parse(userJson);
             if (user.slug) {

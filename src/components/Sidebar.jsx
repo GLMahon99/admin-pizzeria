@@ -8,6 +8,7 @@ import {
     Store,
     User,
     PackageCheck,
+    Bike,
     Settings as SettingsIcon
 } from 'lucide-react';
 
@@ -25,6 +26,7 @@ const Sidebar = () => {
         { to: "/pedidos", icon: <ShoppingBag size={20} />, label: "Pedidos" },
         { to: "/inventario", icon: <Package size={20} />, label: "Inventario" },
         { to: "/insumos", icon: <PackageCheck size={20} />, label: "Insumos" },
+        { to: "/repartidores", icon: <Bike size={20} />, label: "Repartidores" },
     ];
 
     return (

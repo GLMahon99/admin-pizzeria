@@ -14,6 +14,8 @@ import Supplies from './pages/Supplies';
 import Settings from './pages/Settings';
 import SubscriptionPlans from './pages/SubscriptionPlans';
 import SubscriptionSuccess from './pages/SubscriptionSuccess';
+import Drivers from './pages/Drivers';
+import DriverDashboard from './pages/DriverDashboard';
 
 function App() {
   const { token, loading: authLoading } = useAuth();
@@ -35,6 +37,7 @@ function App() {
         <Route path="register" element={!token ? <Register /> : <Navigate to="/" />} />
         <Route path="subscription-plans/:companyId" element={<SubscriptionPlans />} />
         <Route path="subscription-success" element={<SubscriptionSuccess />} />
+        <Route path="reparto" element={<DriverDashboard />} />
 
         {/* Rutas privadas: Todo lo que esté dentro de Layout requiere Token */}
         <Route path="/" element={!token ? <Landing /> : <Layout />}>
@@ -44,6 +47,7 @@ function App() {
               <Route path="pedidos" element={<Orders />} />
               <Route path="inventario" element={<Inventory />} />
               <Route path="insumos" element={<Supplies />} />
+              <Route path="repartidores" element={<Drivers />} />
               <Route path="configuracion" element={<Settings />} />
             </>
           )}

@@ -1,8 +1,10 @@
 import { useState, useMemo, useEffect } from 'react';
 import { Printer, Tag, Package, Clock, DollarSign, Calendar, Plus, X, Search, Trash2, ShoppingCart, User, Hash } from 'lucide-react';
 import api from '../api/axiosConfig';
+import { useAuth } from '../context/AuthContext';
 
 const Orders = () => {
+    const { user } = useAuth();
     // Estados para la lista y filtros
     const [filter, setFilter] = useState('Hoy');
     const [pedidos, setPedidos] = useState([]);
@@ -139,6 +141,9 @@ const Orders = () => {
         const fechaFormat = new Date(pedido.fecha).toLocaleDateString('es-AR') + ' ' + 
                            new Date(pedido.fecha).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' });
         
+        const deliveryUrl = `${window.location.origin}/reparto?pedido=${pedido.id_pedido}&tenant=${user?.slug || 'pizzeria'}`;
+        const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(deliveryUrl)}`;
+
         const html = `
             <html>
             <head>
@@ -155,8 +160,8 @@ const Orders = () => {
                 </style>
             </head>
             <body onload="window.print(); window.close();">
-                <div class="center bold" style="font-size: 18px;">A-COMMERR ERP</div>
-                <div class="center text-gray-500">Florida, Vicente López</div>
+                <div class="center bold" style="font-size: 18px;">${user?.nombre || 'A-COMMERR ERP'}</div>
+                <div class="center text-gray-500">${user?.direccion || 'Florida, Vicente López'}</div>
                 <div class="divider"></div>
                 <div class="bold">ORDEN: #${pedido.id_pedido}</div>
                 <div>FECHA: ${fechaFormat}</div>
@@ -182,11 +187,19 @@ const Orders = () => {
                 </div>
                 
                 <div class="divider"></div>
+                
+                <!-- QR de Auto-Asignación para Repartidores -->
+                <div class="center" style="margin-top: 15px; margin-bottom: 15px; border: 1px dashed #000; padding: 8px;">
+                    <img src="${qrUrl}" alt="QR Asignar Reparto" style="width: 130px; height: 130px;" />
+                    <p style="font-size: 8px; margin: 5px 0 0 0; font-weight: bold; font-family: sans-serif;">ESCANEAR PARA ASIGNAR REPARTO</p>
+                </div>
+
+                <div class="divider"></div>
                 <div class="afip-placeholder center">
                     <p class="bold" style="margin: 0;">FACTURA B - CONSUMIDOR FINAL</p>
                     <p style="margin: 5px 0;">CAE: 74218392817263 (PRUEBA)</p>
                     <p style="margin: 0;">VTO: 26/04/2026</p>
-                    <div style="background: #eee; height: 30px; margin-top: 5px; display: flex; align-items: center; justify-content: center; font-size: 8px;">QR CODE PLACEHOLDER</div>
+                    <div style="background: #eee; height: 30px; margin-top: 5px; display: flex; align-items: center; justify-content: center; font-size: 8px;">QR FACTURACIÓN AFIP</div>
                 </div>
                 <div class="center" style="margin-top: 10px;">¡Gracias por tu compra!</div>
             </body>
