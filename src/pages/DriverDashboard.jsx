@@ -32,18 +32,18 @@ const DriverDashboard = () => {
     });
 
     // Cargar entregas del repartidor
-    const fetchDeliveries = useCallback(async () => {
+    const fetchDeliveries = useCallback(async (silent = false) => {
         if (!token) return;
-        setLoading(true);
+        if (!silent) setLoading(true);
         try {
             const response = await api.get('/pedidos/repartidor/mis-entregas');
             setDeliveries(response.data);
             setError(null);
         } catch (err) {
             console.error('Error al cargar entregas:', err);
-            setError('No pudimos cargar tus repartos activos.');
+            if (!silent) setError('No pudimos cargar tus repartos activos.');
         } finally {
-            setLoading(false);
+            if (!silent) setLoading(false);
         }
     }, [token]);
 
@@ -99,6 +99,13 @@ const DriverDashboard = () => {
     useEffect(() => {
         if (token) {
             fetchDeliveries();
+
+            // Polling silencioso cada 15 segundos para repartidores
+            const interval = setInterval(() => {
+                fetchDeliveries(true);
+            }, 15000);
+
+            return () => clearInterval(interval);
         }
     }, [token, fetchDeliveries]);
 

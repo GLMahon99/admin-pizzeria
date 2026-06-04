@@ -24,21 +24,29 @@ const Orders = () => {
 
     const categories = ['Todas', 'Pizzas', 'Empanadas', 'Bebidas', 'Postres'];
 
-    const fetchData = async () => {
+    const fetchData = async (silent = false) => {
         try {
-            setLoading(true);
+            if (!silent) setLoading(true);
             const response = await api.get('/pedidos');
             setPedidos(response.data);
         } catch (error) {
             console.error('Error al cargar pedidos:', error);
-            alert('No se pudieron cargar los pedidos.');
+            if (!silent) alert('No se pudieron cargar los pedidos.');
         } finally {
-            setLoading(false);
+            if (!silent) setLoading(false);
         }
     };
 
     useEffect(() => {
+        // Carga inicial
         fetchData();
+
+        // Polling silencioso cada 12 segundos
+        const interval = setInterval(() => {
+            fetchData(true);
+        }, 12000);
+
+        return () => clearInterval(interval);
     }, []);
 
     useEffect(() => {
