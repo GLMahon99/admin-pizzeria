@@ -10,10 +10,12 @@ import {
     PackageCheck,
     Bike,
     Settings as SettingsIcon,
-    HelpCircle
+    HelpCircle,
+    ChevronLeft,
+    ChevronRight
 } from 'lucide-react';
 
-const Sidebar = () => {
+const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
     const { logout, user } = useAuth();
     const navigate = useNavigate();
 
@@ -31,20 +33,33 @@ const Sidebar = () => {
     ];
 
     return (
-        <aside className="fixed top-0 left-0 h-screen w-64 bg-slate-900 text-slate-300 flex flex-col shadow-2xl z-50">
+        <aside className={`fixed top-0 left-0 h-screen bg-slate-900 text-slate-300 flex flex-col shadow-2xl z-50 transition-all duration-300 ${
+            isCollapsed ? 'w-20' : 'w-64'
+        }`}>
+
+            {/* Toggle Button */}
+            <button 
+                onClick={() => setIsCollapsed(!isCollapsed)}
+                className="absolute top-8 -right-3 bg-gold-600 hover:bg-gold-700 text-white p-1 rounded-full border border-slate-800 transition-all z-50 shadow-md hover:scale-110 active:scale-95"
+                title={isCollapsed ? "Expandir Menú" : "Contraer Menú"}
+            >
+                {isCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
+            </button>
 
             {/* Logo Area */}
-            <div className="p-8 flex items-center gap-3">
+            <div className={`p-8 flex items-center gap-3 ${isCollapsed ? 'justify-center px-4' : ''}`}>
                 {user?.logo_url ? (
-                    <img src={user.logo_url} alt={user.nombre} className="h-14 w-auto object-contain rounded-lg" />
+                    <img src={user.logo_url} alt={user.nombre} className="h-14 w-auto object-contain rounded-lg flex-shrink-0" />
                 ) : (
-                    <div className="bg-gold-600 p-2 rounded-xl shadow-lg shadow-gold-900/20">
+                    <div className="bg-gold-600 p-2 rounded-xl shadow-lg shadow-gold-900/20 flex-shrink-0">
                         <Store className="text-white" size={24} />
                     </div>
                 )}
-                <span className="text-xl font-black text-white tracking-tighter italic truncate">
-                    {user?.nombre?.split(' ')[0]}<span className="text-gold-500">ADMIN</span>
-                </span>
+                {!isCollapsed && (
+                    <span className="text-xl font-black text-white tracking-tighter italic truncate animate-in fade-in duration-300">
+                        {user?.nombre?.split(' ')[0]}<span className="text-gold-500">ADMIN</span>
+                    </span>
+                )}
             </div>
 
             {/* Navigation */}
@@ -53,15 +68,19 @@ const Sidebar = () => {
                     <NavLink
                         key={item.to}
                         to={item.to}
+                        title={isCollapsed ? item.label : undefined}
                         className={({ isActive }) => `
-              flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition-all duration-200
-              ${isActive
+                            flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition-all duration-200
+                            ${isCollapsed ? 'justify-center px-2' : ''}
+                            ${isActive
                                 ? 'bg-gold-600 text-white shadow-lg shadow-gold-600/20'
                                 : 'hover:bg-slate-800 hover:text-white'}
-            `}
+                        `}
                     >
                         {item.icon}
-                        {item.label}
+                        {!isCollapsed && (
+                            <span className="animate-in fade-in duration-200">{item.label}</span>
+                        )}
                     </NavLink>
                 ))}
             </nav>
@@ -71,54 +90,65 @@ const Sidebar = () => {
                 
                 <NavLink
                     to="/soporte"
+                    title={isCollapsed ? "Soporte" : undefined}
                     className={({ isActive }) => `
                         flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition-all duration-200
+                        ${isCollapsed ? 'justify-center px-2' : ''}
                         ${isActive
                             ? 'bg-gold-600 text-white shadow-lg shadow-gold-600/20'
                             : 'text-slate-400 hover:bg-slate-800 hover:text-white'}
                     `}
                 >
                     <HelpCircle size={20} />
-                    Soporte
+                    {!isCollapsed && <span className="animate-in fade-in duration-200">Soporte</span>}
                 </NavLink>
 
                 <NavLink
                     to="/configuracion"
+                    title={isCollapsed ? "Configuración" : undefined}
                     className={({ isActive }) => `
                         flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition-all duration-200
+                        ${isCollapsed ? 'justify-center px-2' : ''}
                         ${isActive
                             ? 'bg-gold-600 text-white shadow-lg shadow-gold-600/20'
                             : 'text-slate-400 hover:bg-slate-800 hover:text-white'}
                     `}
                 >
                     <SettingsIcon size={20} />
-                    Configuración
+                    {!isCollapsed && <span className="animate-in fade-in duration-200">Configuración</span>}
                 </NavLink>
 
-                <div className="flex items-center gap-3 px-4 py-2 pt-2">
-                    <div className="w-10 h-10 bg-slate-800/50 rounded-full flex items-center justify-center text-gold-500 border border-slate-700">
+                <div className={`flex items-center gap-3 px-4 py-2 pt-2 ${isCollapsed ? 'justify-center px-2' : ''}`}>
+                    <div className="w-10 h-10 bg-slate-800/50 rounded-full flex items-center justify-center text-gold-500 border border-slate-700 flex-shrink-0">
                         <User size={20} />
                     </div>
-                    <div className="overflow-hidden">
-                        <p className="text-sm font-bold text-white truncate">{user?.nombre || 'Admin Gaston'}</p>
-                        <p className="text-[10px] text-slate-500 uppercase tracking-widest font-black">Nivel Gerencia</p>
-                    </div>
+                    {!isCollapsed && (
+                        <div className="overflow-hidden animate-in fade-in duration-200">
+                            <p className="text-sm font-bold text-white truncate">{user?.nombre || 'Admin Gaston'}</p>
+                            <p className="text-[10px] text-slate-500 uppercase tracking-widest font-black">Nivel Gerencia</p>
+                        </div>
+                    )}
                 </div>
 
                 <button
                     onClick={handleLogout}
-                    className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-slate-400 hover:bg-red-500/10 hover:text-red-500 transition-all duration-200"
+                    title={isCollapsed ? "Cerrar Sesión" : undefined}
+                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-slate-400 hover:bg-red-500/10 hover:text-red-500 transition-all duration-200 ${
+                        isCollapsed ? 'justify-center px-2' : ''
+                    }`}
                 >
                     <LogOut size={20} />
-                    Cerrar Sesión
+                    {!isCollapsed && <span className="animate-in fade-in duration-200">Cerrar Sesión</span>}
                 </button>
             </div>
 
-            <div className="p-6 text-center px-4">
-                <p className="text-[10px] text-slate-600 font-bold uppercase tracking-widest break-words leading-relaxed">
-                    {user?.direccion ? `${user.direccion}${user.ciudad ? `, ${user.ciudad}` : ''}` : 'Florida, BA • 2026'}
-                </p>
-            </div>
+            {!isCollapsed && (
+                <div className="p-6 text-center px-4 animate-in fade-in duration-200">
+                    <p className="text-[10px] text-slate-600 font-bold uppercase tracking-widest break-words leading-relaxed">
+                        {user?.direccion ? `${user.direccion}${user.ciudad ? `, ${user.ciudad}` : ''}` : 'Florida, BA • 2026'}
+                    </p>
+                </div>
+            )}
         </aside>
     );
 };
