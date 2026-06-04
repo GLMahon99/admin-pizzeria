@@ -502,9 +502,14 @@ const Orders = () => {
                                         {(pedido.estado === 'Pendiente' || pedido.estado === 'Preparando' || pedido.estado === 'Aprobado') && (
                                             <button 
                                                 onClick={() => handleUpdateStatus(pedido.id_pedido, 'Listo para retirar')}
-                                                className="w-full flex items-center justify-center gap-2 bg-gold-600 hover:bg-gold-700 text-white py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 shadow-lg shadow-gold-100"
+                                                disabled={pedido.estado === 'Pendiente'}
+                                                className={`w-full flex items-center justify-center gap-2 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg ${
+                                                    pedido.estado === 'Pendiente'
+                                                    ? 'bg-slate-100 text-slate-400 cursor-not-allowed shadow-none border border-slate-200'
+                                                    : 'bg-gold-600 hover:bg-gold-700 text-white active:scale-95 shadow-gold-100'
+                                                }`}
                                             >
-                                                <Package size={16} /> Listo para retirar
+                                                <Package size={16} /> {pedido.estado === 'Pendiente' ? 'Pendiente de Pago' : 'Listo para retirar'}
                                             </button>
                                         )}
                                         {pedido.estado === 'Listo para retirar' && (
