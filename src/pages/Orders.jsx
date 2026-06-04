@@ -147,8 +147,8 @@ const Orders = () => {
 
     const handlePrintTicket = (pedido) => {
         const printWindow = window.open('', '_blank', 'width=300,height=600');
-        const fechaFormat = new Date(pedido.fecha).toLocaleDateString('es-AR') + ' ' + 
-                           new Date(pedido.fecha).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' });
+        const fechaFormat = new Date(pedido.fecha).toLocaleDateString('es-AR', { timeZone: 'America/Argentina/Buenos_Aires' }) + ' ' + 
+                           new Date(pedido.fecha).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Argentina/Buenos_Aires' });
         
         const currentOrigin = window.location.origin;
         const deliveryUrl = `${currentOrigin}/reparto?pedido=${pedido.id_pedido}&tenant=${user?.slug || 'pizzeria'}`;
