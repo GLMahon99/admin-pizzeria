@@ -449,7 +449,7 @@ const Orders = () => {
                                         <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none mb-1">Orden de Compra</span>
                                         <div className="flex items-center gap-2">
                                             <span className="text-sm font-black text-slate-800 tracking-tight">#{pedido.id_pedido}</span>
-                                            <span className={`px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-tighter ${
+                                            <span className={`px-4 py-1.5 rounded-xl text-xs font-black uppercase tracking-wider ${
                                                 pedido.estado === 'Aprobado' || pedido.estado === 'Listo para retirar' || pedido.estado === 'Entregado' ? 'bg-green-100 text-green-700' :
                                                 pedido.estado === 'Rechazado' ? 'bg-red-100 text-red-700' :
                                                 'bg-yellow-100 text-yellow-700'
@@ -457,7 +457,7 @@ const Orders = () => {
                                                 {pedido.estado}
                                             </span>
                                             {pedido.metodo_entrega === 'takeaway' && (
-                                                <span className="px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-tighter bg-purple-100 text-purple-700">
+                                                <span className="px-4 py-1.5 rounded-xl text-xs font-black uppercase tracking-wider bg-purple-100 text-purple-700">
                                                     Retiro 🛍️
                                                 </span>
                                             )}
