@@ -9,7 +9,8 @@ import {
     User,
     PackageCheck,
     Bike,
-    Settings as SettingsIcon
+    Settings as SettingsIcon,
+    HelpCircle
 } from 'lucide-react';
 
 const Sidebar = () => {
@@ -68,6 +69,19 @@ const Sidebar = () => {
             {/* User & Footer */}
             <div className="p-4 border-t border-slate-700/50 space-y-2">
                 
+                <NavLink
+                    to="/soporte"
+                    className={({ isActive }) => `
+                        flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition-all duration-200
+                        ${isActive
+                            ? 'bg-gold-600 text-white shadow-lg shadow-gold-600/20'
+                            : 'text-slate-400 hover:bg-slate-800 hover:text-white'}
+                    `}
+                >
+                    <HelpCircle size={20} />
+                    Soporte
+                </NavLink>
+
                 <NavLink
                     to="/configuracion"
                     className={({ isActive }) => `

@@ -16,6 +16,7 @@ import SubscriptionPlans from './pages/SubscriptionPlans';
 import SubscriptionSuccess from './pages/SubscriptionSuccess';
 import Drivers from './pages/Drivers';
 import DriverDashboard from './pages/DriverDashboard';
+import Support from './pages/Support';
 
 function App() {
   const { token, loading: authLoading } = useAuth();
@@ -48,6 +49,7 @@ function App() {
               <Route path="inventario" element={<Inventory />} />
               <Route path="insumos" element={<Supplies />} />
               <Route path="repartidores" element={<Drivers />} />
+              <Route path="soporte" element={<Support />} />
               <Route path="configuracion" element={<Settings />} />
             </>
           )}
