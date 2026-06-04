@@ -14,6 +14,7 @@ import {
     AlertCircle 
 } from 'lucide-react';
 import api from '../api/axiosConfig';
+import { parseAddress, formatAddress } from '../utils/formatters';
 
 const DriverDashboard = () => {
     const [token, setToken] = useState(localStorage.getItem('repartidor_token') || null);
@@ -330,26 +331,41 @@ const DriverDashboard = () => {
                                                 <p className="font-black text-white text-base leading-none uppercase">{pedido.cliente_nombre || 'Cliente Mostrador'}</p>
                                             </div>
 
-                                            {pedido.cliente_direccion && (
-                                                <div className="space-y-1 pt-2 border-t border-slate-900">
-                                                    <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Dirección de Entrega</p>
-                                                    <p className="font-bold text-slate-200 text-sm">{pedido.cliente_direccion}</p>
-                                                </div>
-                                            )}
+                                            {pedido.cliente_direccion && (() => {
+                                                const addr = parseAddress(pedido.cliente_direccion);
+                                                return (
+                                                    <div className="space-y-3 pt-2 border-t border-slate-900 w-full">
+                                                        <div className="space-y-1">
+                                                            <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Dirección de Entrega</p>
+                                                            <p className="font-bold text-slate-200 text-sm">{formatAddress(addr)}</p>
+                                                        </div>
+                                                        {addr.observaciones && (
+                                                            <div className="bg-amber-500/10 border border-amber-500/20 p-3 rounded-xl text-amber-400">
+                                                                <p className="text-[8px] font-black uppercase tracking-widest leading-none mb-1">Notas de Entrega (Observación)</p>
+                                                                <p className="text-xs font-bold leading-normal">{addr.observaciones}</p>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                );
+                                            })()}
                                         </div>
 
                                         {/* Enlaces de Utilidad (Llamada y Mapas) */}
                                         <div className="flex gap-3">
-                                            {pedido.cliente_direccion && (
-                                                <a 
-                                                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(pedido.cliente_direccion)}`}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="flex-1 flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-200 py-3 rounded-xl text-xs font-black uppercase tracking-wider transition-all border border-slate-700/60"
-                                                >
-                                                    <Compass size={14} className="text-gold-500" /> Abrir GPS
-                                                </a>
-                                            )}
+                                            {pedido.cliente_direccion && (() => {
+                                                const addr = parseAddress(pedido.cliente_direccion);
+                                                const mapsQuery = `${addr.calle} ${addr.altura}`;
+                                                return (
+                                                    <a 
+                                                        href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapsQuery)}`}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="flex-1 flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-200 py-3 rounded-xl text-xs font-black uppercase tracking-wider transition-all border border-slate-700/60"
+                                                    >
+                                                        <Compass size={14} className="text-gold-500" /> Abrir GPS
+                                                    </a>
+                                                );
+                                            })()}
                                             
                                             {pedido.cliente_telefono && (
                                                 <a 

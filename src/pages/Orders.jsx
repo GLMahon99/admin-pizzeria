@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { Printer, Tag, Package, Clock, DollarSign, Calendar, Plus, X, Search, Trash2, ShoppingCart, User, Hash } from 'lucide-react';
 import api from '../api/axiosConfig';
 import { useAuth } from '../context/AuthContext';
+import { parseAddress } from '../utils/formatters';
 
 const Orders = () => {
     const { user } = useAuth();
@@ -141,8 +142,11 @@ const Orders = () => {
         const fechaFormat = new Date(pedido.fecha).toLocaleDateString('es-AR') + ' ' + 
                            new Date(pedido.fecha).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' });
         
-        const deliveryUrl = `${window.location.origin}/reparto?pedido=${pedido.id_pedido}&tenant=${user?.slug || 'pizzeria'}`;
+        const currentOrigin = window.location.origin;
+        const deliveryUrl = `${currentOrigin}/reparto?pedido=${pedido.id_pedido}&tenant=${user?.slug || 'pizzeria'}`;
         const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(deliveryUrl)}`;
+
+        const addr = parseAddress(pedido.cliente_direccion);
 
         const html = `
             <html>
@@ -169,7 +173,14 @@ const Orders = () => {
                 
                 <div class="bold">CLIENTE:</div>
                 <div>${pedido.cliente_nombre || 'Cliente Mostrador'}</div>
-                ${pedido.cliente_direccion ? `<div class="bold">DIRECCIÓN:</div><div>${pedido.cliente_direccion}</div>` : ''}
+                
+                ${pedido.cliente_direccion ? `
+                    <div class="bold" style="margin-top: 5px;">DIRECCIÓN DE ENVÍO:</div>
+                    <div>${addr.calle} ${addr.altura}</div>
+                    ${(addr.piso || addr.depto) ? `<div>Piso: ${addr.piso || '-'} | Depto: ${addr.depto || '-'}</div>` : ''}
+                    ${addr.cp ? `<div>Código Postal: ${addr.cp}</div>` : ''}
+                    ${addr.observaciones ? `<div class="bold" style="margin-top: 5px;">NOTAS DE ENTREGA:</div><div style="font-style: italic;">${addr.observaciones}</div>` : ''}
+                ` : ''}
                 
                 <div class="divider"></div>
                 <div class="bold">PRODUCTOS:</div>
