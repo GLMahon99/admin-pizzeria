@@ -41,4 +41,36 @@ api.interceptors.request.use((config) => {
     return config;
 });
 
+// Interceptor para manejar respuestas de error (ej. token JWT expirado o inválido)
+api.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        if (error.response && error.response.status === 401) {
+            const isRepartidorPath = window.location.pathname.includes('/reparto');
+
+            if (isRepartidorPath) {
+                // Limpiar credenciales de repartidor
+                localStorage.removeItem('repartidor_token');
+                localStorage.removeItem('repartidor_user');
+                localStorage.removeItem('repartidor_tenant_slug');
+
+                // Si no estamos en la página de reparto, redirigir
+                if (!window.location.pathname.endsWith('/reparto')) {
+                    window.location.href = '/reparto';
+                }
+            } else {
+                // Limpiar credenciales de administrador de comercio
+                localStorage.removeItem('admin_token');
+                localStorage.removeItem('admin_user');
+
+                // Si no estamos en la página de login, redirigir
+                if (!window.location.pathname.endsWith('/login')) {
+                    window.location.href = '/login';
+                }
+            }
+        }
+        return Promise.reject(error);
+    }
+);
+
 export default api;
