@@ -82,45 +82,27 @@ const Landing = () => {
                     <h2 className="text-4xl font-black text-[#25323f] mb-4">Planes diseñados para vos</h2>
                     <p className="text-[#305a83] mb-16 font-medium">Elegí la opción que mejor se adapte al tamaño de tu negocio.</p>
                     
-                    <div className="grid md:grid-cols-2 gap-8">
-                        {/* Estandar */}
-                        <div className="bg-white border-2 border-gray-100 rounded-[3rem] p-10 hover:border-[#ff5b00] transition-colors relative overflow-hidden group">
-                            <div className="absolute top-0 right-0 p-8 opacity-5 text-gray-900 group-hover:text-[#ff5b00] transition-colors">
-                                <Zap size={120} />
-                            </div>
-                            <h3 className="text-2xl font-black text-gray-400 uppercase tracking-widest text-left mb-2">Estándar</h3>
-                            <div className="flex items-baseline gap-2 mb-2 text-left">
-                                <span className="text-5xl font-black text-[#25323f]">$40.000</span>
-                                <span className="text-gray-500 font-bold">/mes</span>
-                            </div>
-                            <p className="text-sm font-bold text-[#ff5b00] mb-8 text-left">*Ahorrá 20% pagando anual ($384.000)</p>
-                            
-                            <ul className="space-y-4 text-left relative z-10">
-                                <li className="flex items-center gap-3 font-bold text-[#305a83]"><CheckCircle2 className="text-green-500" size={20} /> Todas las funciones operativas conectadas</li>
-                                <li className="flex items-center gap-3 font-bold text-[#305a83]"><CheckCircle2 className="text-green-500" size={20} /> Tienda E-commerce y Panel Activo</li>
-                                <li className="flex items-center gap-3 font-bold text-[#305a83]"><CheckCircle2 className="text-green-500" size={20} /> Soporte garantizado</li>
-                            </ul>
-                        </div>
-
-                        {/* Pro */}
-                        <div className="bg-[#25323f] rounded-[3rem] p-10 relative overflow-hidden group transform md:-translate-y-4 shadow-2xl">
+                    <div className="mb-12">
+                        {/* Plan Premium Único */}
+                        <div className="bg-[#25323f] rounded-[3rem] p-10 max-w-md mx-auto relative overflow-hidden group shadow-2xl text-left">
                             <div className="absolute top-0 right-0 p-8 opacity-10 text-white">
                                 <Store size={120} />
                             </div>
                             <div className="absolute top-6 right-8 bg-[#ff5b00] text-white text-[10px] font-black uppercase tracking-widest px-4 py-2 rounded-full">
-                                Recomendado
+                                Todo Incluido
                             </div>
-                            <h3 className="text-2xl font-black text-gold-200 uppercase tracking-widest text-left mb-2">Pro</h3>
+                            <h3 className="text-2xl font-black text-gold-200 uppercase tracking-widest text-left mb-2">Premium</h3>
                             <div className="flex items-baseline gap-2 mb-2 text-left">
                                 <span className="text-5xl font-black text-white">$60.000</span>
                                 <span className="text-gray-400 font-bold">/mes</span>
                             </div>
-                            <p className="text-sm font-bold text-gold-200 mb-8 text-left">*Ahorrá 20% pagando anual ($576.000)</p>
+                            <p className="text-sm font-bold text-[#ff5b00] mb-8 text-left">*Ahorrá 15% pagando anual ($612.000)</p>
                             
                             <ul className="space-y-4 text-left relative z-10">
-                                <li className="flex items-center gap-3 font-bold text-gray-300"><CheckCircle2 className="text-[#ff5b00]" size={20} /> TODO lo del plan estándar</li>
-                                <li className="flex items-center gap-3 font-bold text-white"><CheckCircle2 className="text-[#ff5b00]" size={40} /> Facturación electrónica automatizada con ARCA (AFIP) a consumidor final</li>
-                                <li className="flex items-center gap-3 font-bold text-white"><CheckCircle2 className="text-[#ff5b00]" size={20} /> Prioridad máxima en soporte</li>
+                                <li className="flex items-center gap-3 font-bold text-white"><CheckCircle2 className="text-[#ff5b00]" size={20} /> Tienda E-commerce y Panel ERP Activo</li>
+                                <li className="flex items-center gap-3 font-bold text-white"><CheckCircle2 className="text-[#ff5b00]" size={20} /> Control de Inventario y Recetas</li>
+                                <li className="flex items-center gap-3 font-bold text-white"><CheckCircle2 className="text-[#ff5b00]" size={28} /> Facturación electrónica automatizada con ARCA (Ex-AFIP)</li>
+                                <li className="flex items-center gap-3 font-bold text-white"><CheckCircle2 className="text-[#ff5b00]" size={20} /> Soporte Prioritario 24/7</li>
                             </ul>
                         </div>
                     </div>
