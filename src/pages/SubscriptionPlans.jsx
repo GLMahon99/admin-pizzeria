@@ -9,7 +9,7 @@ const SubscriptionPlans = () => {
     const [loading, setLoading] = useState(false);
     const [isAnnual, setIsAnnual] = useState(false);
     const [dbPlans, setDbPlans] = useState([]);
-    const [selectedPlan, setSelectedPlan] = useState('STANDARD');
+    const [selectedPlan, setSelectedPlan] = useState('PRO');
     const [plansLoaded, setPlansLoaded] = useState(false);
 
     useEffect(() => {
@@ -36,36 +36,22 @@ const SubscriptionPlans = () => {
 
     const plans = [
         {
-            id: 'STANDARD',
-            name: 'Plan Estándar',
-            monthlyPrice: getPrice('STANDARD_MONTHLY') || 40000,
-            annualPrice: getPrice('STANDARD_ANNUAL') || 384000,
-            description: 'Ideal para negocios que buscan controlar todo sin emitir facturas automáticas.',
+            id: 'PRO',
+            name: 'Plan Premium',
+            monthlyPrice: getPrice('PRO_MONTHLY') || 60000,
+            annualPrice: getPrice('PRO_ANNUAL') || 612000,
+            description: 'Acceso completo a todas las funcionalidades del sistema ERP y tienda online, con facturación automática y soporte premium.',
             features: [
                 'Tienda Online Personalizada',
                 'Gestión de Inventario y Recetas',
-                'Panel de Estadísticas Pro',
-                'Pedidos Ilimitados',
-                'Soporte estándar'
-            ],
-            icon: <Zap className="text-orange-500" />,
-            badge: null
-        },
-        {
-            id: 'PRO',
-            name: 'Pro',
-            monthlyPrice: getPrice('PRO_MONTHLY') || 60000,
-            annualPrice: getPrice('PRO_ANNUAL') || 576000,
-            description: 'La opción recomendada para quienes necesitan facturación a consumidor final directo a ARCA.',
-            features: [
-                'TODO lo del Plan Estándar',
                 'Facturación ARCA (Ex-AFIP) Automática',
-                'Descarga automática de PDF Tícket',
-                'Soporte Prioritario',
-                'Funciones de Alta Gerencia'
+                'Descarga de PDF Ticket',
+                'Pedidos y Clientes Ilimitados',
+                'Panel de Estadísticas Avanzado',
+                'Soporte Prioritario 24/7'
             ],
             icon: <Crown className="text-yellow-500" />,
-            badge: 'Recomendado'
+            badge: 'Todo Incluido'
         }
     ];
 
@@ -114,13 +100,13 @@ const SubscriptionPlans = () => {
                             <div className={`w-6 h-6 bg-orange-500 rounded-full transition-transform ${isAnnual ? 'translate-x-8' : 'translate-x-0'}`}></div>
                         </button>
                         <span className={`text-sm font-bold flex items-center gap-2 ${isAnnual ? 'text-white' : 'text-gray-400'}`}>
-                            Pago Anual <span className="bg-orange-500/20 text-orange-400 text-[10px] px-2 py-1 rounded-full">-20% OFF</span>
+                            Pago Anual <span className="bg-orange-500/20 text-orange-400 text-[10px] px-2 py-1 rounded-full">-15% OFF</span>
                         </span>
                     </div>
                 </div>
 
-                {/* Grilla de Planes */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+                {/* Plan Único Centrado */}
+                <div className="max-w-md mx-auto mb-12">
                     {plans.map((plan) => {
                         const isSelected = selectedPlan === plan.id;
                         const finalPrice = isAnnual ? plan.annualPrice : plan.monthlyPrice;
