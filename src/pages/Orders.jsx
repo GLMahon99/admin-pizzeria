@@ -220,13 +220,18 @@ const Orders = () => {
                 </div>
                 `}
 
+                ${pedido.afip_estado === 'EMITIDA' ? `
                 <div class="divider"></div>
-                <div class="afip-placeholder center">
-                    <p class="bold" style="margin: 0;">FACTURA B - CONSUMIDOR FINAL</p>
-                    <p style="margin: 5px 0;">CAE: 74218392817263 (PRUEBA)</p>
-                    <p style="margin: 0;">VTO: 26/04/2026</p>
-                    <div style="background: #eee; height: 30px; margin-top: 5px; display: flex; align-items: center; justify-content: center; font-size: 8px;">QR FACTURACIÓN AFIP</div>
+                <div class="afip-placeholder center" style="border: 1px solid #000; padding: 8px; margin-top: 15px; font-size: 10px;">
+                    <p class="bold" style="margin: 0; font-size: 11px;">COMPROBANTE AUTORIZADO</p>
+                    <p style="margin: 5px 0; font-weight: bold; font-size: 11px;">NRO: ${pedido.afip_numero_factura}</p>
+                    <p style="margin: 2px 0;">CAE: ${pedido.afip_cae}</p>
+                    <p style="margin: 2px 0 8px 0;">VTO CAE: ${new Date(pedido.afip_cae_vto + 'T12:00:00').toLocaleDateString()}</p>
+                    <div class="center">
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(pedido.afip_qr)}" style="width: 110px; height: 110px; display: block; margin: 0 auto;" />
+                    </div>
                 </div>
+                ` : ''}
                 <div class="center" style="margin-top: 10px;">¡Gracias por tu compra!</div>
             </body>
             </html>
@@ -244,6 +249,18 @@ const Orders = () => {
         } catch (error) {
             console.error('Error al actualizar el estado del pedido:', error);
             alert('No se pudo actualizar el estado del pedido.');
+        }
+    };
+
+    const handleRetryInvoice = async (id_pedido) => {
+        try {
+            await api.post(`/pedidos/${id_pedido}/facturar`);
+            alert(`Factura emitida con éxito para el pedido #${id_pedido}`);
+            fetchData();
+        } catch (error) {
+            console.error('Error al reintentar facturación:', error);
+            const msg = error.response?.data?.details || error.response?.data?.message || 'Error al emitir la factura.';
+            alert(`Error: ${msg}`);
         }
     };
 
@@ -461,6 +478,16 @@ const Orders = () => {
                                                     Retiro 🛍️
                                                 </span>
                                             )}
+                                            {pedido.afip_estado === 'EMITIDA' && (
+                                                <span className="px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider bg-blue-100 text-blue-700" title={`Factura Nro: ${pedido.afip_numero_factura}`}>
+                                                    Factura Emitida 🧾
+                                                </span>
+                                            )}
+                                            {pedido.afip_estado === 'ERROR' && (
+                                                <span className="px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider bg-red-100 text-red-700 cursor-help" title={`Error: ${pedido.afip_error}`}>
+                                                    Error Factura ⚠️
+                                                </span>
+                                            )}
                                         </div>
                                     </div>
                                     <div className="flex items-center text-slate-500 text-[10px] font-black bg-slate-50 px-3 py-1.5 rounded-full uppercase tracking-tighter">
@@ -521,6 +548,15 @@ const Orders = () => {
                                             </button>
                                         )}
                                     </>
+                                )}
+
+                                {pedido.afip_estado === 'ERROR' && (
+                                    <button 
+                                        onClick={() => handleRetryInvoice(pedido.id_pedido)}
+                                        className="w-full flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 shadow-lg shadow-red-100"
+                                    >
+                                        <Hash size={16} /> Reintentar Factura ARCA
+                                    </button>
                                 )}
 
                                 <button 
