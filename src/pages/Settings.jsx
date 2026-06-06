@@ -29,6 +29,7 @@ const Settings = () => {
         afip_punto_venta: '',
         afip_condicion_iva: '',
         afip_habilitado: false,
+        afip_clave_fiscal: '',
         mp_oauth_user_id: '',
         codigos_postales: ''
     });
@@ -398,6 +399,18 @@ const Settings = () => {
                                 onChange={(e) => setConfig({...config, afip_cuit: e.target.value})}
                                 placeholder="Ej: 20304567891"
                             />
+                        </div>
+
+                        <div className="space-y-2">
+                            <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Clave Fiscal (Para Producción)</label>
+                            <input
+                                type="password"
+                                className="w-full bg-gray-50 border-2 border-gray-100 p-4 rounded-2xl focus:border-purple-600 outline-none font-mono text-sm"
+                                value={config.afip_clave_fiscal || ''}
+                                onChange={(e) => setConfig({...config, afip_clave_fiscal: e.target.value})}
+                                placeholder="••••••••"
+                            />
+                            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-tight">Opcional en entorno de pruebas (test).</p>
                         </div>
 
                         <div className="space-y-2">
