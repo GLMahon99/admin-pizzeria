@@ -10,14 +10,15 @@ const SubscriptionSuccess = () => {
 
     const empresaId = searchParams.get('empresaId');
     const plan = searchParams.get('plan');
+    const preapprovalId = searchParams.get('preapproval_id');
 
-    // Simulación de activación (En producción deberías usar webhooks para confirmar el pago real)
     useEffect(() => {
         const activateSubscription = async () => {
             try {
                 await api.post('/subscriptions/confirm', {
                     empresaId: empresaId,
-                    plan: plan
+                    plan: plan,
+                    preapprovalId: preapprovalId
                 });
             } catch (error) {
                 console.error("Error confirmando suscripción:", error);
@@ -27,7 +28,7 @@ const SubscriptionSuccess = () => {
         };
 
         if (empresaId) activateSubscription();
-    }, [empresaId]);
+    }, [empresaId, plan, preapprovalId]);
 
     return (
         <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
