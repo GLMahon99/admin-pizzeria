@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import {
@@ -12,12 +13,35 @@ import {
     Settings as SettingsIcon,
     HelpCircle,
     ChevronLeft,
-    ChevronRight
+    ChevronRight,
+    Maximize2,
+    Minimize2
 } from 'lucide-react';
 
 const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
     const { logout, user } = useAuth();
     const navigate = useNavigate();
+    const [isFullscreen, setIsFullscreen] = useState(!!document.fullscreenElement);
+
+    useEffect(() => {
+        const handleFullscreenChange = () => {
+            setIsFullscreen(!!document.fullscreenElement);
+        };
+        document.addEventListener('fullscreenchange', handleFullscreenChange);
+        return () => {
+            document.removeEventListener('fullscreenchange', handleFullscreenChange);
+        };
+    }, []);
+
+    const toggleFullscreen = () => {
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen().catch((err) => {
+                console.error(`Error al intentar activar pantalla completa: ${err.message}`);
+            });
+        } else {
+            document.exitFullscreen();
+        }
+    };
 
     const handleLogout = () => {
         logout();
@@ -117,6 +141,18 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
                     <SettingsIcon size={20} />
                     {!isCollapsed && <span className="animate-in fade-in duration-200">Configuración</span>}
                 </NavLink>
+
+                {/* Botón de Pantalla Completa */}
+                <button
+                    onClick={toggleFullscreen}
+                    title={isCollapsed ? (isFullscreen ? "Salir de Pantalla Completa" : "Pantalla Completa") : undefined}
+                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-all duration-200 ${
+                        isCollapsed ? 'justify-center px-2' : ''
+                    }`}
+                >
+                    {isFullscreen ? <Minimize2 size={20} /> : <Maximize2 size={20} />}
+                    {!isCollapsed && <span className="animate-in fade-in duration-200">{isFullscreen ? "Pantalla Normal" : "Pantalla Completa"}</span>}
+                </button>
 
                 <div className={`flex items-center gap-3 px-4 py-2 pt-2 ${isCollapsed ? 'justify-center px-2' : ''}`}>
                     <div className="w-10 h-10 bg-slate-800/50 rounded-full flex items-center justify-center text-gold-500 border border-slate-700 flex-shrink-0">
