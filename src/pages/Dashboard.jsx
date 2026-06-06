@@ -141,7 +141,7 @@ const Dashboard = () => {
                 <StatCard title="Ventas Hoy (Bruto)" value={`$${Math.round(kpis.ventas_hoy).toLocaleString() || 0}`} icon={<DollarSign className="text-[#10b981]" />} trend="+15%" color="bg-[#10b981]/10" />
                 <StatCard title="Ventas del Mes" value={`$${Math.round(kpis.ventas_mes || 0).toLocaleString()}`} icon={<ShoppingCart className="text-[#083d5a]" />} trend="Estable" color="bg-[#083d5a]/10" />
                 <StatCard title="Ticket Promedio" value={`$${Math.round(kpis.ticket_promedio).toLocaleString() || 0}`} icon={<TrendingUp className="text-[#ff5b00]" />} trend="+8%" color="bg-[#ff5b00]/10" />
-                <StatCard title="Últimos 30 días" value={`${kpis.clientes_recientes || 0} Clientes`} icon={<UserPlus className="text-[#305a83]" />} trend="+12%" color="bg-[#305a83]/10" />
+                <StatCard title="Total Clientes" value={`${kpis.clientes_recientes || 0} Clientes`} icon={<UserPlus className="text-[#305a83]" />} trend="Histórico" color="bg-[#305a83]/10" />
             </div>
 
             {/* 2. Main Charts Section */}
