@@ -144,9 +144,19 @@ const Orders = () => {
             return true;
         });
     }, [filter, pedidos]);
-
     const handlePrintTicket = (pedido) => {
-        const printWindow = window.open('', '_blank', 'width=300,height=600');
+        // Crear un iframe oculto para la impresión si no existe
+        let iframe = document.getElementById('print-iframe');
+        if (!iframe) {
+            iframe = document.createElement('iframe');
+            iframe.id = 'print-iframe';
+            iframe.style.position = 'absolute';
+            iframe.style.width = '0px';
+            iframe.style.height = '0px';
+            iframe.style.border = 'none';
+            document.body.appendChild(iframe);
+        }
+
         const fechaFormat = new Date(pedido.fecha).toLocaleDateString('es-AR', { timeZone: 'America/Argentina/Buenos_Aires' }) + ' ' + 
                            new Date(pedido.fecha).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Argentina/Buenos_Aires' });
         
@@ -171,7 +181,7 @@ const Orders = () => {
                     @media print { body { margin: 0; padding: 10px; } }
                 </style>
             </head>
-            <body onload="window.print(); window.close();">
+            <body>
                 <div class="center bold" style="font-size: 18px;">${user?.nombre || 'A-COMMERR ERP'}</div>
                 <div class="center text-gray-500">${user?.direccion || 'Florida, Vicente López'}</div>
                 <div class="divider"></div>
@@ -219,7 +229,7 @@ const Orders = () => {
                     <p style="font-size: 8px; margin: 5px 0 0 0; font-weight: bold; font-family: sans-serif;">ESCANEAR PARA ASIGNAR REPARTO</p>
                 </div>
                 `}
-
+ 
                 ${pedido.afip_estado === 'EMITIDA' ? `
                 <div class="divider"></div>
                 <div class="afip-placeholder center" style="border: 1px solid #000; padding: 8px; margin-top: 15px; font-size: 10px;">
@@ -236,9 +246,17 @@ const Orders = () => {
             </body>
             </html>
         `;
-        
-        printWindow.document.write(html);
-        printWindow.document.close();
+
+        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+        iframeDoc.open();
+        iframeDoc.write(html);
+        iframeDoc.close();
+
+        // Esperar un momento a que se renderice el contenido del iframe y disparar la impresión
+        setTimeout(() => {
+            iframe.contentWindow.focus();
+            iframe.contentWindow.print();
+        }, 100);
     };
 
     const handleUpdateStatus = async (id_pedido, nuevoEstado) => {
