@@ -258,11 +258,24 @@ const Orders = () => {
         const totalImages = images.length;
         let printTriggered = false;
 
+        const wasFullscreen = !!document.fullscreenElement;
+
         const triggerPrint = () => {
             if (!printTriggered) {
                 printTriggered = true;
                 iframe.contentWindow.focus();
                 iframe.contentWindow.print();
+
+                // Intentar volver a pantalla completa automáticamente si estaba activa
+                if (wasFullscreen) {
+                    setTimeout(() => {
+                        if (!document.fullscreenElement) {
+                            document.documentElement.requestFullscreen().catch((err) => {
+                                console.log("El navegador bloqueó la reactivación automática de pantalla completa:", err.message);
+                            });
+                        }
+                    }, 500);
+                }
             }
         };
 
