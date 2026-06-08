@@ -252,11 +252,42 @@ const Orders = () => {
         iframeDoc.write(html);
         iframeDoc.close();
 
-        // Esperar un momento a que se renderice el contenido del iframe y disparar la impresión
-        setTimeout(() => {
-            iframe.contentWindow.focus();
-            iframe.contentWindow.print();
-        }, 100);
+        // Esperar a que se carguen todas las imágenes (como los códigos QR externos) antes de imprimir
+        const images = iframeDoc.getElementsByTagName('img');
+        let loadedCount = 0;
+        const totalImages = images.length;
+        let printTriggered = false;
+
+        const triggerPrint = () => {
+            if (!printTriggered) {
+                printTriggered = true;
+                iframe.contentWindow.focus();
+                iframe.contentWindow.print();
+            }
+        };
+
+        if (totalImages === 0) {
+            triggerPrint();
+        } else {
+            const onImageLoad = () => {
+                loadedCount++;
+                if (loadedCount === totalImages) {
+                    triggerPrint();
+                }
+            };
+
+            for (let i = 0; i < totalImages; i++) {
+                if (images[i].complete) {
+                    onImageLoad();
+                } else {
+                    images[i].onload = onImageLoad;
+                    images[i].onerror = onImageLoad; // Si alguna imagen falla, continuamos para no trabar la impresión
+                }
+            }
+
+            // Fallback de seguridad: si las imágenes tardan más de 2 segundos en cargar, disparar la impresión de todas formas
+            setTimeout(triggerPrint, 2000);
+        }
     };
 
     const handleUpdateStatus = async (id_pedido, nuevoEstado) => {
