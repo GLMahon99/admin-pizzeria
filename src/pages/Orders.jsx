@@ -241,6 +241,12 @@ const Orders = () => {
                         <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(pedido.afip_qr)}" style="width: 110px; height: 110px; display: block; margin: 0 auto;" />
                     </div>
                 </div>
+                ` : pedido.afip_estado === 'PENDING_RETRY' ? `
+                <div class="divider"></div>
+                <div class="center bold" style="border: 1px dashed #000; padding: 8px; margin-top: 15px; font-size: 10px;">
+                    <p style="margin: 0; font-size: 11px; text-transform: uppercase;">Comprobante Provisorio</p>
+                    <p style="margin: 4px 0 0 0; font-size: 8px; font-weight: normal; line-height: 1.2;">Factura electrónica pendiente de emisión en AFIP/ARCA.</p>
+                </div>
                 ` : ''}
                 <div class="center" style="margin-top: 10px;">¡Gracias por tu compra!</div>
             </body>
@@ -545,6 +551,11 @@ const Orders = () => {
                                                     Factura Emitida 🧾
                                                 </span>
                                             )}
+                                            {pedido.afip_estado === 'PENDING_RETRY' && (
+                                                <span className="px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider bg-amber-100 text-amber-700 cursor-help animate-pulse" title={`AFIP caído, reintentando automáticamente en segundo plano. Error: ${pedido.afip_error}`}>
+                                                    Factura Pendiente ⏳
+                                                </span>
+                                            )}
                                             {pedido.afip_estado === 'ERROR' && (
                                                 <span className="px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider bg-red-100 text-red-700 cursor-help" title={`Error: ${pedido.afip_error}`}>
                                                     Error Factura ⚠️
@@ -612,7 +623,7 @@ const Orders = () => {
                                     </>
                                 )}
 
-                                {pedido.afip_estado === 'ERROR' && (
+                                {(pedido.afip_estado === 'ERROR' || pedido.afip_estado === 'PENDING_RETRY') && (
                                     <button 
                                         onClick={() => handleRetryInvoice(pedido.id_pedido)}
                                         className="w-full flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 shadow-lg shadow-red-100"
