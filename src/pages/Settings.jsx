@@ -480,7 +480,7 @@ const Settings = () => {
                                             <li>Ingresá a la web de <a href="https://auth.afip.gob.ar/contribuyente/" target="_blank" rel="noreferrer" className="text-purple-600 font-bold underline">AFIP con Clave Fiscal</a>.</li>
                                             <li>Entrá en <b>"Administrador de Relaciones de Clave Fiscal"</b>.</li>
                                             <li>Hacé clic en <b>"Nueva Relación"</b>.</li>
-                                            <li>Elegí <b>"Buscar"</b> {"→"} <b>"Servicios Interactivos"</b> {"→"} <b>"AFIP"</b> {"→"} <b>"WebServices"</b> {"→"} <b>"facturacion electronica - wsfe"</b>.</li>
+                                            <li>Elegí <b>"Buscar"</b> {"→"} <b>"AFIP"</b> {"→"} <b>"WebServices"</b> {"→"} <b>"facturacion electronica - wsfe"</b>.</li>
                                             <li>En <b>"Representante"</b>, ingresá el CUIT copiado arriba y hacé clic en <b>"Confirmar"</b>.</li>
                                         </ol>
                                     </div>
