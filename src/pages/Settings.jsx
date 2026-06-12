@@ -424,6 +424,9 @@ const Settings = () => {
                                     onChange={(e) => setConfig({...config, afip_punto_venta: e.target.value ? Number(e.target.value) : ''})}
                                     placeholder="Ej: 5"
                                 />
+                                <p className="text-[10px] text-amber-600 font-bold uppercase tracking-tight leading-normal mt-1">
+                                    ⚠️ Importante: Debe estar configurado en AFIP como tipo "Factura Electrónica - Web Services". No usar el mismo de "Comprobantes en Línea".
+                                </p>
                             </div>
 
                             <div className="space-y-2">
@@ -482,6 +485,7 @@ const Settings = () => {
                                             <li>Hacé clic en <b>"Nueva Relación"</b>.</li>
                                             <li>Elegí <b>"Buscar"</b> {"→"} <b>"AFIP"</b> {"→"} <b>"WebServices"</b> {"→"} <b>"facturacion electronica - wsfe"</b>.</li>
                                             <li>En <b>"Representante"</b>, ingresá el CUIT copiado arriba y hacé clic en <b>"Confirmar"</b>.</li>
+                                            <li><b>Punto de Venta:</b> Habilitá en AFIP un Punto de Venta nuevo específico para <i>"Factura Electrónica - Web Services"</i>.</li>
                                         </ol>
                                     </div>
                                 </div>
