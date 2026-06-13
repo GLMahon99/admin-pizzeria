@@ -236,7 +236,7 @@ const Orders = () => {
                     <p class="bold" style="margin: 0; font-size: 11px;">COMPROBANTE AUTORIZADO</p>
                     <p style="margin: 5px 0; font-weight: bold; font-size: 11px;">NRO: ${pedido.afip_numero_factura}</p>
                     <p style="margin: 2px 0;">CAE: ${pedido.afip_cae}</p>
-                    <p style="margin: 2px 0 8px 0;">VTO CAE: ${new Date(pedido.afip_cae_vto + 'T12:00:00').toLocaleDateString()}</p>
+                    <p style="margin: 2px 0 8px 0;">VTO CAE: ${pedido.afip_cae_vto ? new Date(pedido.afip_cae_vto.split('T')[0] + 'T12:00:00').toLocaleDateString() : ''}</p>
                     <div class="center">
                         <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(pedido.afip_qr)}" style="width: 110px; height: 110px; display: block; margin: 0 auto;" />
                     </div>
