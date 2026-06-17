@@ -64,7 +64,7 @@ const Drivers = () => {
         setFormData({
             nombre: driver.nombre,
             telefono: driver.telefono,
-            pin: '', // Se deja vacío para indicar que no se modifica
+            pin: driver.pin,
             activo: driver.activo
         });
         setShowModal(true);
@@ -82,25 +82,26 @@ const Drivers = () => {
         e.preventDefault();
         if (isSubmitting) return;
 
-        if (!formData.nombre || !formData.telefono || (!editingDriver && !formData.pin)) {
+        if (!formData.nombre || !formData.telefono || !formData.pin) {
             alert('Por favor completa todos los campos requeridos.');
+            return;
+        }
+
+        const pinRegex = /^\d{4}$/;
+        if (!pinRegex.test(formData.pin)) {
+            alert('El PIN debe ser de exactamente 4 dígitos numéricos.');
             return;
         }
 
         setIsSubmitting(true);
         try {
-            const payload = { ...formData };
-            if (editingDriver && !payload.pin) {
-                delete payload.pin; // No modificar el PIN si se deja en blanco
-            }
-
             if (editingDriver) {
                 // Editar repartidor
-                await api.put(`/repartidores/${editingDriver.id_repartidor}`, payload);
+                await api.put(`/repartidores/${editingDriver.id_repartidor}`, formData);
                 alert('Repartidor actualizado con éxito.');
             } else {
                 // Crear repartidor nuevo
-                await api.post('/repartidores', payload);
+                await api.post('/repartidores', formData);
                 alert('Repartidor registrado con éxito.');
             }
             setShowModal(false);
@@ -199,7 +200,7 @@ const Drivers = () => {
                                     </div>
                                     <div className="flex items-center gap-3 text-gray-600 font-bold border-t border-gray-100/60 pt-3">
                                         <Key size={16} className="text-gold-500" />
-                                        <span>PIN de Acceso: <strong className="text-slate-800 font-black tracking-widest font-mono text-base">••••</strong></span>
+                                        <span>PIN de Acceso: <strong className="text-slate-800 font-black tracking-widest font-mono text-base">{driver.pin}</strong></span>
                                     </div>
                                 </div>
                             </div>
@@ -293,12 +294,20 @@ const Drivers = () => {
                                 <input 
                                     type="text" 
                                     name="pin"
-                                    required={!editingDriver}
-                                    maxLength={10}
-                                    placeholder={editingDriver ? "•••• (dejar vacío para mantener)" : "Ej. 1234"} 
+                                    required
+                                    maxLength={4}
+                                    pattern="\d{4}"
+                                    autoComplete="new-password"
+                                    placeholder="Ej. 1234" 
                                     className="w-full p-4 bg-gray-100 border-none rounded-2xl focus:ring-2 focus:ring-gold-500 outline-none font-black tracking-widest text-center text-lg"
                                     value={formData.pin}
-                                    onChange={handleInputChange}
+                                    onChange={(e) => {
+                                        const value = e.target.value.replace(/\D/g, '').slice(0, 4);
+                                        setFormData({
+                                            ...formData,
+                                            pin: value
+                                        });
+                                    }}
                                 />
                             </div>
 
