@@ -1,7 +1,28 @@
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, ShoppingBag, BarChart3, Store, CheckCircle2, Zap } from 'lucide-react';
+import api from '../api/axiosConfig';
 
 const Landing = () => {
+    const [prices, setPrices] = useState({ monthly: 60000, annual: 612000 });
+
+    useEffect(() => {
+        const fetchPlanes = async () => {
+            try {
+                const response = await api.get('/subscriptions/planes');
+                const monthlyPlan = response.data.find(p => p.id_plan === 'PRO_MONTHLY');
+                const annualPlan = response.data.find(p => p.id_plan === 'PRO_ANNUAL');
+                
+                setPrices({
+                    monthly: monthlyPlan ? parseFloat(monthlyPlan.precio) : 60000,
+                    annual: annualPlan ? parseFloat(annualPlan.precio) : 612000
+                });
+            } catch (error) {
+                console.error('Error fetching planes for landing:', error);
+            }
+        };
+        fetchPlanes();
+    }, []);
     return (
         <div className="min-h-screen bg-slate-50 font-sans selection:bg-gold-200">
             {/* Navbar (Landing) */}
@@ -93,10 +114,10 @@ const Landing = () => {
                             </div>
                             <h3 className="text-2xl font-black text-gold-200 uppercase tracking-widest text-left mb-2">Premium</h3>
                             <div className="flex items-baseline gap-2 mb-2 text-left">
-                                <span className="text-5xl font-black text-white">$60.000</span>
+                                <span className="text-5xl font-black text-white">${prices.monthly.toLocaleString('es-AR')}</span>
                                 <span className="text-gray-400 font-bold">/mes</span>
                             </div>
-                            <p className="text-sm font-bold text-[#ff5b00] mb-8 text-left">*Ahorrá 15% pagando anual ($612.000)</p>
+                            <p className="text-sm font-bold text-[#ff5b00] mb-8 text-left">*Ahorrá 15% pagando anual (${prices.annual.toLocaleString('es-AR')})</p>
                             
                             <ul className="space-y-4 text-left relative z-10">
                                 <li className="flex items-center gap-3 font-bold text-white"><CheckCircle2 className="text-[#ff5b00]" size={20} /> Tienda E-commerce y Panel ERP Activo</li>
