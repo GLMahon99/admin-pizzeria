@@ -51,7 +51,7 @@ const SubscriptionSuccess = () => {
                         
                         <h1 className="text-3xl font-black text-gray-900 mb-4 tracking-tight">¡Bienvenido a la red <span className="text-gold-600">A-commerr</span>!</h1>
                         <p className="text-gray-500 mb-10 font-medium leading-relaxed">
-                            Tu suscripción <span className="font-black text-gray-800">{plan === 'MONTHLY' ? 'Mensual' : 'Anual'}</span> ha sido activada con éxito. Ya podés empezar a gestionar tu negocio.
+                            Tu prueba gratuita de <span className="font-black text-gray-800">10 días</span> ha comenzado. Tu suscripción <span className="font-black text-gray-800">{plan && plan.includes('MONTHLY') ? 'Mensual' : 'Anual'}</span> se activará y cobrará automáticamente al finalizar la prueba si no la cancelás.
                         </p>
 
                         <button 

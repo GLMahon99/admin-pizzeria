@@ -40,8 +40,9 @@ const SubscriptionPlans = () => {
             name: 'Plan Premium',
             monthlyPrice: getPrice('PRO_MONTHLY') || 60000,
             annualPrice: getPrice('PRO_ANNUAL') || 612000,
-            description: 'Acceso completo a todas las funcionalidades del sistema ERP y tienda online, con facturación automática y soporte premium.',
+            description: 'Probá el sistema completo con todas sus funcionalidades gratis por 10 días. Si no cancelás antes de que termine la prueba, se comenzará a cobrar automáticamente la suscripción.',
             features: [
+                '10 Días de Prueba Gratis',
                 'Tienda Online Personalizada',
                 'Gestión de Inventario y Recetas',
                 'Facturación ARCA (Ex-AFIP) Automática',
@@ -51,7 +52,7 @@ const SubscriptionPlans = () => {
                 'Soporte Prioritario 24/7'
             ],
             icon: <Crown className="text-yellow-500" />,
-            badge: 'Todo Incluido'
+            badge: '10 Días Gratis'
         }
     ];
 
@@ -159,7 +160,7 @@ const SubscriptionPlans = () => {
                                 >
                                     {loading ? 'Cargando MP...' : (
                                         <>
-                                            Continuar con {plan.name} <ArrowRight size={20} />
+                                            Iniciar Prueba Gratis de 10 Días <ArrowRight size={20} />
                                         </>
                                     )}
                                 </button>
