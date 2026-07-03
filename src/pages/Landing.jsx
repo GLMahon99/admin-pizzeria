@@ -109,22 +109,45 @@ const Landing = () => {
                             <div className="absolute top-0 right-0 p-8 opacity-10 text-white">
                                 <Store size={120} />
                             </div>
-                            <div className="absolute top-6 right-8 bg-[#ff5b00] text-white text-[10px] font-black uppercase tracking-widest px-4 py-2 rounded-full">
-                                Todo Incluido
+                            <div className="absolute top-6 right-8 flex gap-2">
+                                <span className="bg-emerald-600 text-white text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full shadow-sm">
+                                    10 Días Gratis
+                                </span>
+                                <span className="bg-[#ff5b00] text-white text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full shadow-sm">
+                                    Todo Incluido
+                                </span>
                             </div>
                             <h3 className="text-2xl font-black text-gold-200 uppercase tracking-widest text-left mb-2">Premium</h3>
                             <div className="flex items-baseline gap-2 mb-2 text-left">
                                 <span className="text-5xl font-black text-white">${prices.monthly.toLocaleString('es-AR')}</span>
                                 <span className="text-gray-400 font-bold">/mes</span>
                             </div>
-                            <p className="text-sm font-bold text-[#ff5b00] mb-8 text-left">*Ahorrá 15% pagando anual (${prices.annual.toLocaleString('es-AR')})</p>
+                            <p className="text-sm font-bold text-[#ff5b00] mb-6 text-left">*Ahorrá 15% pagando anual (${prices.annual.toLocaleString('es-AR')})</p>
                             
-                            <ul className="space-y-4 text-left relative z-10">
+                            {/* Prueba Gratis Highlight */}
+                            <div className="bg-emerald-950/40 border border-emerald-500/30 rounded-2xl p-4 mb-6 flex items-start gap-3 relative z-10">
+                                <div className="w-5 h-5 bg-emerald-500/20 rounded-full flex items-center justify-center text-emerald-400 shrink-0 mt-0.5">
+                                    <Zap size={12} strokeWidth={3} className="fill-emerald-400" />
+                                </div>
+                                <div>
+                                    <h4 className="text-sm font-black text-emerald-400">10 Días de Prueba Gratis</h4>
+                                    <p className="text-xs text-gray-300 font-medium mt-0.5 font-sans">Probá el sistema completo sin costo. Cancelá en cualquier momento antes del día 10.</p>
+                                </div>
+                            </div>
+                            
+                            <ul className="space-y-4 text-left relative z-10 mb-8">
                                 <li className="flex items-center gap-3 font-bold text-white"><CheckCircle2 className="text-[#ff5b00]" size={20} /> Tienda E-commerce y Panel ERP Activo</li>
                                 <li className="flex items-center gap-3 font-bold text-white"><CheckCircle2 className="text-[#ff5b00]" size={20} /> Control de Inventario y Recetas</li>
                                 <li className="flex items-center gap-3 font-bold text-white"><CheckCircle2 className="text-[#ff5b00]" size={28} /> Facturación electrónica automatizada con ARCA (Ex-AFIP)</li>
                                 <li className="flex items-center gap-3 font-bold text-white"><CheckCircle2 className="text-[#ff5b00]" size={20} /> Soporte Prioritario 24/7</li>
                             </ul>
+
+                            <div className="mt-8 relative z-10">
+                                <Link to="/register" className="w-full bg-[#ff5b00] hover:bg-[#ef4c00] text-white py-4 rounded-2xl font-black text-center block transition-all active:scale-95 shadow-lg shadow-[#ff5b00]/20 hover:-translate-y-0.5">
+                                    Comenzar Prueba Gratis
+                                </Link>
+                                <p className="text-[10px] text-gray-400 text-center mt-3 font-bold">No se realiza ningún cargo hoy. Podés cancelar online cuando quieras.</p>
+                            </div>
                         </div>
                     </div>
                 </div>
