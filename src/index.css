@@ -55,3 +55,28 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: #242f3d;
 }
+
+/* Entrada suave de las capturas del hero */
+@keyframes hero-pop {
+  from {
+    opacity: 0;
+    transform: translateY(24px) rotate(var(--hero-rot, 0deg)) scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) rotate(var(--hero-rot, 0deg)) scale(1);
+  }
+}
+
+.hero-pop {
+  opacity: 0;
+  transform: rotate(var(--hero-rot, 0deg));
+  animation: hero-pop 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-pop {
+    opacity: 1;
+    animation: none;
+  }
+}
