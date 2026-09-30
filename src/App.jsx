@@ -17,6 +17,8 @@ import SubscriptionSuccess from './pages/SubscriptionSuccess';
 import Drivers from './pages/Drivers';
 import DriverDashboard from './pages/DriverDashboard';
 import Support from './pages/Support';
+import SuperAdminLogin from './pages/SuperAdminLogin';
+import SuperAdminDashboard from './pages/SuperAdminDashboard';
 
 function App() {
   const { token, loading: authLoading } = useAuth();
@@ -39,6 +41,10 @@ function App() {
         <Route path="subscription-plans/:companyId" element={<SubscriptionPlans />} />
         <Route path="subscription-success" element={<SubscriptionSuccess />} />
         <Route path="reparto" element={<DriverDashboard />} />
+        
+        {/* Rutas de Super Admin (Dueño de la Plataforma) */}
+        <Route path="superadmin/login" element={<SuperAdminLogin />} />
+        <Route path="superadmin" element={<SuperAdminDashboard />} />
 
         {/* Rutas privadas: Todo lo que esté dentro de Layout requiere Token */}
         <Route path="/" element={!token ? <Landing /> : <Layout />}>

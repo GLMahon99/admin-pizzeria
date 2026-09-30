@@ -443,16 +443,19 @@ const Settings = () => {
                                 </select>
                             </div>
 
-                            <label className="flex items-center gap-3 bg-gray-50 p-4 rounded-2xl cursor-pointer hover:bg-gray-100/70 transition-all border-2 border-gray-100 select-none">
+                            <label className={`flex items-center gap-3 bg-gray-50 p-4 rounded-2xl transition-all border-2 border-gray-100 select-none ${config.plan_facturacion_automatica ? 'cursor-pointer hover:bg-gray-100/70' : 'cursor-not-allowed opacity-60'}`}>
                                 <input
                                     type="checkbox"
-                                    className="w-5 h-5 rounded text-purple-600 focus:ring-purple-500 border-gray-300 cursor-pointer"
+                                    className="w-5 h-5 rounded text-purple-600 focus:ring-purple-500 border-gray-300 cursor-pointer disabled:cursor-not-allowed"
                                     checked={!!config.afip_habilitado}
+                                    disabled={!config.plan_facturacion_automatica}
                                     onChange={(e) => setConfig({...config, afip_habilitado: e.target.checked})}
                                 />
                                 <div className="flex flex-col">
                                     <span className="font-bold text-gray-800 text-sm">Habilitar Facturación Automática</span>
-                                    <span className="text-[10px] text-gray-400 font-bold uppercase">Emitir facturas al aprobar cobros</span>
+                                    <span className="text-[10px] text-gray-400 font-bold uppercase">
+                                        {config.plan_facturacion_automatica ? 'Emitir facturas al aprobar cobros' : 'Disponible solo en el plan Premium'}
+                                    </span>
                                 </div>
                             </label>
                         </div>

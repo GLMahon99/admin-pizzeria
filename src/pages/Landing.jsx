@@ -113,7 +113,7 @@ const CAPTURAS_CELULAR = [
 const PREGUNTAS = [
     {
         p: '¿Cobran comisión por cada venta?',
-        r: 'No. Pagás solo el plan mensual, vendas lo que vendas. Mercado Pago cobra su propia tarifa por procesar cada pago.'
+        r: 'No. Pagás solo tu plan (Clásica o Premium), vendas lo que vendas. Mercado Pago cobra su propia tarifa por procesar cada pago.'
     },
     {
         p: '¿Puedo probarlo gratis?',
@@ -129,7 +129,7 @@ const PREGUNTAS = [
     },
     {
         p: '¿Cómo hago las facturas?',
-        r: 'Cargás tus datos de ARCA (ex AFIP) una sola vez. Después las facturas se emiten solas cuando se aprueba el cobro. En el panel tenés la guía para hacerlo.'
+        r: 'Cargás tus datos de ARCA (ex AFIP) una sola vez. Con el plan Premium, después las facturas se emiten solas cuando se aprueba el cobro. En el panel tenés la guía para hacerlo.'
     }
 ];
 
@@ -178,7 +178,7 @@ const Etiqueta = ({ children }) => (
 );
 
 const Landing = () => {
-    const [prices, setPrices] = useState({ monthly: 60000, annual: 612000 });
+    const [prices, setPrices] = useState({ premium: 40000, premiumAnual: 408000, clasica: 30000 });
     const [tab, setTab] = useState(0);
     const [scrolled, setScrolled] = useState(false);
 
@@ -186,12 +186,14 @@ const Landing = () => {
         const fetchPlanes = async () => {
             try {
                 const response = await api.get('/subscriptions/planes');
-                const monthlyPlan = response.data.find(p => p.id_plan === 'PRO_MONTHLY');
-                const annualPlan = response.data.find(p => p.id_plan === 'PRO_ANNUAL');
-
+                const precio = (id, fallback) => {
+                    const plan = response.data.find(p => p.id_plan === id);
+                    return plan ? parseFloat(plan.precio) : fallback;
+                };
                 setPrices({
-                    monthly: monthlyPlan ? parseFloat(monthlyPlan.precio) : 60000,
-                    annual: annualPlan ? parseFloat(annualPlan.precio) : 612000
+                    premium: precio('PREMIUM_MONTHLY', 40000),
+                    premiumAnual: precio('PREMIUM_ANNUAL', 408000),
+                    clasica: precio('CLASICA_MONTHLY', 30000)
                 });
             } catch (error) {
                 console.error('Error fetching planes for landing:', error);
@@ -515,7 +517,7 @@ const Landing = () => {
                     <div className="max-w-6xl mx-auto px-4 sm:px-6 grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
                         <Reveal>
                             <Etiqueta>Precio</Etiqueta>
-                            <h2 className="text-3xl sm:text-5xl font-extrabold text-[#083d5a] mb-4 leading-[1.05]">Un solo plan, con todo incluido</h2>
+                            <h2 className="text-3xl sm:text-5xl font-extrabold text-[#083d5a] mb-4 leading-[1.05]">Dos planes, sin comisiones</h2>
                             <p className="text-lg text-[#305a83] font-medium mb-8">Sin comisiones por venta.</p>
                             <ul className="space-y-3">
                                 {[
@@ -543,11 +545,15 @@ const Landing = () => {
                                     <span className="bg-emerald-600 text-white text-xs font-extrabold uppercase tracking-widest px-3 py-1.5 rounded-full">10 días gratis</span>
                                     <span className="bg-[#ff5b00] text-white text-xs font-extrabold uppercase tracking-widest px-3 py-1.5 rounded-full">Todo incluido</span>
                                 </div>
+                                <p className="text-xs font-extrabold uppercase tracking-widest text-[#ffaa66] mb-1 relative z-10">Premium · con facturación automática</p>
                                 <div className="flex items-baseline gap-2 mb-2 relative z-10">
-                                    <span className="text-4xl sm:text-5xl font-extrabold text-white tabular-nums">${prices.monthly.toLocaleString('es-AR')}</span>
+                                    <span className="text-4xl sm:text-5xl font-extrabold text-white tabular-nums">${prices.premium.toLocaleString('es-AR')}</span>
                                     <span className="text-gray-300 font-bold">por mes</span>
                                 </div>
-                                <p className="text-sm font-bold text-[#ffaa66] mb-6 relative z-10">Pagando por año ahorrás 15%: ${prices.annual.toLocaleString('es-AR')}</p>
+                                <p className="text-sm font-bold text-[#ffaa66] mb-4 relative z-10">Pagando por año: ${prices.premiumAnual.toLocaleString('es-AR')}</p>
+                                <p className="text-sm font-bold text-gray-300 mb-6 relative z-10 border-t border-white/10 pt-4">
+                                    ¿No necesitás facturar automáticamente? Plan Clásica: <span className="text-white tabular-nums">${prices.clasica.toLocaleString('es-AR')}</span> por mes.
+                                </p>
 
                                 <div className="bg-emerald-950/40 border border-emerald-500/30 rounded-2xl p-4 mb-6 flex items-start gap-3 relative z-10">
                                     <div className="w-5 h-5 bg-emerald-500/20 rounded-full flex items-center justify-center text-emerald-400 shrink-0 mt-0.5">

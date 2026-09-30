@@ -369,12 +369,12 @@ const Login = () => {
                     </div>
                 </div>
 
-                <div className="mt-10 flex flex-col items-center gap-2 opacity-30">
+                <div className="mt-10 flex flex-col items-center gap-2 opacity-40">
                     <p className="text-[10px] font-black text-gray-900 uppercase tracking-[0.5em] text-center">
-                        Secure Enterprise Platform
+                        Acommerr Enterprise Platform
                     </p>
                     <p className="text-[9px] font-bold text-gray-500 uppercase tracking-widest">
-                        v2.0 Build 2026-04
+                        v2.0 Build 2026-08
                     </p>
                 </div>
             </div>

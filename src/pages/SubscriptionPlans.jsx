@@ -6,11 +6,10 @@ import { Check, Zap, Crown, ArrowLeft, ArrowRight, ShieldCheck } from 'lucide-re
 const SubscriptionPlans = () => {
     const { companyId } = useParams();
     const navigate = useNavigate();
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(null); // id del plan que se está procesando
     const [isAnnual, setIsAnnual] = useState(false);
     const [dbPlans, setDbPlans] = useState([]);
-    const [selectedPlan, setSelectedPlan] = useState('PRO');
-    const [plansLoaded, setPlansLoaded] = useState(false);
+    const [selectedPlan, setSelectedPlan] = useState('PREMIUM');
 
     useEffect(() => {
         console.log("SubscriptionPlans mounted for companyId:", companyId);
@@ -21,8 +20,6 @@ const SubscriptionPlans = () => {
                 setDbPlans(response.data);
             } catch (error) {
                 console.error('Error fetching planes db:', error);
-            } finally {
-                setPlansLoaded(true);
             }
         };
         fetchPlanes();
@@ -34,30 +31,46 @@ const SubscriptionPlans = () => {
         return plan ? parseFloat(plan.precio) : 0;
     };
 
+    const baseFeatures = [
+        '10 Días de Prueba Gratis',
+        'Tienda Online Personalizada',
+        'Gestión de Inventario y Recetas',
+        'Pedidos y Clientes Ilimitados',
+        'Panel de Estadísticas'
+    ];
+
     const plans = [
         {
-            id: 'PRO',
+            id: 'CLASICA',
+            name: 'Plan Clásica',
+            tagline: 'Core Operativo',
+            monthlyPrice: getPrice('CLASICA_MONTHLY') || 30000,
+            annualPrice: getPrice('CLASICA_ANNUAL') || 306000,
+            description: 'Todo para vender online y gestionar tu negocio, sin facturación automática. Probalo gratis por 10 días; si no cancelás antes, se cobra la suscripción.',
+            features: baseFeatures,
+            icon: <Zap className="text-orange-500" />,
+            badge: '10 Días Gratis'
+        },
+        {
+            id: 'PREMIUM',
             name: 'Plan Premium',
-            monthlyPrice: getPrice('PRO_MONTHLY') || 60000,
-            annualPrice: getPrice('PRO_ANNUAL') || 612000,
-            description: 'Probá el sistema completo con todas sus funcionalidades gratis por 10 días. Si no cancelás antes de que termine la prueba, se comenzará a cobrar automáticamente la suscripción.',
+            tagline: 'Kit Completo',
+            monthlyPrice: getPrice('PREMIUM_MONTHLY') || 40000,
+            annualPrice: getPrice('PREMIUM_ANNUAL') || 408000,
+            description: 'El sistema completo con facturación automática a ARCA en cada venta. Probalo gratis por 10 días; si no cancelás antes, se cobra la suscripción.',
             features: [
-                '10 Días de Prueba Gratis',
-                'Tienda Online Personalizada',
-                'Gestión de Inventario y Recetas',
+                ...baseFeatures,
                 'Facturación ARCA (Ex-AFIP) Automática',
                 'Descarga de PDF Ticket',
-                'Pedidos y Clientes Ilimitados',
-                'Panel de Estadísticas Avanzado',
                 'Soporte Prioritario 24/7'
             ],
             icon: <Crown className="text-yellow-500" />,
-            badge: '10 Días Gratis'
+            badge: 'Recomendado'
         }
     ];
 
     const handleSubscribe = async (planType) => {
-        setLoading(true);
+        setLoading(planType);
         try {
             const finalPlanType = `${planType}_${isAnnual ? 'ANNUAL' : 'MONTHLY'}`;
             const response = await api.post('/subscriptions/create', {
@@ -72,7 +85,7 @@ const SubscriptionPlans = () => {
             console.error('Error al iniciar suscripción:', error);
             alert('Hubo un error al procesar tu solicitud. Por favor intenta de nuevo.');
         } finally {
-            setLoading(false);
+            setLoading(null);
         }
     };
 
@@ -106,8 +119,8 @@ const SubscriptionPlans = () => {
                     </div>
                 </div>
 
-                {/* Plan Único Centrado */}
-                <div className="max-w-md mx-auto mb-12">
+                {/* Planes */}
+                <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto mb-12 items-start">
                     {plans.map((plan) => {
                         const isSelected = selectedPlan === plan.id;
                         const finalPrice = isAnnual ? plan.annualPrice : plan.monthlyPrice;
@@ -129,12 +142,12 @@ const SubscriptionPlans = () => {
                                     </div>
                                     <div>
                                         <h3 className="text-2xl font-black text-gray-900">{plan.name}</h3>
-                                        <p className="text-gray-400 text-xs font-bold uppercase tracking-wider">{plan.id === 'STANDARD' ? 'Core Operativo' : 'Kit Completo'}</p>
+                                        <p className="text-gray-400 text-xs font-bold uppercase tracking-wider">{plan.tagline}</p>
                                     </div>
                                 </div>
 
                                 <div className="mb-8">
-                                    <span className="text-5xl font-black text-gray-900 tracking-tighter">${finalPrice.toLocaleString()}</span>
+                                    <span className="text-5xl font-black text-gray-900 tracking-tighter">${finalPrice.toLocaleString('es-AR')}</span>
                                     <span className="text-gray-400 font-bold ml-1">/ {isAnnual ? 'año' : 'mes'}</span>
                                 </div>
 
@@ -154,11 +167,11 @@ const SubscriptionPlans = () => {
                                 </div>
 
                                 <button
-                                    onClick={() => handleSubscribe(plan.id)}
-                                    disabled={loading}
-                                    className={`w-full py-5 rounded-2xl font-black text-lg transition-all flex items-center justify-center gap-3 shadow-xl ${plan.id === 'PRO' ? 'bg-[#242f3d] text-white hover:bg-black shadow-gray-200' : 'bg-orange-600 text-white hover:bg-orange-700 shadow-orange-100 hover:-translate-y-1'}`}
+                                    onClick={(e) => { e.stopPropagation(); handleSubscribe(plan.id); }}
+                                    disabled={!!loading}
+                                    className={`w-full py-5 rounded-2xl font-black text-lg transition-all flex items-center justify-center gap-3 shadow-xl ${plan.id === 'PREMIUM' ? 'bg-[#242f3d] text-white hover:bg-black shadow-gray-200' : 'bg-orange-600 text-white hover:bg-orange-700 shadow-orange-100 hover:-translate-y-1'}`}
                                 >
-                                    {loading ? 'Cargando MP...' : (
+                                    {loading === plan.id ? 'Cargando MP...' : (
                                         <>
                                             Iniciar Prueba Gratis de 10 Días <ArrowRight size={20} />
                                         </>

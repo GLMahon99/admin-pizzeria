@@ -10,13 +10,17 @@ const api = axios.create({
     },
 });
 
-// Interceptor para inyectar el token y el tenant automáticamente (soporta admin y repartidor)
+// Interceptor para inyectar el token y el tenant automáticamente (soporta superadmin, admin y repartidor)
 api.interceptors.request.use((config) => {
+    const isSuperAdminPath = window.location.pathname.includes('/superadmin') || config.url?.includes('/superadmin');
     const isRepartidorPath = window.location.pathname.includes('/reparto');
+    const superAdminToken = localStorage.getItem('superadmin_token');
     const repartidorToken = localStorage.getItem('repartidor_token');
     const adminToken = localStorage.getItem('admin_token');
 
-    if (isRepartidorPath && repartidorToken) {
+    if (isSuperAdminPath && superAdminToken) {
+        config.headers.Authorization = `Bearer ${superAdminToken}`;
+    } else if (isRepartidorPath && repartidorToken) {
         config.headers.Authorization = `Bearer ${repartidorToken}`;
     } else if (adminToken) {
         config.headers.Authorization = `Bearer ${adminToken}`;
@@ -27,7 +31,7 @@ api.interceptors.request.use((config) => {
 
     if (isRepartidorPath && repartidorTenant) {
         config.headers['x-tenant'] = repartidorTenant;
-    } else if (userJson) {
+    } else if (!isSuperAdminPath && userJson) {
         try {
             const user = JSON.parse(userJson);
             if (user.slug) {
@@ -46,9 +50,16 @@ api.interceptors.response.use(
     (response) => response,
     (error) => {
         if (error.response && error.response.status === 401) {
+            const isSuperAdminPath = window.location.pathname.includes('/superadmin');
             const isRepartidorPath = window.location.pathname.includes('/reparto');
 
-            if (isRepartidorPath) {
+            if (isSuperAdminPath) {
+                localStorage.removeItem('superadmin_token');
+                localStorage.removeItem('superadmin_user');
+                if (!window.location.pathname.endsWith('/superadmin/login')) {
+                    window.location.href = '/superadmin/login';
+                }
+            } else if (isRepartidorPath) {
                 // Limpiar credenciales de repartidor
                 localStorage.removeItem('repartidor_token');
                 localStorage.removeItem('repartidor_user');

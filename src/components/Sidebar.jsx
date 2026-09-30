@@ -15,7 +15,8 @@ import {
     ChevronLeft,
     ChevronRight,
     Maximize2,
-    Minimize2
+    Minimize2,
+    ShieldCheck
 } from 'lucide-react';
 
 const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
@@ -141,6 +142,23 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
                     <SettingsIcon size={20} />
                     {!isCollapsed && <span className="animate-in fade-in duration-200">Configuración</span>}
                 </NavLink>
+
+                {localStorage.getItem('superadmin_token') && (
+                    <NavLink
+                        to="/superadmin"
+                        title={isCollapsed ? "Panel Master" : undefined}
+                        className={({ isActive }) => `
+                            flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition-all duration-200
+                            ${isCollapsed ? 'justify-center px-2' : ''}
+                            ${isActive
+                                ? 'bg-amber-500 text-slate-950 shadow-lg shadow-amber-500/20'
+                                : 'text-amber-400 hover:bg-amber-500/10 hover:text-amber-300'}
+                        `}
+                    >
+                        <ShieldCheck size={20} />
+                        {!isCollapsed && <span className="animate-in fade-in duration-200">Panel Master</span>}
+                    </NavLink>
+                )}
 
                 {/* Botón de Pantalla Completa */}
                 <button
