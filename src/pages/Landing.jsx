@@ -1,48 +1,18 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import {
-    ArrowRight, Store, CheckCircle2, Zap, ChevronDown, Wallet,
-    PackageCheck, Receipt, Bike, BarChart3, UserPlus, UtensilsCrossed, Share2
+    ArrowRight, Store, Check, Zap, Plus, Wallet, PackageCheck, Receipt, Bike,
+    BarChart3, UserPlus, UtensilsCrossed, Share2, Smartphone, ShieldCheck, BadgePercent
 } from 'lucide-react';
 import api from '../api/axiosConfig';
 
-const BENEFICIOS = [
-    {
-        icon: Store,
-        color: 'bg-gold-100 text-[#ff5b00]',
-        titulo: 'Tu tienda online',
-        texto: 'Tus clientes piden desde el celular, con tu logo y tus colores. Sin comisiones por venta.'
-    },
-    {
-        icon: Wallet,
-        color: 'bg-blue-50 text-[#083d5a]',
-        titulo: 'Cobrá con Mercado Pago',
-        texto: 'El cliente paga en la tienda y la plata va directo a tu cuenta.'
-    },
-    {
-        icon: PackageCheck,
-        color: 'bg-green-50 text-green-600',
-        titulo: 'Controlá tu stock de insumos',
-        texto: 'Cada venta descuenta los ingredientes. Te avisamos cuando queda poco.'
-    },
-    {
-        icon: Receipt,
-        color: 'bg-gold-100 text-[#ff5b00]',
-        titulo: 'Facturas sin vueltas',
-        texto: 'Se emiten solas, con ARCA (ex AFIP), apenas se aprueba el cobro.'
-    },
-    {
-        icon: Bike,
-        color: 'bg-blue-50 text-[#083d5a]',
-        titulo: 'Repartidores ordenados',
-        texto: 'Cargá a tus cadetes. Cada uno ve sus entregas en su celular.'
-    },
-    {
-        icon: BarChart3,
-        color: 'bg-green-50 text-green-600',
-        titulo: 'Mirá cómo te va',
-        texto: 'Cuánto vendiste, qué se pide más y a qué hora hay más gente.'
-    }
+const RUBROS = ['Pizzerías', 'Hamburgueserías', 'Bares', 'Rotiserías', 'Sushi', 'Parrillas', 'Cafés', 'Heladerías', 'Panaderías', 'Food trucks'];
+
+const NAV_LINKS = [
+    { href: '#funciones', label: 'Funciones' },
+    { href: '#como-funciona', label: 'Cómo funciona' },
+    { href: '#precio', label: 'Precio' },
+    { href: '#preguntas', label: 'Preguntas' }
 ];
 
 // Capturas chicas que se superponen a la imagen base del hero.
@@ -51,22 +21,22 @@ const HERO_CAPTURAS = [
         src: '/capturas/hero-ticket.webp',
         alt: 'Ticket de una venta listo para imprimir',
         width: 365, height: 452,
-        pos: 'top-[-4%] right-[2%] sm:-right-[2%] w-[22%] sm:w-[19%]',
-        rot: '14deg', delay: '0.35s'
+        pos: 'top-[-6%] right-[1%] sm:-right-[3%] w-[22%] sm:w-[17%]',
+        rot: '8deg', delay: '0.35s', float: '0s'
     },
     {
         src: '/capturas/hero-editar-producto.webp',
         alt: 'Pantalla para editar el nombre, el precio y la foto de un producto',
         width: 1130, height: 880,
-        pos: 'bottom-[-10%] right-[6%] sm:-bottom-[8%] sm:right-[5%] w-[38%] sm:w-[36%]',
-        rot: '6deg', delay: '0.5s'
+        pos: 'bottom-[-12%] right-[4%] sm:-bottom-[10%] sm:right-[6%] w-[40%] sm:w-[34%]',
+        rot: '-3deg', delay: '0.5s', float: '1.2s'
     },
     {
         src: '/capturas/hero-producto-tarjeta.webp',
         alt: 'Producto de la carta tal como lo ve el cliente en la tienda online',
         width: 518, height: 650,
-        pos: 'bottom-[-6%] left-[4%] sm:bottom-[2%] sm:left-[3%] w-[26%] sm:w-[24%]',
-        rot: '-5deg', delay: '0.65s'
+        pos: 'bottom-[-8%] left-[2%] sm:bottom-[4%] sm:-left-[3%] w-[26%] sm:w-[20%]',
+        rot: '-6deg', delay: '0.65s', float: '2.4s'
     }
 ];
 
@@ -78,6 +48,7 @@ const PASOS = [
 
 const CAPTURAS_PANEL = [
     {
+        tab: 'Resumen',
         src: '/capturas/panel-resumen.webp',
         width: 1440, height: 709,
         alt: 'Pantalla de resumen del panel con las ventas de hoy y del mes, el ticket promedio y un gráfico de ventas',
@@ -85,6 +56,7 @@ const CAPTURAS_PANEL = [
         texto: 'Las ventas de hoy y del mes, el ticket promedio y los productos que más se piden.'
     },
     {
+        tab: 'Pedidos',
         src: '/capturas/panel-pedidos.webp',
         width: 1440, height: 709,
         alt: 'Lista de pedidos del día con su estado: en preparación, en camino o entregado, y el botón para imprimir el ticket',
@@ -92,6 +64,7 @@ const CAPTURAS_PANEL = [
         texto: 'Mirá cuáles están en preparación, en camino o entregados. Imprimí el ticket con un toque.'
     },
     {
+        tab: 'Productos',
         src: '/capturas/panel-productos.webp',
         width: 1440, height: 709,
         alt: 'Lista de productos del local con categoría y precio, y botones para editar o borrar',
@@ -99,6 +72,7 @@ const CAPTURAS_PANEL = [
         texto: 'Cargá tus productos y cambiá un precio cuando lo necesites.'
     },
     {
+        tab: 'Insumos',
         src: '/capturas/panel-insumos.webp',
         width: 1515, height: 625,
         alt: 'Pantalla de insumos con el stock actual de cada ingrediente, el mínimo y un aviso de estado',
@@ -106,6 +80,7 @@ const CAPTURAS_PANEL = [
         texto: 'Mirá cuánto te queda de cada ingrediente y cuándo tenés que reponer.'
     },
     {
+        tab: 'Configuración',
         src: '/capturas/panel-configuracion.webp',
         width: 1473, height: 741,
         alt: 'Pantalla de configuración con el nombre del local, el logo, los colores, las redes y los datos de Mercado Pago',
@@ -158,10 +133,54 @@ const PREGUNTAS = [
     }
 ];
 
-const botonPrincipal = 'bg-[#ff5b00] hover:bg-[#ef4c00] text-white font-black text-lg rounded-full min-h-[52px] px-8 py-3 inline-flex items-center justify-center gap-3 shadow-lg shadow-gold-200 transition-all active:scale-95';
+const INCLUYE = [
+    'Tu tienda online y el panel para manejar tu local',
+    'Stock y recetas: cada venta descuenta ingredientes',
+    'Facturas electrónicas de ARCA (ex AFIP)',
+    'Soporte prioritario'
+];
+
+const botonPrincipal = 'group bg-[#ff5b00] hover:bg-[#ef4c00] text-white font-extrabold text-base sm:text-lg rounded-full min-h-[56px] px-8 py-3 inline-flex items-center justify-center gap-3 shadow-xl shadow-[#ff5b00]/30 transition-[transform,background-color] duration-200 active:scale-[0.97] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#ff5b00]';
+const botonSecundario = 'bg-white ring-1 ring-[#083d5a]/15 hover:ring-[#ff5b00] hover:text-[#ff5b00] min-h-[56px] px-8 py-3 rounded-full font-extrabold text-base sm:text-lg text-[#083d5a] transition-[transform,box-shadow,color] duration-200 active:scale-[0.97] inline-flex items-center justify-center';
+
+// Muestra el contenido con una entrada suave cuando entra en pantalla.
+const Reveal = ({ children, delay = 0, className = '', as = 'div' }) => {
+    const Tag = as;
+    const ref = useRef(null);
+    const [visible, setVisible] = useState(typeof IntersectionObserver === 'undefined');
+
+    useEffect(() => {
+        const node = ref.current;
+        if (!node || typeof IntersectionObserver === 'undefined') return undefined;
+        const observer = new IntersectionObserver(([entry]) => {
+            if (entry.isIntersecting) {
+                setVisible(true);
+                observer.disconnect();
+            }
+        }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+        observer.observe(node);
+        return () => observer.disconnect();
+    }, []);
+
+    return (
+        <Tag
+            ref={ref}
+            className={`reveal ${visible ? 'is-visible' : ''} ${className}`}
+            style={{ '--reveal-delay': `${delay}ms` }}
+        >
+            {children}
+        </Tag>
+    );
+};
+
+const Etiqueta = ({ children }) => (
+    <span className="inline-block text-xs font-extrabold uppercase tracking-[0.14em] text-[#ff5b00] mb-4">{children}</span>
+);
 
 const Landing = () => {
     const [prices, setPrices] = useState({ monthly: 60000, annual: 612000 });
+    const [tab, setTab] = useState(0);
+    const [scrolled, setScrolled] = useState(false);
 
     useEffect(() => {
         const fetchPlanes = async () => {
@@ -181,240 +200,426 @@ const Landing = () => {
         fetchPlanes();
     }, []);
 
+    useEffect(() => {
+        const onScroll = () => setScrolled(window.scrollY > 12);
+        window.addEventListener('scroll', onScroll, { passive: true });
+        return () => window.removeEventListener('scroll', onScroll);
+    }, []);
+
+    const panel = CAPTURAS_PANEL[tab];
+
     return (
-        <div className="min-h-screen bg-slate-50 font-sans selection:bg-gold-200 overflow-x-hidden">
-            {/* Barra superior */}
-            <nav className="flex items-center justify-between gap-3 px-4 py-4 sm:p-6 max-w-7xl mx-auto">
-                <img src="/logo-acommerr.png" alt="Acommerr" className="h-10 sm:h-12 object-contain" />
-                <div className="flex items-center gap-2 sm:gap-4">
-                    <Link to="/login" className="font-bold text-[#305a83] hover:text-[#ff5b00] transition-colors min-h-[44px] px-3 inline-flex items-center">
-                        Ingresar
-                    </Link>
-                    <Link to="/register" className="bg-[#ff5b00] hover:bg-[#ef4c00] text-white px-4 sm:px-6 min-h-[44px] rounded-full font-bold shadow-lg shadow-gold-200 transition-all active:scale-95 inline-flex items-center">
-                        Probalo gratis
-                    </Link>
-                </div>
-            </nav>
+        <div className="landing min-h-screen bg-[#fbf8f4] text-[#25323f] selection:bg-[#ffcba3] overflow-x-hidden">
+            <a href="#contenido" className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[60] focus:bg-white focus:px-4 focus:py-2 focus:rounded-full focus:font-bold">
+                Saltar al contenido
+            </a>
 
-            <main>
+            {/* Barra superior flotante */}
+            <header className="fixed top-3 sm:top-4 inset-x-0 z-50 px-3 sm:px-6 pointer-events-none">
+                <nav
+                    aria-label="Principal"
+                    className={`pointer-events-auto max-w-6xl mx-auto flex items-center justify-between gap-3 rounded-full pl-5 pr-2 py-2 transition-[background-color,box-shadow,backdrop-filter] duration-300 ${scrolled ? 'bg-white/85 backdrop-blur-xl shadow-lg shadow-[#083d5a]/10 ring-1 ring-[#083d5a]/5' : 'bg-transparent'}`}
+                >
+                    <a href="#inicio" aria-label="Acommerr, ir al inicio">
+                        <img src="/logo-acommerr.png" alt="Acommerr" className="h-8 sm:h-10 object-contain" />
+                    </a>
+                    <ul className="hidden md:flex items-center gap-1">
+                        {NAV_LINKS.map(({ href, label }) => (
+                            <li key={href}>
+                                <a href={href} className="px-4 py-2 rounded-full text-sm font-bold text-[#305a83] hover:text-[#ff5b00] hover:bg-[#ff5b00]/5 transition-colors">
+                                    {label}
+                                </a>
+                            </li>
+                        ))}
+                    </ul>
+                    <div className="flex items-center gap-1 sm:gap-2">
+                        <Link to="/login" className="font-bold text-sm text-[#083d5a] hover:text-[#ff5b00] transition-colors min-h-[44px] px-3 inline-flex items-center">
+                            Ingresar
+                        </Link>
+                        <Link to="/register" className="bg-[#ff5b00] hover:bg-[#ef4c00] text-white text-sm px-4 sm:px-6 min-h-[44px] rounded-full font-extrabold transition-[transform,background-color] duration-200 active:scale-[0.97] inline-flex items-center">
+                            Probalo gratis
+                        </Link>
+                    </div>
+                </nav>
+            </header>
+
+            <main id="contenido">
                 {/* Hero */}
-                <section className="relative pt-10 sm:pt-16 pb-16 overflow-hidden">
-                    <div className="absolute top-0 right-0 -translate-y-12 translate-x-1/3 pointer-events-none">
-                        <div className="w-[600px] h-[600px] bg-[#ff5b00]/10 rounded-full blur-3xl" />
-                    </div>
-                    <div className="absolute top-40 left-0 -translate-x-1/3 pointer-events-none">
-                        <div className="w-[500px] h-[500px] bg-[#083d5a]/10 rounded-full blur-3xl" />
+                <section id="inicio" className="relative pt-32 sm:pt-40 pb-20 sm:pb-28">
+                    <div aria-hidden="true" className="absolute inset-0 pointer-events-none overflow-hidden">
+                        <div className="absolute -top-40 -right-40 w-[640px] h-[640px] rounded-full bg-[#ff5b00]/12 blur-3xl" />
+                        <div className="absolute top-1/3 -left-56 w-[520px] h-[520px] rounded-full bg-[#083d5a]/10 blur-3xl" />
                     </div>
 
-                    <div className="max-w-5xl mx-auto px-4 sm:px-6 relative z-10 text-center">
-                        <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-[#25323f] tracking-tight mb-6 leading-tight">
-                            Todo tu local en <span className="text-[#ff5b00]">un solo lugar</span>
-                        </h1>
-                        <p className="text-lg sm:text-xl text-[#305a83] mb-6 max-w-2xl mx-auto font-medium">
-                            Recibí pedidos por internet, controlá tu stock, cobrá y facturá. Desde el celular o la compu.
-                        </p>
-
-                        <p className="text-base sm:text-lg text-[#25323f] font-bold mb-5 max-w-xl mx-auto leading-snug">
-                            ¿Tenés un bar, hamburguesería, pizzería, rotisería...?{' '}
-                            <span className="text-[#ff5b00]">Acommerr es la solución para tu negocio.</span>
-                        </p>
-
-                        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                            <Link to="/register" className={`w-full sm:w-auto ${botonPrincipal}`}>
-                                Probalo 10 días gratis <ArrowRight size={20} />
-                            </Link>
-                            <Link to="/login" className="w-full sm:w-auto bg-white border-2 border-gray-200 hover:border-[#ff5b00] hover:text-[#ff5b00] min-h-[52px] px-8 py-3 rounded-full font-black text-lg text-gray-600 transition-all inline-flex items-center justify-center">
-                                Ya tengo cuenta
-                            </Link>
+                    <div className="relative max-w-6xl mx-auto px-4 sm:px-6">
+                        <div className="max-w-3xl">
+                            <Reveal>
+                                <span className="inline-flex items-center gap-2 rounded-full bg-white ring-1 ring-[#ff5b00]/20 pl-2 pr-4 py-1.5 text-sm font-bold text-[#083d5a] shadow-sm mb-7">
+                                    <span className="bg-[#ff5b00] text-white rounded-full px-2.5 py-0.5 text-xs font-extrabold">Nuevo</span>
+                                    10 días gratis, con todo incluido
+                                </span>
+                            </Reveal>
+                            <Reveal delay={60}>
+                                <h1 className="text-[2.6rem] leading-[1.02] sm:text-6xl lg:text-7xl font-extrabold text-[#083d5a] mb-6">
+                                    Todo tu local en <span className="text-[#ff5b00]">un solo lugar</span>
+                                </h1>
+                            </Reveal>
+                            <Reveal delay={120}>
+                                <p className="text-lg sm:text-xl text-[#305a83] mb-3 max-w-xl font-medium leading-relaxed">
+                                    Recibí pedidos por internet, controlá tu stock, cobrá y facturá. Desde el celular o la compu.
+                                </p>
+                                <p className="text-base sm:text-lg text-[#25323f] font-bold mb-9 max-w-xl leading-snug">
+                                    ¿Tenés un bar, hamburguesería, pizzería, rotisería...?{' '}
+                                    <span className="text-[#ff5b00]">Acommerr es la solución para tu negocio.</span>
+                                </p>
+                            </Reveal>
+                            <Reveal delay={180}>
+                                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
+                                    <Link to="/register" className={botonPrincipal}>
+                                        Probalo 10 días gratis
+                                        <ArrowRight size={20} className="transition-transform duration-200 group-hover:translate-x-1" aria-hidden="true" />
+                                    </Link>
+                                    <Link to="/login" className={botonSecundario}>
+                                        Ya tengo cuenta
+                                    </Link>
+                                </div>
+                                <ul className="mt-7 flex flex-wrap gap-x-6 gap-y-2 text-sm font-bold text-[#305a83]">
+                                    {['Sin comisiones por venta', 'Cobrás con Mercado Pago', 'Facturas con ARCA'].map(t => (
+                                        <li key={t} className="inline-flex items-center gap-2">
+                                            <Check size={16} strokeWidth={3} className="text-emerald-600" aria-hidden="true" /> {t}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </Reveal>
                         </div>
 
-                        <div className="relative mt-12 mb-8 sm:mb-12">
-                            <div className="rounded-2xl sm:rounded-3xl overflow-hidden border border-gray-200 shadow-2xl shadow-[#083d5a]/20 bg-white">
-                                <img
-                                    src="/capturas/panel-resumen.webp"
-                                    alt="Pantalla de resumen del panel de Acommerr con las ventas de hoy y del mes, el ticket promedio y un gráfico de ventas"
-                                    width="1440"
-                                    height="709"
-                                    fetchPriority="high"
-                                    decoding="async"
-                                    className="w-full h-auto block"
-                                />
-                            </div>
-                            {HERO_CAPTURAS.map(({ src, alt, width, height, pos, rot, delay }) => (
-                                <div
-                                    key={src}
-                                    className={`hero-pop absolute ${pos} rounded-xl sm:rounded-2xl overflow-hidden border border-gray-200 bg-white shadow-2xl shadow-[#083d5a]/30`}
-                                    style={{ '--hero-rot': rot, animationDelay: delay }}
-                                >
+                        <Reveal delay={240} className="relative mt-16 sm:mt-20">
+                            <div className="rounded-[1.25rem] sm:rounded-[2rem] p-2 sm:p-3 bg-gradient-to-b from-white to-[#083d5a]/5 ring-1 ring-[#083d5a]/10 shadow-2xl shadow-[#083d5a]/20">
+                                <div className="rounded-[0.9rem] sm:rounded-[1.5rem] overflow-hidden bg-white ring-1 ring-[#083d5a]/10">
+                                    <div className="flex items-center gap-1.5 px-4 py-3 bg-[#f4f1ec] border-b border-[#083d5a]/5" aria-hidden="true">
+                                        <span className="w-2.5 h-2.5 rounded-full bg-[#ff5b00]/70" />
+                                        <span className="w-2.5 h-2.5 rounded-full bg-[#083d5a]/25" />
+                                        <span className="w-2.5 h-2.5 rounded-full bg-[#083d5a]/15" />
+                                    </div>
                                     <img
-                                        src={src}
-                                        alt={alt}
-                                        width={width}
-                                        height={height}
-                                        loading="lazy"
+                                        src="/capturas/panel-resumen.webp"
+                                        alt="Pantalla de resumen del panel de Acommerr con las ventas de hoy y del mes, el ticket promedio y un gráfico de ventas"
+                                        width="1440"
+                                        height="709"
+                                        fetchPriority="high"
                                         decoding="async"
                                         className="w-full h-auto block"
                                     />
                                 </div>
+                            </div>
+                            {HERO_CAPTURAS.map(({ src, alt, width, height, pos, rot, delay, float }) => (
+                                <div
+                                    key={src}
+                                    className={`hero-pop absolute ${pos}`}
+                                    style={{ '--hero-rot': rot, animationDelay: delay }}
+                                >
+                                    <div
+                                        className="landing-float rounded-xl sm:rounded-2xl overflow-hidden ring-1 ring-[#083d5a]/10 bg-white shadow-2xl shadow-[#083d5a]/30"
+                                        style={{ '--float-delay': float }}
+                                    >
+                                        <img src={src} alt={alt} width={width} height={height} loading="lazy" decoding="async" className="w-full h-auto block" />
+                                    </div>
+                                </div>
                             ))}
-                        </div>
+                        </Reveal>
                     </div>
                 </section>
 
-                {/* Qué resolvés */}
-                <section className="max-w-7xl mx-auto px-4 sm:px-6 py-16">
-                    <h2 className="text-3xl sm:text-4xl font-black text-[#25323f] text-center mb-3">Lo que te resuelve todos los días</h2>
-                    <p className="text-lg text-[#305a83] text-center font-medium mb-12 max-w-2xl mx-auto">Menos papelitos y menos llamados. Más tiempo para atender tu local.</p>
-                    <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {BENEFICIOS.map(({ icon, color, titulo, texto }) => {
-                            const Icon = icon;
-                            return (
-                            <div key={titulo} className="bg-white p-6 sm:p-8 rounded-[2rem] shadow-xl shadow-gray-200/50 border border-white">
-                                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-5 ${color}`}>
-                                    <Icon size={28} aria-hidden="true" />
+                {/* Cinta de rubros */}
+                <section aria-label="Para qué tipo de negocio sirve" className="py-8 border-y border-[#083d5a]/8 bg-white/60">
+                    <p className="text-center text-sm font-bold text-[#305a83] mb-5 px-4">Pensado para locales gastronómicos como el tuyo</p>
+                    <div className="overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_12%,black_88%,transparent)]">
+                        <ul className="landing-marquee flex w-max gap-3">
+                            {[...RUBROS, ...RUBROS].map((r, i) => (
+                                <li key={`${r}-${i}`} aria-hidden={i >= RUBROS.length} className="shrink-0 rounded-full bg-white ring-1 ring-[#083d5a]/10 px-5 py-2.5 text-sm sm:text-base font-bold text-[#083d5a]">
+                                    {r}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </section>
+
+                {/* Qué resolvés: bento */}
+                <section id="funciones" className="max-w-6xl mx-auto px-4 sm:px-6 py-20 sm:py-28">
+                    <Reveal className="max-w-2xl mb-12 sm:mb-16">
+                        <Etiqueta>Funciones</Etiqueta>
+                        <h2 className="text-3xl sm:text-5xl font-extrabold text-[#083d5a] mb-4 leading-[1.05]">Lo que te resuelve todos los días</h2>
+                        <p className="text-lg text-[#305a83] font-medium">Menos papelitos y menos llamados. Más tiempo para atender tu local.</p>
+                    </Reveal>
+
+                    <div className="grid grid-cols-1 md:grid-cols-6 gap-4 sm:gap-5">
+                        {/* Tienda online */}
+                        <Reveal className="md:col-span-4 md:row-span-2 relative overflow-hidden rounded-[2rem] bg-[#083d5a] text-white p-7 sm:p-10 landing-grain min-h-[380px]">
+                            <div className="relative z-10 max-w-sm">
+                                <div className="w-12 h-12 rounded-2xl bg-[#ff5b00] flex items-center justify-center mb-6">
+                                    <Store size={24} aria-hidden="true" />
                                 </div>
-                                <h3 className="text-xl sm:text-2xl font-black text-[#25323f] mb-2">{titulo}</h3>
-                                <p className="text-base sm:text-lg text-[#305a83] font-medium leading-relaxed">{texto}</p>
+                                <h3 className="text-2xl sm:text-4xl font-extrabold mb-3 leading-tight">Tu tienda online</h3>
+                                <p className="text-base sm:text-lg text-white/80 font-medium leading-relaxed">Tus clientes piden desde el celular, con tu logo y tus colores. Sin comisiones por venta.</p>
                             </div>
-                            );
-                        })}
+                            <div className="hidden sm:block absolute -right-2 -bottom-16 w-[250px] lg:w-[290px] rotate-[6deg] rounded-[1.75rem] overflow-hidden border-[6px] border-[#25323f] shadow-2xl shadow-black/40">
+                                <img src="/capturas/tienda-checkout.webp" alt="" width="720" height="1300" loading="lazy" decoding="async" className="w-full h-auto block" />
+                            </div>
+                        </Reveal>
+
+                        <Reveal delay={80} className="md:col-span-2 rounded-[2rem] bg-white ring-1 ring-[#083d5a]/8 p-7">
+                            <div className="w-11 h-11 rounded-2xl bg-[#009ee3]/10 text-[#0078b4] flex items-center justify-center mb-5">
+                                <Wallet size={22} aria-hidden="true" />
+                            </div>
+                            <h3 className="text-xl font-extrabold mb-2">Cobrá con Mercado Pago</h3>
+                            <p className="text-base text-[#305a83] font-medium leading-relaxed">El cliente paga en la tienda y la plata va directo a tu cuenta.</p>
+                        </Reveal>
+
+                        <Reveal delay={140} className="md:col-span-2 rounded-[2rem] bg-[#ff5b00] text-white p-7">
+                            <div className="w-11 h-11 rounded-2xl bg-white/20 flex items-center justify-center mb-5">
+                                <Receipt size={22} aria-hidden="true" />
+                            </div>
+                            <h3 className="text-xl font-extrabold mb-2">Facturas sin vueltas</h3>
+                            <p className="text-base text-white/90 font-medium leading-relaxed">Se emiten solas, con ARCA (ex AFIP), apenas se aprueba el cobro.</p>
+                        </Reveal>
+
+                        <Reveal delay={60} className="md:col-span-3 rounded-[2rem] bg-white ring-1 ring-[#083d5a]/8 p-7 sm:p-8 flex gap-5 items-start">
+                            <div className="shrink-0 w-11 h-11 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                                <PackageCheck size={22} aria-hidden="true" />
+                            </div>
+                            <div>
+                                <h3 className="text-xl font-extrabold mb-2">Controlá tu stock de insumos</h3>
+                                <p className="text-base text-[#305a83] font-medium leading-relaxed">Cada venta descuenta los ingredientes. Te avisamos cuando queda poco.</p>
+                            </div>
+                        </Reveal>
+
+                        <Reveal delay={120} className="md:col-span-3 rounded-[2rem] bg-white ring-1 ring-[#083d5a]/8 p-7 sm:p-8 flex gap-5 items-start">
+                            <div className="shrink-0 w-11 h-11 rounded-2xl bg-[#083d5a]/8 text-[#083d5a] flex items-center justify-center">
+                                <Bike size={22} aria-hidden="true" />
+                            </div>
+                            <div>
+                                <h3 className="text-xl font-extrabold mb-2">Repartidores ordenados</h3>
+                                <p className="text-base text-[#305a83] font-medium leading-relaxed">Cargá a tus cadetes. Cada uno ve sus entregas en su celular.</p>
+                            </div>
+                        </Reveal>
+
+                        <Reveal delay={60} className="md:col-span-6 rounded-[2rem] bg-gradient-to-br from-white to-[#ffe6d4]/60 ring-1 ring-[#ff5b00]/15 p-7 sm:p-8 flex flex-col sm:flex-row sm:items-center gap-5 sm:gap-8">
+                            <div className="shrink-0 w-12 h-12 rounded-2xl bg-[#ff5b00]/10 text-[#ff5b00] flex items-center justify-center">
+                                <BarChart3 size={24} aria-hidden="true" />
+                            </div>
+                            <div className="flex-1">
+                                <h3 className="text-xl sm:text-2xl font-extrabold mb-1">Mirá cómo te va</h3>
+                                <p className="text-base sm:text-lg text-[#305a83] font-medium">Cuánto vendiste, qué se pide más y a qué hora hay más gente.</p>
+                            </div>
+                        </Reveal>
                     </div>
                 </section>
 
                 {/* Cómo funciona */}
-                <section className="bg-white py-16">
-                    <div className="max-w-5xl mx-auto px-4 sm:px-6">
-                        <h2 className="text-3xl sm:text-4xl font-black text-[#25323f] text-center mb-12">Empezar es fácil</h2>
-                        <ol className="grid md:grid-cols-3 gap-8">
+                <section id="como-funciona" className="bg-[#083d5a] text-white py-20 sm:py-28 relative overflow-hidden landing-grain">
+                    <div aria-hidden="true" className="absolute -top-32 -right-24 w-[420px] h-[420px] rounded-full bg-[#ff5b00]/20 blur-3xl pointer-events-none" />
+                    <div className="relative max-w-6xl mx-auto px-4 sm:px-6">
+                        <Reveal className="max-w-2xl mb-14">
+                            <Etiqueta>Cómo funciona</Etiqueta>
+                            <h2 className="text-3xl sm:text-5xl font-extrabold leading-[1.05]">Empezar es fácil</h2>
+                        </Reveal>
+                        <ol className="grid md:grid-cols-3 gap-5 sm:gap-6">
                             {PASOS.map(({ icon, titulo, texto }, i) => {
                                 const Icon = icon;
                                 return (
-                                <li key={titulo} className="text-center">
-                                    <div className="relative w-16 h-16 mx-auto mb-4 bg-[#083d5a] text-white rounded-full flex items-center justify-center">
-                                        <Icon size={28} aria-hidden="true" />
-                                        <span className="absolute -top-2 -right-2 w-7 h-7 rounded-full bg-[#ff5b00] text-white text-sm font-black flex items-center justify-center">{i + 1}</span>
-                                    </div>
-                                    <h3 className="text-xl font-black text-[#25323f] mb-2">{titulo}</h3>
-                                    <p className="text-base sm:text-lg text-[#305a83] font-medium">{texto}</p>
-                                </li>
+                                    <Reveal as="li" key={titulo} delay={i * 90} className="relative rounded-[2rem] bg-white/[0.06] ring-1 ring-white/10 p-7 sm:p-8 overflow-hidden">
+                                        <span aria-hidden="true" className="absolute -top-4 right-4 text-[7rem] leading-none font-extrabold text-white/[0.06]">{i + 1}</span>
+                                        <div className="relative w-12 h-12 rounded-2xl bg-[#ff5b00] flex items-center justify-center mb-6">
+                                            <Icon size={24} aria-hidden="true" />
+                                        </div>
+                                        <p className="text-xs font-extrabold uppercase tracking-[0.14em] text-[#ffaa66] mb-2">Paso {i + 1}</p>
+                                        <h3 className="text-xl sm:text-2xl font-extrabold mb-2">{titulo}</h3>
+                                        <p className="text-base sm:text-lg text-white/75 font-medium leading-relaxed">{texto}</p>
+                                    </Reveal>
                                 );
                             })}
                         </ol>
                     </div>
                 </section>
 
-                {/* Capturas del panel */}
-                <section className="max-w-7xl mx-auto px-4 sm:px-6 py-16">
-                    <h2 className="text-3xl sm:text-4xl font-black text-[#25323f] text-center mb-3">Mirá cómo se usa</h2>
-                    <p className="text-lg text-[#305a83] text-center font-medium mb-12 max-w-2xl mx-auto">Estas son pantallas reales de Acommerr.</p>
+                {/* Recorrido por el panel */}
+                <section id="panel" className="max-w-6xl mx-auto px-4 sm:px-6 py-20 sm:py-28">
+                    <Reveal className="max-w-2xl mb-10">
+                        <Etiqueta>El panel</Etiqueta>
+                        <h2 className="text-3xl sm:text-5xl font-extrabold text-[#083d5a] mb-4 leading-[1.05]">Mirá cómo se usa</h2>
+                        <p className="text-lg text-[#305a83] font-medium">Estas son pantallas reales de Acommerr.</p>
+                    </Reveal>
 
-                    <div className="grid lg:grid-cols-2 gap-8 mb-16">
-                        {CAPTURAS_PANEL.map(({ src, alt, width, height, titulo, texto }, i) => (
-                            <figure key={src} className={i === 0 ? 'lg:col-span-2' : ''}>
-                                <div className="rounded-2xl overflow-hidden border border-gray-200 shadow-xl shadow-gray-200/60 bg-white">
-                                    <img src={src} alt={alt} width={width} height={height} loading="lazy" decoding="async" className="w-full h-auto block" />
-                                </div>
-                                <figcaption className="mt-4 px-1">
-                                    <h3 className="text-xl font-black text-[#25323f]">{titulo}</h3>
-                                    <p className="text-base sm:text-lg text-[#305a83] font-medium">{texto}</p>
-                                </figcaption>
-                            </figure>
+                    <div role="tablist" aria-label="Pantallas del panel" className="flex gap-2 overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 mb-6">
+                        {CAPTURAS_PANEL.map(({ tab: nombre }, i) => (
+                            <button
+                                key={nombre}
+                                role="tab"
+                                type="button"
+                                id={`tab-${i}`}
+                                aria-selected={tab === i}
+                                aria-controls="panel-captura"
+                                onClick={() => setTab(i)}
+                                className={`shrink-0 min-h-[44px] px-5 rounded-full font-bold text-sm sm:text-base transition-[background-color,color,transform] duration-200 active:scale-[0.97] ${tab === i ? 'bg-[#083d5a] text-white' : 'bg-white ring-1 ring-[#083d5a]/10 text-[#305a83] hover:text-[#ff5b00]'}`}
+                            >
+                                {nombre}
+                            </button>
                         ))}
                     </div>
 
-                    <h3 className="text-2xl sm:text-3xl font-black text-[#25323f] text-center mb-10">Y en el celular de tus clientes y repartidores</h3>
-                    <div className="grid sm:grid-cols-3 gap-10 max-w-4xl mx-auto">
-                        {CAPTURAS_CELULAR.map(({ src, alt, titulo, texto }) => (
-                            <figure key={src} className="max-w-[260px] mx-auto sm:max-w-none">
-                                <div className="rounded-[1.75rem] overflow-hidden border-4 border-[#25323f] shadow-xl shadow-gray-300/60 bg-white">
-                                    <img src={src} alt={alt} width="720" height="1300" loading="lazy" decoding="async" className="w-full h-auto block" />
-                                </div>
-                                <figcaption className="mt-4 text-center">
-                                    <h4 className="text-lg font-black text-[#25323f]">{titulo}</h4>
-                                    <p className="text-base text-[#305a83] font-medium">{texto}</p>
-                                </figcaption>
-                            </figure>
-                        ))}
+                    <div id="panel-captura" role="tabpanel" aria-labelledby={`tab-${tab}`} className="grid lg:grid-cols-[1fr_2.2fr] gap-6 lg:gap-10 items-start">
+                        <div className="lg:pt-6">
+                            <h3 className="text-2xl sm:text-3xl font-extrabold text-[#083d5a] mb-3">{panel.titulo}</h3>
+                            <p className="text-base sm:text-lg text-[#305a83] font-medium leading-relaxed">{panel.texto}</p>
+                        </div>
+                        <div className="rounded-[1.25rem] sm:rounded-[2rem] p-2 sm:p-3 bg-gradient-to-b from-white to-[#083d5a]/5 ring-1 ring-[#083d5a]/10 shadow-2xl shadow-[#083d5a]/15">
+                            <div className="rounded-[0.9rem] sm:rounded-[1.5rem] overflow-hidden bg-white ring-1 ring-[#083d5a]/10">
+                                <img
+                                    key={panel.src}
+                                    src={panel.src}
+                                    alt={panel.alt}
+                                    width={panel.width}
+                                    height={panel.height}
+                                    loading="lazy"
+                                    decoding="async"
+                                    className="w-full h-auto block animate-[hero-pop_0.4s_cubic-bezier(0.23,1,0.32,1)]"
+                                    style={{ '--hero-rot': '0deg' }}
+                                />
+                            </div>
+                        </div>
                     </div>
+
+                    <Reveal className="mt-20 sm:mt-28">
+                        <div className="flex items-center gap-3 mb-10 justify-center text-center">
+                            <Smartphone size={22} className="text-[#ff5b00] shrink-0" aria-hidden="true" />
+                            <h3 className="text-2xl sm:text-3xl font-extrabold text-[#083d5a]">Y en el celular de tus clientes y repartidores</h3>
+                        </div>
+                        <div className="grid sm:grid-cols-3 gap-10 sm:gap-8 max-w-4xl mx-auto">
+                            {CAPTURAS_CELULAR.map(({ src, alt, titulo, texto }, i) => (
+                                <figure key={src} className={`max-w-[260px] mx-auto sm:max-w-none ${i === 1 ? 'sm:mt-10' : ''}`}>
+                                    <div className="rounded-[1.75rem] overflow-hidden border-[5px] border-[#25323f] shadow-xl shadow-[#083d5a]/20 bg-white">
+                                        <img src={src} alt={alt} width="720" height="1300" loading="lazy" decoding="async" className="w-full h-auto block" />
+                                    </div>
+                                    <figcaption className="mt-5 text-center">
+                                        <h4 className="text-lg font-extrabold text-[#083d5a]">{titulo}</h4>
+                                        <p className="text-base text-[#305a83] font-medium">{texto}</p>
+                                    </figcaption>
+                                </figure>
+                            ))}
+                        </div>
+                    </Reveal>
                 </section>
 
                 {/* Precio */}
-                <section className="max-w-5xl mx-auto px-4 sm:px-6 py-16 text-center">
-                    <h2 className="text-3xl sm:text-4xl font-black text-[#25323f] mb-3">Un solo plan, con todo incluido</h2>
-                    <p className="text-lg text-[#305a83] mb-12 font-medium">Sin comisiones por venta.</p>
+                <section id="precio" className="bg-white py-20 sm:py-28">
+                    <div className="max-w-6xl mx-auto px-4 sm:px-6 grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+                        <Reveal>
+                            <Etiqueta>Precio</Etiqueta>
+                            <h2 className="text-3xl sm:text-5xl font-extrabold text-[#083d5a] mb-4 leading-[1.05]">Un solo plan, con todo incluido</h2>
+                            <p className="text-lg text-[#305a83] font-medium mb-8">Sin comisiones por venta.</p>
+                            <ul className="space-y-3">
+                                {[
+                                    { icon: BadgePercent, t: 'Sin comisiones por venta' },
+                                    { icon: Zap, t: '10 días gratis para probarlo' },
+                                    { icon: ShieldCheck, t: 'Cancelás online cuando quieras' }
+                                ].map(({ icon, t }) => {
+                                    const Icon = icon;
+                                    return (
+                                        <li key={t} className="flex items-center gap-3 font-bold text-[#25323f]">
+                                            <span className="w-9 h-9 rounded-xl bg-[#ff5b00]/10 text-[#ff5b00] flex items-center justify-center"><Icon size={18} aria-hidden="true" /></span>
+                                            {t}
+                                        </li>
+                                    );
+                                })}
+                            </ul>
+                        </Reveal>
 
-                    <div className="bg-[#25323f] rounded-[2rem] sm:rounded-[3rem] p-6 sm:p-10 max-w-md mx-auto relative overflow-hidden shadow-2xl text-left">
-                        <div className="absolute top-0 right-0 p-8 opacity-10 text-white pointer-events-none">
-                            <Store size={120} aria-hidden="true" />
-                        </div>
-                        <div className="flex flex-wrap gap-2 mb-5 relative z-10">
-                            <span className="bg-emerald-600 text-white text-xs font-black uppercase tracking-widest px-3 py-1.5 rounded-full">10 días gratis</span>
-                            <span className="bg-[#ff5b00] text-white text-xs font-black uppercase tracking-widest px-3 py-1.5 rounded-full">Todo incluido</span>
-                        </div>
-                        <div className="flex items-baseline gap-2 mb-2 relative z-10">
-                            <span className="text-4xl sm:text-5xl font-black text-white">${prices.monthly.toLocaleString('es-AR')}</span>
-                            <span className="text-gray-300 font-bold">por mes</span>
-                        </div>
-                        <p className="text-sm font-bold text-gold-300 mb-6 relative z-10">Pagando por año ahorrás 15%: ${prices.annual.toLocaleString('es-AR')}</p>
+                        <Reveal delay={100}>
+                            <div className="bg-[#25323f] rounded-[2rem] sm:rounded-[2.5rem] p-7 sm:p-10 max-w-md w-full mx-auto lg:ml-auto relative overflow-hidden shadow-2xl shadow-[#083d5a]/30 landing-grain">
+                                <div className="absolute top-0 right-0 p-8 opacity-10 text-white pointer-events-none">
+                                    <Store size={120} aria-hidden="true" />
+                                </div>
+                                <div className="flex flex-wrap gap-2 mb-5 relative z-10">
+                                    <span className="bg-emerald-600 text-white text-xs font-extrabold uppercase tracking-widest px-3 py-1.5 rounded-full">10 días gratis</span>
+                                    <span className="bg-[#ff5b00] text-white text-xs font-extrabold uppercase tracking-widest px-3 py-1.5 rounded-full">Todo incluido</span>
+                                </div>
+                                <div className="flex items-baseline gap-2 mb-2 relative z-10">
+                                    <span className="text-4xl sm:text-5xl font-extrabold text-white tabular-nums">${prices.monthly.toLocaleString('es-AR')}</span>
+                                    <span className="text-gray-300 font-bold">por mes</span>
+                                </div>
+                                <p className="text-sm font-bold text-[#ffaa66] mb-6 relative z-10">Pagando por año ahorrás 15%: ${prices.annual.toLocaleString('es-AR')}</p>
 
-                        <div className="bg-emerald-950/40 border border-emerald-500/30 rounded-2xl p-4 mb-6 flex items-start gap-3 relative z-10">
-                            <div className="w-5 h-5 bg-emerald-500/20 rounded-full flex items-center justify-center text-emerald-400 shrink-0 mt-0.5">
-                                <Zap size={12} strokeWidth={3} className="fill-emerald-400" aria-hidden="true" />
+                                <div className="bg-emerald-950/40 border border-emerald-500/30 rounded-2xl p-4 mb-6 flex items-start gap-3 relative z-10">
+                                    <div className="w-5 h-5 bg-emerald-500/20 rounded-full flex items-center justify-center text-emerald-400 shrink-0 mt-0.5">
+                                        <Zap size={12} strokeWidth={3} className="fill-emerald-400" aria-hidden="true" />
+                                    </div>
+                                    <div>
+                                        <h3 className="text-base font-extrabold text-emerald-400">Probalo 10 días gratis</h3>
+                                        <p className="text-sm text-gray-300 font-medium mt-0.5">Hoy no pagás nada. Si no cancelás antes del día 10, se cobra el plan.</p>
+                                    </div>
+                                </div>
+
+                                <ul className="space-y-4 relative z-10 mb-8">
+                                    {INCLUYE.map(item => (
+                                        <li key={item} className="flex items-start gap-3 font-bold text-white">
+                                            <Check className="text-[#ff5b00] shrink-0 mt-0.5" size={22} strokeWidth={3} aria-hidden="true" /> {item}
+                                        </li>
+                                    ))}
+                                </ul>
+
+                                <Link to="/register" className="w-full bg-[#ff5b00] hover:bg-[#ef4c00] text-white min-h-[56px] rounded-2xl font-extrabold text-lg flex items-center justify-center transition-[transform,background-color] duration-200 active:scale-[0.97] shadow-lg shadow-[#ff5b00]/25 relative z-10">
+                                    Probalo gratis
+                                </Link>
+                                <p className="text-xs text-gray-300 text-center mt-3 font-bold relative z-10">Cancelás online cuando quieras.</p>
                             </div>
-                            <div>
-                                <h3 className="text-base font-black text-emerald-400">Probalo 10 días gratis</h3>
-                                <p className="text-sm text-gray-300 font-medium mt-0.5">Hoy no pagás nada. Si no cancelás antes del día 10, se cobra el plan.</p>
-                            </div>
-                        </div>
-
-                        <ul className="space-y-4 relative z-10 mb-8">
-                            {[
-                                'Tu tienda online y el panel para manejar tu local',
-                                'Stock y recetas: cada venta descuenta ingredientes',
-                                'Facturas electrónicas de ARCA (ex AFIP)',
-                                'Soporte prioritario'
-                            ].map(item => (
-                                <li key={item} className="flex items-start gap-3 font-bold text-white">
-                                    <CheckCircle2 className="text-[#ff5b00] shrink-0 mt-0.5" size={22} aria-hidden="true" /> {item}
-                                </li>
-                            ))}
-                        </ul>
-
-                        <Link to="/register" className="w-full bg-[#ff5b00] hover:bg-[#ef4c00] text-white min-h-[56px] rounded-2xl font-black text-lg flex items-center justify-center transition-all active:scale-95 shadow-lg shadow-[#ff5b00]/20 relative z-10">
-                            Probalo gratis
-                        </Link>
-                        <p className="text-xs text-gray-300 text-center mt-3 font-bold relative z-10">Cancelás online cuando quieras.</p>
+                        </Reveal>
                     </div>
                 </section>
 
                 {/* Preguntas frecuentes */}
-                <section className="max-w-3xl mx-auto px-4 sm:px-6 pb-16">
-                    <h2 className="text-3xl sm:text-4xl font-black text-[#25323f] text-center mb-10">Preguntas que nos hacen</h2>
-                    <div className="space-y-3">
-                        {PREGUNTAS.map(({ p, r }) => (
-                            <details key={p} className="group bg-white rounded-2xl border border-gray-200 shadow-sm">
-                                <summary className="flex items-center justify-between gap-4 cursor-pointer list-none min-h-[56px] px-5 py-4 font-black text-lg text-[#25323f]">
-                                    {p}
-                                    <ChevronDown className="shrink-0 text-[#ff5b00] transition-transform group-open:rotate-180" size={22} aria-hidden="true" />
-                                </summary>
-                                <p className="px-5 pb-5 text-base sm:text-lg text-[#305a83] font-medium leading-relaxed">{r}</p>
-                            </details>
+                <section id="preguntas" className="max-w-6xl mx-auto px-4 sm:px-6 py-20 sm:py-28 grid lg:grid-cols-[1fr_1.6fr] gap-10 lg:gap-16">
+                    <Reveal>
+                        <Etiqueta>Preguntas</Etiqueta>
+                        <h2 className="text-3xl sm:text-5xl font-extrabold text-[#083d5a] leading-[1.05]">Preguntas que nos hacen</h2>
+                    </Reveal>
+                    <div className="divide-y divide-[#083d5a]/10 border-y border-[#083d5a]/10">
+                        {PREGUNTAS.map(({ p, r }, i) => (
+                            <Reveal key={p} delay={i * 50}>
+                                <details className="group">
+                                    <summary className="flex items-center justify-between gap-4 cursor-pointer list-none min-h-[64px] py-5 font-extrabold text-lg text-[#25323f] hover:text-[#ff5b00] transition-colors [&::-webkit-details-marker]:hidden">
+                                        {p}
+                                        <span className="shrink-0 w-9 h-9 rounded-full bg-white ring-1 ring-[#083d5a]/10 flex items-center justify-center text-[#ff5b00] transition-transform duration-200 group-open:rotate-45">
+                                            <Plus size={18} aria-hidden="true" />
+                                        </span>
+                                    </summary>
+                                    <p className="pb-6 pr-12 text-base sm:text-lg text-[#305a83] font-medium leading-relaxed">{r}</p>
+                                </details>
+                            </Reveal>
                         ))}
                     </div>
                 </section>
 
                 {/* Cierre */}
-                <section className="bg-[#083d5a] py-16 px-4 text-center">
-                    <h2 className="text-3xl sm:text-4xl font-black text-white mb-4">Probalo en tu local</h2>
-                    <p className="text-lg text-gray-200 font-medium mb-8">10 días gratis, con todo incluido.</p>
-                    <Link to="/register" className={botonPrincipal}>
-                        Crear mi cuenta <ArrowRight size={20} />
-                    </Link>
+                <section className="px-4 sm:px-6 pb-20 sm:pb-28">
+                    <Reveal className="relative max-w-6xl mx-auto rounded-[2rem] sm:rounded-[3rem] bg-[#083d5a] text-white text-center px-6 py-16 sm:py-24 overflow-hidden landing-grain">
+                        <div aria-hidden="true" className="absolute -bottom-40 left-1/2 -translate-x-1/2 w-[640px] h-[320px] rounded-full bg-[#ff5b00]/35 blur-3xl pointer-events-none" />
+                        <div className="relative">
+                            <h2 className="text-3xl sm:text-5xl font-extrabold mb-4 leading-[1.05]">Probalo en tu local</h2>
+                            <p className="text-lg text-white/80 font-medium mb-9">10 días gratis, con todo incluido.</p>
+                            <Link to="/register" className={botonPrincipal}>
+                                Crear mi cuenta <ArrowRight size={20} className="transition-transform duration-200 group-hover:translate-x-1" aria-hidden="true" />
+                            </Link>
+                        </div>
+                    </Reveal>
                 </section>
             </main>
 
-            <footer className="border-t border-gray-100 py-8 px-4 text-center">
-                <p className="text-sm font-bold text-gray-500">© 2026 Acommerr</p>
+            <footer className="border-t border-[#083d5a]/10 py-8 px-4 sm:px-6">
+                <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <img src="/logo-acommerr.png" alt="Acommerr" className="h-8 object-contain" />
+                    <a href="mailto:acommerr@gmail.com" className="text-sm font-bold text-[#305a83] hover:text-[#ff5b00] transition-colors">acommerr@gmail.com</a>
+                    <p className="text-sm font-bold text-[#305a83]">© 2026 Acommerr</p>
+                </div>
             </footer>
         </div>
     );
