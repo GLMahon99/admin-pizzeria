@@ -3,6 +3,24 @@ import { Printer, Tag, Package, Clock, DollarSign, Calendar, Plus, X, Search, Tr
 import api from '../api/axiosConfig';
 import { useAuth } from '../context/AuthContext';
 import { parseAddress } from '../utils/formatters';
+import ArmarItemModal from '../components/ArmarItemModal';
+
+const ETIQUETA_SELECCION = { GUSTO: 'Gustos', TOPPING: 'Toppings', ADEREZO: 'Aderezos', GUARNICION: 'Guarnición' };
+
+// Ítem del pedido -> ["Gustos: Chocolate, Frutilla", "Carne extra: +2", "Obs: sin tomate"]
+const lineasDetalle = (item) => {
+    const lineas = [];
+    const porTipo = {};
+    for (const sel of item.selecciones || []) {
+        (porTipo[sel.tipo] = porTipo[sel.tipo] || []).push(sel.nombre);
+    }
+    for (const tipo of Object.keys(ETIQUETA_SELECCION)) {
+        if (porTipo[tipo]) lineas.push(`${ETIQUETA_SELECCION[tipo]}: ${porTipo[tipo].join(', ')}`);
+    }
+    if (item.carnes_extra > 0) lineas.push(`Carne extra: +${item.carnes_extra}`);
+    if (item.observacion) lineas.push(`Obs: ${item.observacion}`);
+    return lineas;
+};
 
 const Orders = () => {
     const { user } = useAuth();
@@ -22,7 +40,9 @@ const Orders = () => {
     const [selectedCategory, setSelectedCategory] = useState('Todas');
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const categories = ['Todas', 'Pizzas', 'Empanadas', 'Bebidas', 'Postres'];
+    const categories = ['Todas', ...new Set(availableProducts.map(p => p.categoria).filter(Boolean))];
+    // Producto que se está armando (tamaño, gustos, guarnición...) antes de sumarlo al pedido
+    const [armando, setArmando] = useState(null);
 
     const fetchData = async (silent = false) => {
         try {
@@ -64,30 +84,39 @@ const Orders = () => {
         }
     };
 
-    const addItemToOrder = (prod) => {
-        const exists = newOrder.items.find(item => item.id_producto === prod.id_producto);
-        if (exists) {
-            setNewOrder({
-                ...newOrder,
-                items: newOrder.items.map(item => 
-                    item.id_producto === prod.id_producto 
-                    ? { ...item, cantidad: item.cantidad + 1 } 
-                    : item
-                )
-            });
-        } else {
-            setNewOrder({
-                ...newOrder,
-                items: [...newOrder.items, { ...prod, cantidad: 1 }]
-            });
-        }
+    // Pizza con tamaño chico, helado y hamburguesa se arman en una ventana; el resto se suma directo
+    const requiereArmado = (prod) =>
+        (prod.tipo === 'PIZZA' && prod.pizza?.precio_chica != null) || prod.tipo === 'HELADO' || prod.tipo === 'HAMBURGUESA';
+
+    const agregarItem = (item) => {
+        setNewOrder(prev => {
+            const existe = prev.items.find(i => i.key === item.key);
+            return {
+                ...prev,
+                items: existe
+                    ? prev.items.map(i => (i.key === item.key ? { ...i, cantidad: i.cantidad + item.cantidad } : i))
+                    : [...prev.items, item]
+            };
+        });
     };
 
-    const removeItemFromOrder = (id) => {
-        setNewOrder({
-            ...newOrder,
-            items: newOrder.items.filter(item => item.id_producto !== id)
+    const addItemToOrder = (prod) => {
+        if (requiereArmado(prod)) {
+            setArmando(prod);
+            return;
+        }
+        agregarItem({
+            key: String(prod.id_producto),
+            id_producto: prod.id_producto,
+            nombre: prod.nombre,
+            precio: Number(prod.precio),
+            cantidad: 1,
+            detalleTexto: []
         });
+    };
+
+    const removeItemFromOrder = (key) => {
+        setNewOrder(prev => ({ ...prev, items: prev.items.filter(item => item.key !== key) }));
     };
 
     const calculateTotal = () => {
@@ -106,7 +135,14 @@ const Orders = () => {
                 items: newOrder.items.map(item => ({
                     id_producto: item.id_producto,
                     cantidad: item.cantidad,
-                    precio: parseFloat(item.precio)
+                    precio: item.precio,
+                    variante: item.variante || undefined,
+                    gustos: item.gustos,
+                    toppings: item.toppings,
+                    aderezos: item.aderezos,
+                    guarnicion: item.guarnicion,
+                    carnes_extra: item.carnes_extra,
+                    observacion: item.observacion
                 }))
             };
 
@@ -118,7 +154,7 @@ const Orders = () => {
             alert('Pedido registrado con éxito');
         } catch (error) {
             console.error('Error al confirmar pedido:', error);
-            alert('Hubo un error al procesar la venta.');
+            alert(error.response?.data?.message || 'Hubo un error al procesar la venta.');
         } finally {
             setIsSubmitting(false);
         }
@@ -165,6 +201,8 @@ const Orders = () => {
         const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(deliveryUrl)}`;
 
         const addr = parseAddress(pedido.cliente_direccion);
+        // Escapar los datos de texto: el cliente los escribe en la compra y se insertan en el HTML del ticket
+        const esc = (v) => String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
         const html = `
             <html>
@@ -182,8 +220,8 @@ const Orders = () => {
                 </style>
             </head>
             <body>
-                <div class="center bold" style="font-size: 18px;">${user?.nombre || 'A-COMMERR ERP'}</div>
-                <div class="center text-gray-500">${user?.direccion || 'Florida, Vicente López'}</div>
+                <div class="center bold" style="font-size: 18px;">${esc(user?.nombre || 'A-COMMERR ERP')}</div>
+                <div class="center text-gray-500">${esc(user?.direccion || 'Florida, Vicente López')}</div>
                 <div class="divider"></div>
                 <div class="bold">ORDEN: #${pedido.id_pedido}</div>
                 <div>FECHA: ${fechaFormat}</div>
@@ -191,23 +229,24 @@ const Orders = () => {
                 <div class="divider"></div>
                 
                 <div class="bold">CLIENTE:</div>
-                <div>${pedido.cliente_nombre || 'Cliente Mostrador'}</div>
+                <div>${esc(pedido.cliente_nombre || 'Cliente Mostrador')}</div>
                 
                 ${pedido.metodo_entrega !== 'takeaway' && pedido.cliente_direccion ? `
                     <div class="bold" style="margin-top: 5px;">DIRECCIÓN DE ENVÍO:</div>
-                    <div>${addr.calle} ${addr.altura}</div>
-                    ${(addr.piso || addr.depto) ? `<div>Piso: ${addr.piso || '-'} | Depto: ${addr.depto || '-'}</div>` : ''}
-                    ${addr.cp ? `<div>Código Postal: ${addr.cp}</div>` : ''}
-                    ${addr.observaciones ? `<div class="bold" style="margin-top: 5px;">NOTAS DE ENTREGA:</div><div style="font-style: italic;">${addr.observaciones}</div>` : ''}
+                    <div>${esc(addr.calle)} ${esc(addr.altura)}</div>
+                    ${(addr.piso || addr.depto) ? `<div>Piso: ${esc(addr.piso || '-')} | Depto: ${esc(addr.depto || '-')}</div>` : ''}
+                    ${addr.cp ? `<div>Código Postal: ${esc(addr.cp)}</div>` : ''}
+                    ${addr.observaciones ? `<div class="bold" style="margin-top: 5px;">NOTAS DE ENTREGA:</div><div style="font-style: italic;">${esc(addr.observaciones)}</div>` : ''}
                 ` : ''}
                 
                 <div class="divider"></div>
                 <div class="bold">PRODUCTOS:</div>
                 ${pedido.detalle ? pedido.detalle.map(item => `
                     <div class="item">
-                        <span>${item.cantidad}x ${item.producto_nombre}</span>
+                        <span class="bold">${item.cantidad}x ${esc(item.producto_nombre)}${item.variante ? ` (${esc(item.variante)})` : ''}</span>
                         <span>$${(item.cantidad * item.precio_unitario).toLocaleString()}</span>
                     </div>
+                    ${lineasDetalle(item).map(l => `<div style="margin: -3px 0 4px 12px;">${esc(l)}</div>`).join('')}
                 `).join('') : 'Sin detalle'}
                 
                 <div class="divider"></div>
@@ -454,16 +493,22 @@ const Orders = () => {
                                     ) : (
                                         <div className="space-y-4">
                                             {newOrder.items.map(item => (
-                                                <div key={item.id_producto} className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 flex items-center justify-between group animate-in slide-in-from-right-3">
+                                                <div key={item.key} className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 flex items-center justify-between group animate-in slide-in-from-right-3">
                                                     <div className="flex flex-col flex-1">
-                                                        <span className="text-base font-black text-gray-800 uppercase tracking-tighter line-clamp-1">{item.nombre}</span>
+                                                        <span className="text-base font-black text-gray-800 uppercase tracking-tighter line-clamp-1">
+                                                            {item.nombre}{item.variante && <span className="text-gray-400"> ({item.variante})</span>}
+                                                        </span>
+                                                        {item.detalleTexto.map(l => (
+                                                            <span key={l} className="text-xs font-bold text-gray-500">{l}</span>
+                                                        ))}
+                                                        {item.observacion && <span className="text-xs font-bold text-amber-700">“{item.observacion}”</span>}
                                                         <div className="flex items-center gap-2 mt-1">
                                                             <span className="bg-gold-100 text-gold-600 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter">x{item.cantidad}</span>
                                                             <span className="text-xs font-bold text-gray-400">Total: <span className="text-slate-800">${(parseFloat(item.precio) * item.cantidad).toLocaleString()}</span></span>
                                                         </div>
                                                     </div>
                                                     <button 
-                                                        onClick={() => removeItemFromOrder(item.id_producto)} 
+                                                        onClick={() => removeItemFromOrder(item.key)}  
                                                         className="ml-4 p-4 text-red-100 group-hover:text-red-500 hover:bg-red-50 rounded-2xl transition-all"
                                                         title="Eliminar"
                                                     >
@@ -500,6 +545,10 @@ const Orders = () => {
                         </div>
                     </div>
                 </div>
+            )}
+
+            {armando && (
+                <ArmarItemModal product={armando} onAgregar={agregarItem} onClose={() => setArmando(null)} />
             )}
 
             {/* Barra de Filtros */}
@@ -583,8 +632,14 @@ const Orders = () => {
                                 <div className="space-y-3 mb-8 bg-gray-50/50 p-6 rounded-[1.5rem] border border-gray-100/50 max-h-40 overflow-y-auto custom-scrollbar">
                                     <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Resumen de Productos</p>
                                     {pedido.detalle && pedido.detalle.map((item, idx) => (
-                                        <div key={idx} className="flex justify-between items-center text-sm">
-                                            <span className="text-gray-600 font-bold"><span className="text-gold-600">x{item.cantidad}</span> {item.producto_nombre}</span>
+                                        <div key={idx} className="flex justify-between items-start gap-3 text-sm">
+                                            <span className="text-gray-600 font-bold">
+                                                <span className="text-gold-600">x{item.cantidad}</span> {item.producto_nombre}
+                                                {item.variante && <span className="text-gray-400"> ({item.variante})</span>}
+                                                {lineasDetalle(item).map(l => (
+                                                    <span key={l} className={`block text-xs font-medium pl-6 ${l.startsWith('Obs:') ? 'text-amber-700' : 'text-gray-500'}`}>{l}</span>
+                                                ))}
+                                            </span>
                                             <span className="text-gray-400 font-bold text-xs">${parseFloat(item.precio_unitario).toLocaleString()}</span>
                                         </div>
                                     ))}

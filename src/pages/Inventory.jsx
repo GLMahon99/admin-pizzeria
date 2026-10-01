@@ -1,6 +1,60 @@
 import { useState, useEffect } from 'react';
-import { Plus, ImagePlus, Utensils, DollarSign, Tag, Trash2, Edit, Save, X, Beaker } from 'lucide-react';
+import { Plus, ImagePlus, Utensils, DollarSign, Tag, Trash2, Edit, Save, X, Beaker, IceCream, Beef } from 'lucide-react';
 import api from '../api/axiosConfig';
+import ListaEditable from '../components/ListaEditable';
+
+// Tipos de producto fijos: cada uno con sus propios campos (ver productoTiposService en el backend)
+const TIPOS = [
+    { id: 'PIZZA', label: 'Pizza', categoria: 'Pizzas' },
+    { id: 'HELADO', label: 'Helado', categoria: 'Helados' },
+    { id: 'HAMBURGUESA', label: 'Hamburguesa', categoria: 'Hamburguesas' },
+    { id: 'OTRO', label: 'Otro', categoria: '' }
+];
+const CATEGORIAS_DEFAULT = TIPOS.map(t => t.categoria).filter(Boolean);
+
+// Lista del backend -> estado editable
+const listaParaEditar = (lista = [], conPrecio = false) => lista.map(o => ({
+    id: o.id,
+    nombre: o.nombre,
+    disponible: o.disponible,
+    ...(conPrecio ? { precio_extra: o.precio_extra ? String(o.precio_extra) : '' } : {})
+}));
+
+const CampoPrecio = ({ label, name, value, onChange, required = false }) => (
+    <div>
+        <label className="text-xs font-black text-gray-400 uppercase tracking-widest">{label}</label>
+        <div className="relative mt-1">
+            <DollarSign className="absolute left-3 top-3.5 text-gray-400" size={16} />
+            <input
+                type="number"
+                name={name}
+                min="0"
+                step="0.01"
+                required={required}
+                value={value}
+                className="w-full pl-9 p-3 bg-gray-100 border-none rounded-xl focus:ring-2 focus:ring-gold-500 outline-none font-black text-gold-600"
+                placeholder="0.00"
+                onChange={onChange}
+            />
+        </div>
+    </div>
+);
+
+const CampoNumero = ({ label, value, onChange, min, max }) => (
+    <div>
+        <label className="text-xs font-black text-gray-400 uppercase tracking-widest">{label}</label>
+        <input
+            type="number"
+            min={min}
+            max={max}
+            step="1"
+            required
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            className="w-full mt-1 p-3 bg-gray-100 border-none rounded-xl focus:ring-2 focus:ring-gold-500 outline-none font-black"
+        />
+    </div>
+);
 
 const Inventory = () => {
     const [showForm, setShowForm] = useState(false);
@@ -20,10 +74,23 @@ const Inventory = () => {
     const initialFormState = {
         nombre: '',
         descripcion: '',
-        categoria: 'Pizzas', // Restauramos Pizzas por defecto
+        tipo: 'PIZZA',
+        categoria: 'Pizzas',
         precio: '',
+        // Pizza
+        precio_grande: '',
         precio_chica: '',
-        precio_cuarto: ''
+        // Helado
+        max_gustos: '1',
+        gustos: [],
+        // Hamburguesa
+        max_toppings: '0',
+        max_aderezos: '0',
+        precio_carne_extra: '',
+        max_carnes_extra: '0',
+        toppings: [],
+        aderezos: [],
+        guarniciones: []
     };
     const [formData, setFormData] = useState(initialFormState);
 
@@ -67,6 +134,16 @@ const Inventory = () => {
         setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
+    const setTipo = (tipo) => {
+        setFormData((prev) => {
+            const sugerida = TIPOS.find(t => t.id === tipo).categoria;
+            const categoriaEraSugerida = !prev.categoria || CATEGORIAS_DEFAULT.includes(prev.categoria);
+            return { ...prev, tipo, categoria: categoriaEraSugerida ? sugerida : prev.categoria };
+        });
+    };
+
+    const setCampo = (campo, valor) => setFormData((prev) => ({ ...prev, [campo]: valor }));
+
     const openEditForm = async (prod) => {
         try {
             // Buscamos el detalle completo (que ahora incluye la receta)
@@ -74,12 +151,23 @@ const Inventory = () => {
             const data = response.data;
 
             setFormData({
+                ...initialFormState,
                 nombre: data.nombre,
                 descripcion: data.descripcion || '',
-                categoria: data.categoria || 'Pizzas',
-                precio: data.precio || '',
-                precio_chica: data.precio_chica || '',
-                precio_cuarto: data.precio_cuarto || ''
+                tipo: data.tipo || 'OTRO',
+                categoria: data.categoria || '',
+                precio: data.tipo === 'PIZZA' ? '' : (data.precio || ''),
+                precio_grande: data.pizza?.precio_grande ?? '',
+                precio_chica: data.pizza?.precio_chica ?? '',
+                max_gustos: String(data.helado?.max_gustos ?? 1),
+                gustos: listaParaEditar(data.helado?.gustos),
+                max_toppings: String(data.hamburguesa?.max_toppings ?? 0),
+                max_aderezos: String(data.hamburguesa?.max_aderezos ?? 0),
+                precio_carne_extra: data.hamburguesa?.precio_carne_extra ? String(data.hamburguesa.precio_carne_extra) : '',
+                max_carnes_extra: String(data.hamburguesa?.max_carnes_extra ?? 0),
+                toppings: listaParaEditar(data.hamburguesa?.toppings),
+                aderezos: listaParaEditar(data.hamburguesa?.aderezos),
+                guarniciones: listaParaEditar(data.hamburguesa?.guarniciones, true)
             });
             
             // Mapeamos la receta del backend al estado local (con check de seguridad || [])
@@ -138,18 +226,35 @@ const Inventory = () => {
             dataToUpload.append('nombre', formData.nombre);
             dataToUpload.append('descripcion', formData.descripcion);
             dataToUpload.append('categoria', formData.categoria);
-            if (formData.precio !== '') {
+            dataToUpload.append('tipo', formData.tipo);
+            if (formData.tipo !== 'PIZZA' && formData.precio !== '') {
                 dataToUpload.append('precio', parseFloat(formData.precio));
             }
-            
-            if (formData.categoria === 'Pizzas' || formData.categoria === 'Helados') {
-                if (formData.precio_chica !== '') {
-                    dataToUpload.append('precio_chica', parseFloat(formData.precio_chica));
-                }
-                if (formData.categoria === 'Helados' && formData.precio_cuarto !== '') {
-                    dataToUpload.append('precio_cuarto', parseFloat(formData.precio_cuarto));
-                }
+
+            // Datos propios del tipo (el backend los valida)
+            const lista = (items, conPrecio = false) => items.map(it => ({
+                id: it.id,
+                nombre: it.nombre,
+                disponible: it.disponible,
+                ...(conPrecio ? { precio_extra: it.precio_extra === '' ? 0 : Number(it.precio_extra) } : {})
+            }));
+            let detalle = {};
+            if (formData.tipo === 'PIZZA') {
+                detalle = { precio_grande: formData.precio_grande, precio_chica: formData.precio_chica };
+            } else if (formData.tipo === 'HELADO') {
+                detalle = { max_gustos: Number(formData.max_gustos), gustos: lista(formData.gustos) };
+            } else if (formData.tipo === 'HAMBURGUESA') {
+                detalle = {
+                    max_toppings: Number(formData.max_toppings),
+                    max_aderezos: Number(formData.max_aderezos),
+                    precio_carne_extra: formData.precio_carne_extra,
+                    max_carnes_extra: Number(formData.max_carnes_extra),
+                    toppings: lista(formData.toppings),
+                    aderezos: lista(formData.aderezos),
+                    guarniciones: lista(formData.guarniciones, true)
+                };
             }
+            dataToUpload.append('detalle', JSON.stringify(detalle));
 
             // Enviamos la receta simplificada (solo IDs y cantidades)
             const recetaParaEnviar = recetaItems.map(item => ({
@@ -181,7 +286,7 @@ const Inventory = () => {
             fetchData();
         } catch (error) {
             console.error('Error al guardar producto:', error);
-            alert('No se pudo guardar el producto. Verificá los datos.');
+            alert(error.response?.data?.message || 'No se pudo guardar el producto. Verificá los datos.');
         } finally {
             setIsSubmitting(false);
         }
@@ -257,86 +362,50 @@ const Inventory = () => {
                                             />
                                         </div>
 
-                                        <div className="grid grid-cols-2 gap-4">
-                                            <div>
-                                                <label className="text-xs font-black text-gray-400 uppercase tracking-widest">Categoría</label>
-                                                <input
-                                                    list="categories-list"
-                                                    name="categoria"
-                                                    value={formData.categoria}
-                                                    className="w-full mt-1 p-3 bg-gray-100 border-none rounded-xl focus:ring-2 focus:ring-gold-500 outline-none font-bold"
-                                                    placeholder="Elegí o escribí..."
-                                                    onChange={handleChange}
-                                                    autoComplete="off"
-                                                />
-                                                <datalist id="categories-list">
-                                                    {categories.map(cat => (
-                                                        <option key={cat} value={cat} />
-                                                    ))}
-                                                    {!categories.includes('Pizzas') && <option value="Pizzas" />}
-                                                    {!categories.includes('Helados') && <option value="Helados" />}
-                                                    {!categories.includes('Entradas') && <option value="Entradas" />}
-                                                    {!categories.includes('Bebidas') && <option value="Bebidas" />}
-                                                    {!categories.includes('Postres') && <option value="Postres" />}
-                                                </datalist>
-                                            </div>
-                                            <div>
-                                                <label className="text-xs font-black text-gray-400 uppercase tracking-widest">
-                                                    {formData.categoria === 'Pizzas' ? 'Precio (Grande)' : formData.categoria === 'Helados' ? 'Precio (1 kg)' : 'Precio'}
-                                                </label>
-                                                <div className="relative mt-1">
-                                                    <DollarSign className="absolute left-3 top-3.5 text-gray-400" size={16} />
-                                                    <input
-                                                        type="number"
-                                                        name="precio"
-                                                        required={formData.categoria !== 'Helados'}
-                                                        step="0.01"
-                                                        value={formData.precio}
-                                                        className="w-full pl-9 p-3 bg-gray-100 border-none rounded-xl focus:ring-2 focus:ring-gold-500 outline-none font-black text-gold-600"
-                                                        placeholder="0.00"
-                                                        onChange={handleChange}
-                                                    />
-                                                </div>
+                                        <div>
+                                            <label className="text-xs font-black text-gray-400 uppercase tracking-widest">Tipo de producto</label>
+                                            <div className="grid grid-cols-4 gap-1 mt-1 bg-gray-100 p-1 rounded-xl" role="radiogroup">
+                                                {TIPOS.map(t => (
+                                                    <button
+                                                        key={t.id}
+                                                        type="button"
+                                                        role="radio"
+                                                        aria-checked={formData.tipo === t.id}
+                                                        onClick={() => setTipo(t.id)}
+                                                        className={`py-2 rounded-lg text-xs font-black transition-all ${formData.tipo === t.id ? 'bg-white text-gold-700 shadow-sm' : 'text-gray-500 hover:text-gray-800'}`}
+                                                    >
+                                                        {t.label}
+                                                    </button>
+                                                ))}
                                             </div>
                                         </div>
 
-                                        {(formData.categoria === 'Pizzas' || formData.categoria === 'Helados') && (
-                                            <div className="animate-in fade-in slide-in-from-top-2">
-                                                <label className="text-xs font-black text-gray-400 uppercase tracking-widest">
-                                                    {formData.categoria === 'Pizzas' ? 'Precio (Chica)' : 'Precio (1/2 kg)'}
-                                                </label>
-                                                <div className="relative mt-1">
-                                                    <DollarSign className="absolute left-3 top-3.5 text-gray-400" size={16} />
-                                                    <input
-                                                        type="number"
-                                                        name="precio_chica"
-                                                        step="0.01"
-                                                        value={formData.precio_chica}
-                                                        className="w-full pl-9 p-3 bg-gray-100 border-none rounded-xl focus:ring-2 focus:ring-slate-500 outline-none font-black text-slate-700"
-                                                        placeholder="0.00"
-                                                        onChange={handleChange}
-                                                    />
-                                                </div>
-                                            </div>
-                                        )}
+                                        <div>
+                                            <label className="text-xs font-black text-gray-400 uppercase tracking-widest">Categoría (como se ve en la tienda)</label>
+                                            <input
+                                                list="categories-list"
+                                                name="categoria"
+                                                value={formData.categoria}
+                                                className="w-full mt-1 p-3 bg-gray-100 border-none rounded-xl focus:ring-2 focus:ring-gold-500 outline-none font-bold"
+                                                placeholder={formData.tipo === 'OTRO' ? 'Ej: Bebidas, Empanadas...' : 'Elegí o escribí...'}
+                                                onChange={handleChange}
+                                                autoComplete="off"
+                                                required
+                                            />
+                                            <datalist id="categories-list">
+                                                {[...new Set([...categories, ...CATEGORIAS_DEFAULT, 'Bebidas', 'Postres', 'Entradas'])].map(cat => (
+                                                    <option key={cat} value={cat} />
+                                                ))}
+                                            </datalist>
+                                        </div>
 
-                                        {formData.categoria === 'Helados' && (
-                                            <div className="animate-in fade-in slide-in-from-top-2">
-                                                <label className="text-xs font-black text-gray-400 uppercase tracking-widest">Precio (1/4 kg)</label>
-                                                <div className="relative mt-1">
-                                                    <DollarSign className="absolute left-3 top-3.5 text-gray-400" size={16} />
-                                                    <input
-                                                        type="number"
-                                                        name="precio_cuarto"
-                                                        required={formData.categoria === 'Helados'}
-                                                        step="0.01"
-                                                        value={formData.precio_cuarto}
-                                                        className="w-full pl-9 p-3 bg-gray-100 border-none rounded-xl focus:ring-2 focus:ring-slate-500 outline-none font-black text-slate-700"
-                                                        placeholder="0.00"
-                                                        onChange={handleChange}
-                                                    />
-                                                </div>
+                                        {formData.tipo === 'PIZZA' ? (
+                                            <div className="grid grid-cols-2 gap-4">
+                                                <CampoPrecio label="Precio grande" name="precio_grande" value={formData.precio_grande} onChange={handleChange} required />
+                                                <CampoPrecio label="Precio chica (opcional)" name="precio_chica" value={formData.precio_chica} onChange={handleChange} />
                                             </div>
+                                        ) : (
+                                            <CampoPrecio label="Precio" name="precio" value={formData.precio} onChange={handleChange} required />
                                         )}
 
                                         <div>
@@ -444,6 +513,51 @@ const Inventory = () => {
                                     </div>
                                 </div>
 
+                                {formData.tipo === 'HELADO' && (
+                                    <div className="md:col-span-2 space-y-4">
+                                        <h3 className="text-lg font-black text-gray-800 border-b pb-2 flex items-center gap-2"><IceCream size={20} className="text-gold-500" /> Gustos</h3>
+                                        <CampoNumero
+                                            label="Máxima cantidad de gustos que puede elegir el cliente"
+                                            value={formData.max_gustos} min={1} max={20}
+                                            onChange={(v) => setCampo('max_gustos', v)}
+                                        />
+                                        <ListaEditable
+                                            titulo="Gustos disponibles en este producto"
+                                            items={formData.gustos}
+                                            onChange={(v) => setCampo('gustos', v)}
+                                            placeholder="Ej: Chocolate (Enter para agregar, o pegá varios separados por coma)"
+                                        />
+                                    </div>
+                                )}
+
+                                {formData.tipo === 'HAMBURGUESA' && (
+                                    <div className="md:col-span-2 space-y-6">
+                                        <h3 className="text-lg font-black text-gray-800 border-b pb-2 flex items-center gap-2"><Beef size={20} className="text-gold-500" /> Opciones de la hamburguesa</h3>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                            <div className="space-y-3">
+                                                <CampoNumero label="Máximo de toppings" value={formData.max_toppings} min={0} max={30} onChange={(v) => setCampo('max_toppings', v)} />
+                                                <ListaEditable titulo="Toppings (sin cargo)" items={formData.toppings} onChange={(v) => setCampo('toppings', v)} placeholder="Ej: Cheddar, Lechuga, Tomate" />
+                                            </div>
+                                            <div className="space-y-3">
+                                                <CampoNumero label="Máximo de aderezos" value={formData.max_aderezos} min={0} max={30} onChange={(v) => setCampo('max_aderezos', v)} />
+                                                <ListaEditable titulo="Aderezos (sin cargo)" items={formData.aderezos} onChange={(v) => setCampo('aderezos', v)} placeholder="Ej: Mayonesa, Ketchup" />
+                                            </div>
+                                            <div className="space-y-3">
+                                                <p className="text-[11px] text-gray-400 font-bold">Si cargás guarniciones, el cliente elige una. Poné +$0 a la que viene incluida.</p>
+                                                <ListaEditable titulo="Guarniciones" items={formData.guarniciones} onChange={(v) => setCampo('guarniciones', v)} conPrecio placeholder="Ej: Papas chicas, Papas grandes" />
+                                            </div>
+                                            <div className="space-y-3">
+                                                <p className="text-xs font-black text-gray-400 uppercase tracking-widest">Carne extra</p>
+                                                <div className="grid grid-cols-2 gap-3">
+                                                    <CampoNumero label="Máximo de carnes extra" value={formData.max_carnes_extra} min={0} max={10} onChange={(v) => setCampo('max_carnes_extra', v)} />
+                                                    <CampoPrecio label="Precio por carne" name="precio_carne_extra" value={formData.precio_carne_extra} onChange={handleChange} required={Number(formData.max_carnes_extra) > 0} />
+                                                </div>
+                                                <p className="text-[11px] text-gray-400 font-bold">Ej: máximo 2 a $500 → el cliente puede sumar +1 (+$500) o +2 (+$1.000). Con 0 no se ofrece.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+
                                 <div className="md:col-span-2 pt-4">
                                     <button 
                                         type="submit" 
@@ -520,31 +634,29 @@ const Inventory = () => {
                                     </td>
                                     <td className="px-8 py-6">
                                         <div className="flex flex-col justify-center">
-                                            <div className="flex items-baseline gap-1">
-                                                <span className="text-xs font-bold text-gray-400">
-                                                    {prod.categoria === 'Pizzas' ? 'G:' : prod.categoria === 'Helados' ? '1k:' : 'P:'}
-                                                </span>
-                                                <span className="font-black text-gray-900 text-2xl tracking-tighter">
-                                                    ${parseFloat(prod.precio).toLocaleString()}
-                                                </span>
-                                            </div>
-                                            {prod.precio_chica && (
-                                                <div className="flex items-baseline gap-1 mt-1 opacity-60">
-                                                    <span className="text-[10px] font-bold text-gray-400 uppercase">
-                                                        {prod.categoria === 'Pizzas' ? 'CH:' : prod.categoria === 'Helados' ? '1/2:' : 'V:'}
-                                                    </span>
-                                                    <span className="font-black text-slate-700 text-sm">
-                                                        ${parseFloat(prod.precio_chica).toLocaleString()}
-                                                    </span>
-                                                </div>
+                                            {prod.tipo === 'PIZZA' && prod.pizza ? (
+                                                <>
+                                                    <div className="flex items-baseline gap-1">
+                                                        <span className="text-xs font-bold text-gray-400">G:</span>
+                                                        <span className="font-black text-gray-900 text-2xl tracking-tighter">${prod.pizza.precio_grande.toLocaleString()}</span>
+                                                    </div>
+                                                    {prod.pizza.precio_chica != null && (
+                                                        <div className="flex items-baseline gap-1 mt-1 opacity-60">
+                                                            <span className="text-[10px] font-bold text-gray-400 uppercase">CH:</span>
+                                                            <span className="font-black text-slate-700 text-sm">${prod.pizza.precio_chica.toLocaleString()}</span>
+                                                        </div>
+                                                    )}
+                                                </>
+                                            ) : (
+                                                <span className="font-black text-gray-900 text-2xl tracking-tighter">${parseFloat(prod.precio || 0).toLocaleString()}</span>
                                             )}
-                                            {prod.precio_cuarto && (
-                                                <div className="flex items-baseline gap-1 mt-1 opacity-60">
-                                                    <span className="text-[10px] font-bold text-gray-400 uppercase">1/4:</span>
-                                                    <span className="font-black text-slate-700 text-sm">
-                                                        ${parseFloat(prod.precio_cuarto).toLocaleString()}
-                                                    </span>
-                                                </div>
+                                            {prod.tipo === 'HELADO' && prod.helado && (
+                                                <span className="text-[10px] font-black text-gold-700 mt-1">{prod.helado.gustos.length} gustos · hasta {prod.helado.max_gustos}</span>
+                                            )}
+                                            {prod.tipo === 'HAMBURGUESA' && prod.hamburguesa && (
+                                                <span className="text-[10px] font-black text-gold-700 mt-1">
+                                                    {prod.hamburguesa.toppings.length} toppings · {prod.hamburguesa.aderezos.length} aderezos · {prod.hamburguesa.guarniciones.length} guarniciones
+                                                </span>
                                             )}
                                         </div>
                                     </td>
