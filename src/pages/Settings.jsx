@@ -1,10 +1,23 @@
 import { useState, useEffect } from 'react';
-import { Save, ShieldCheck, Key, Palette, Image as ImageIcon, Loader2, Phone, Truck, Database, DollarSign, Link, FileText, Copy, Check } from 'lucide-react';
+import { useSearchParams } from 'react-router-dom';
+import { Save, ShieldCheck, Key, Palette, Image as ImageIcon, Loader2, Phone, Truck, Database, DollarSign, Link, FileText, Copy, Check, Clock } from 'lucide-react';
 import api from '../api/axiosConfig';
 import HorariosConfig from '../components/HorariosConfig';
 import { useAuth } from '../context/AuthContext';
 
+const SECCIONES = [
+    { id: 'horarios', label: 'Horarios y estado del local', icon: Clock },
+    { id: 'branding', label: 'Branding y diseño', icon: Palette },
+    { id: 'contacto', label: 'Redes y contacto', icon: Phone },
+    { id: 'mercadopago', label: 'Mercado Pago', icon: Key },
+    { id: 'envio', label: 'Envío y logística', icon: Truck },
+    { id: 'inventario', label: 'Inventario', icon: Database },
+    { id: 'facturacion', label: 'Facturación ARCA', icon: FileText }
+];
+
 const Settings = () => {
+    const [searchParams, setSearchParams] = useSearchParams();
+    const seccion = SECCIONES.some(s => s.id === searchParams.get('seccion')) ? searchParams.get('seccion') : 'horarios';
     const { user, token, login } = useAuth();
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
@@ -103,14 +116,14 @@ const Settings = () => {
                     <h1 className="text-3xl font-black text-gray-800 tracking-tight italic uppercase">Configuración</h1>
                     <p className="text-gray-500 font-bold uppercase text-xs tracking-widest mt-1">Personalizá tu negocio/pizzería y métodos de pago</p>
                 </div>
-                <button
+                {seccion !== 'horarios' && <button
                     type="submit"
                     disabled={saving}
                     className="bg-gold-600 hover:bg-gold-700 text-white px-8 py-3.5 rounded-2xl font-black text-base shadow-xl shadow-gold-100 transition-all active:scale-95 flex items-center gap-3 disabled:opacity-50 cursor-pointer"
                 >
                     {saving ? <Loader2 className="animate-spin" size={18} /> : <Save size={18} />}
                     {saving ? 'Guardando...' : 'Guardar Cambios'}
-                </button>
+                </button>}
             </div>
 
             {message.text && (
@@ -122,11 +135,35 @@ const Settings = () => {
                 </div>
             )}
 
-            <HorariosConfig />
+            {/* Secciones */}
+            <nav className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1" aria-label="Secciones de configuración">
+                {SECCIONES.map(({ id, label, icon }) => {
+                    const Icon = icon;
+                    return (
+                    <button
+                        key={id}
+                        type="button"
+                        onClick={() => setSearchParams({ seccion: id }, { replace: true })}
+                        aria-current={seccion === id ? 'page' : undefined}
+                        className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl text-sm font-black whitespace-nowrap border-2 transition-all cursor-pointer ${
+                            seccion === id
+                                ? 'bg-gray-900 border-gray-900 text-white shadow-lg'
+                                : 'bg-white border-gray-100 text-gray-500 hover:border-gray-200 hover:text-gray-800'
+                        }`}
+                    >
+                        <Icon size={16} />
+                        {label}
+                    </button>
+                    );
+                })}
+            </nav>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {seccion === 'horarios' && <HorariosConfig />}
+
+            <div>
                 
                 {/* Branding */}
+                {seccion === 'branding' && (
                 <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100 space-y-6">
                     <h2 className="text-xl font-black text-gray-800 flex items-center gap-2">
                         <Palette className="text-gold-600" size={20} /> Branding y Diseño
@@ -185,8 +222,10 @@ const Settings = () => {
                         </div>
                     </div>
                 </div>
+                )}
 
                 {/* Redes Sociales y Contacto */}
+                {seccion === 'contacto' && (
                 <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100 space-y-6">
                     <h2 className="text-xl font-black text-gray-800 flex items-center gap-2">
                         <Phone className="text-green-600" size={20} /> Redes y Contacto
@@ -250,8 +289,10 @@ const Settings = () => {
                     </div>
 
                 </div>
+                )}
 
                 {/* Mercado Pago */}
+                {seccion === 'mercadopago' && (
                 <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100 space-y-6">
                     <h2 className="text-xl font-black text-gray-800 flex items-center gap-2">
                         <Key className="text-blue-600" size={20} /> Mercado Pago
@@ -290,8 +331,10 @@ const Settings = () => {
                         </div>
                     </div>
                    </div>
+                )}
 
                 {/* Envío y Logística */}
+                {seccion === 'envio' && (
                 <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100 space-y-6">
                     <h2 className="text-xl font-black text-gray-800 flex items-center gap-2">
                         <Truck className="text-purple-600" size={20} /> Envío y Logística
@@ -344,8 +387,10 @@ const Settings = () => {
                         </div>
                     </div>
                 </div>
+                )}
 
                 {/* Control de Inventario */}
+                {seccion === 'inventario' && (
                 <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100 space-y-6">
                     <h2 className="text-xl font-black text-gray-800 flex items-center gap-2">
                         <Database className="text-amber-600" size={20} /> Control de Inventario
@@ -375,9 +420,11 @@ const Settings = () => {
                         </label>
                          </div>
                 </div>
+                )}
 
                 {/* AFIP/ARCA Facturación */}
-                <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100 space-y-6 lg:col-span-2">
+                {seccion === 'facturacion' && (
+                <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100 space-y-6">
                     <h2 className="text-xl font-black text-gray-800 flex items-center gap-2">
                         <FileText className="text-purple-600" size={20} /> AFIP / ARCA Facturación Electrónica
                     </h2>
@@ -492,6 +539,7 @@ const Settings = () => {
                         </div>
                     </div>
                 </div>
+                )}
 
             </div>
         </form>
