@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Plus, ImagePlus, Utensils, DollarSign, Tag, Trash2, Edit, Save, X, Beaker, IceCream, Beef } from 'lucide-react';
+import { Plus, ImagePlus, Utensils, DollarSign, Tag, Trash2, Edit, Save, X, Beaker, IceCream, Beef, Pause, Play } from 'lucide-react';
 import api from '../api/axiosConfig';
 import ListaEditable from '../components/ListaEditable';
 
@@ -293,13 +293,26 @@ const Inventory = () => {
     };
 
     const handleDelete = async (id) => {
-        if (!window.confirm('¿Seguro que querés eliminar este producto?')) return;
+        if (!window.confirm('¿Seguro que querés eliminar este producto? Si ya se vendió, va a seguir figurando en los pedidos anteriores.')) return;
         try {
-            await api.delete(`/productos/${id}`);
+            const res = await api.delete(`/productos/${id}`);
+            if (res.data?.resultado === 'baja') alert(res.data.message);
             fetchData();
         } catch (error) {
             console.error('Error al eliminar:', error);
-            alert('Error al intentar eliminar el producto.');
+            alert(error.response?.data?.message || 'Error al intentar eliminar el producto.');
+        }
+    };
+
+    // Pausar / reanudar la venta (ej: sin stock momentáneo). Se actualiza en la lista sin recargar todo.
+    const handleTogglePausa = async (prod) => {
+        const pausado = !prod.pausado;
+        try {
+            await api.put(`/productos/${prod.id_producto}/pausa`, { pausado });
+            setProducts(prev => prev.map(p => (p.id_producto === prod.id_producto ? { ...p, pausado: pausado ? 1 : 0 } : p)));
+        } catch (error) {
+            console.error('Error al pausar:', error);
+            alert(error.response?.data?.message || 'No se pudo cambiar el estado del producto.');
         }
     };
 
@@ -622,7 +635,12 @@ const Inventory = () => {
                                                 </div>
                                             )}
                                             <div className="flex flex-col">
-                                                <span className="font-black text-gray-800 text-xl leading-tight group-hover:text-gold-600 transition-colors">{prod.nombre}</span>
+                                                <span className="font-black text-gray-800 text-xl leading-tight group-hover:text-gold-600 transition-colors">
+                                                    {prod.nombre}
+                                                    {!!prod.pausado && (
+                                                        <span className="ml-2 align-middle bg-amber-100 text-amber-700 px-2 py-0.5 rounded-lg text-[10px] font-black uppercase tracking-widest">Pausado</span>
+                                                    )}
+                                                </span>
                                                 <span className="text-xs text-gray-400 max-w-[250px] line-clamp-2 mt-2 font-medium leading-relaxed">{prod.descripcion}</span>
                                             </div>
                                         </div>
@@ -662,8 +680,16 @@ const Inventory = () => {
                                     </td>
                                     <td className="px-8 py-6">
                                         <div className="flex justify-center gap-3">
-                                            <button 
-                                                onClick={() => openEditForm(prod)} 
+                                            <button
+                                                onClick={() => handleTogglePausa(prod)}
+                                                className={`p-3 rounded-2xl transition-all active:scale-95 hover:bg-white hover:shadow-lg ${prod.pausado ? 'text-amber-600 hover:text-green-600 hover:shadow-green-50' : 'text-slate-400 hover:text-amber-600 hover:shadow-amber-50'}`}
+                                                title={prod.pausado ? 'Reanudar venta' : 'Pausar venta (sin stock)'}
+                                                aria-label={prod.pausado ? `Reanudar ${prod.nombre}` : `Pausar ${prod.nombre}`}
+                                            >
+                                                {prod.pausado ? <Play size={22} /> : <Pause size={22} />}
+                                            </button>
+                                            <button
+                                                onClick={() => openEditForm(prod)}  
                                                 className="p-3 text-slate-400 hover:text-gold-600 hover:bg-white hover:shadow-lg hover:shadow-gold-100 rounded-2xl transition-all active:scale-95"
                                                 title="Editar Receta y Datos"
                                             >

@@ -455,10 +455,12 @@ const Orders = () => {
 
                                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                                     {filteredProducts.map(prod => (
-                                        <button 
+                                        <button
                                             key={prod.id_producto}
                                             onClick={() => addItemToOrder(prod)}
-                                            className="group bg-white border border-gray-100 p-4 rounded-3xl hover:border-gold-500 hover:shadow-lg transition-all text-left flex flex-col gap-3 active:scale-95"
+                                            disabled={!!prod.pausado}
+                                            title={prod.pausado ? 'Producto pausado (sin stock)' : undefined}
+                                            className="group bg-white border border-gray-100 p-4 rounded-3xl hover:border-gold-500 hover:shadow-lg transition-all text-left flex flex-col gap-3 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-gray-100 disabled:hover:shadow-none disabled:active:scale-100"
                                         >
                                             {prod.img ? (
                                                 <img src={prod.img} className="w-full h-24 object-cover rounded-2xl" alt={prod.nombre} />
@@ -467,7 +469,9 @@ const Orders = () => {
                                             )}
                                             <div>
                                                 <p className="font-black text-gray-800 leading-tight group-hover:text-gold-600 transition-colors uppercase text-sm">{prod.nombre}</p>
-                                                <p className="text-gold-600 font-black mt-1">${parseFloat(prod.precio).toLocaleString()}</p>
+                                                <p className="text-gold-600 font-black mt-1">
+                                                    {prod.pausado ? <span className="text-amber-600 text-xs uppercase">Pausado · sin stock</span> : `$${parseFloat(prod.precio).toLocaleString()}`}
+                                                </p>
                                             </div>
                                         </button>
                                     ))}
