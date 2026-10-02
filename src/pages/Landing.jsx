@@ -173,7 +173,67 @@ const Reveal = ({ children, delay = 0, className = '', as = 'div' }) => {
     );
 };
 
-const Etiqueta = ({ children }) => (
+const DEMO_URL = 'https://acommerr.store/prueba1';
+
+// Celular de la portada: al tocar "Probar demo" carga la tienda de prueba adentro.
+const DemoPhone = () => {
+    const [abierta, setAbierta] = useState(false);
+    const [cargada, setCargada] = useState(false);
+
+    return (
+        <div className="relative w-[285px] sm:w-[300px] shrink-0">
+            <div aria-hidden="true" className="absolute -inset-6 rounded-full bg-[#ff5b00]/20 blur-3xl" />
+            <div className="relative rounded-[2.8rem] bg-[#25323f] p-[10px] shadow-2xl shadow-[#083d5a]/40 ring-1 ring-white/10">
+                <div className="relative h-[570px] sm:h-[600px] rounded-[2.2rem] overflow-hidden bg-[#083d5a]">
+                    <div aria-hidden="true" className="absolute top-2.5 left-1/2 -translate-x-1/2 w-20 h-5 rounded-full bg-[#25323f] z-20" />
+
+                    {abierta ? (
+                        <>
+                            {!cargada && (
+                                <p role="status" className="absolute inset-0 flex items-center justify-center text-sm font-bold text-white/80">Cargando la tienda…</p>
+                            )}
+                            <iframe
+                                src={DEMO_URL}
+                                title="Demo de la tienda de Acommerr"
+                                onLoad={() => setCargada(true)}
+                                loading="lazy"
+                                className={`absolute inset-0 w-full h-full border-0 bg-white pt-8 transition-opacity duration-300 ${cargada ? "opacity-100" : "opacity-0"}`}
+                            />
+                            <button
+                                type="button"
+                                onClick={() => { setAbierta(false); setCargada(false); }}
+                                className="absolute top-1 left-3 z-30 text-[11px] font-extrabold text-[#083d5a] bg-white/90 rounded-full px-2.5 py-1 min-h-[24px] shadow-sm active:scale-95 transition-transform"
+                            >
+                                ← Volver
+                            </button>
+                        </>
+                    ) : (
+                        <div className="relative h-full flex flex-col items-center justify-center text-center px-7 text-white landing-grain">
+                            <div aria-hidden="true" className="absolute -bottom-24 left-1/2 -translate-x-1/2 w-72 h-72 rounded-full bg-[#ff5b00]/40 blur-3xl" />
+                            <div className="relative z-10 flex flex-col items-center">
+                                <div className="w-16 h-16 rounded-3xl bg-[#ff5b00] flex items-center justify-center mb-6 shadow-lg shadow-[#ff5b00]/40">
+                                    <Store size={30} aria-hidden="true" />
+                                </div>
+                                <button
+                                    type="button"
+                                    onClick={() => setAbierta(true)}
+                                    className="group bg-white text-[#083d5a] hover:bg-[#fff4ed] font-extrabold text-lg rounded-full min-h-[52px] px-8 inline-flex items-center gap-2 shadow-xl transition-[transform,background-color] duration-200 active:scale-[0.97] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+                                >
+                                    Probar demo
+                                    <ArrowRight size={18} className="transition-transform duration-200 group-hover:translate-x-1" aria-hidden="true" />
+                                </button>
+                                <span className="mt-4 text-sm font-extrabold uppercase tracking-[0.18em] text-[#ffaa66]">Tienda</span>
+                                <p className="mt-6 text-sm text-white/70 font-medium leading-relaxed">Así la ve tu cliente en su celular. Tocá y pedí algo.</p>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            </div>
+        </div>
+    );
+};
+
+const Etiqueta =({ children }) => (
     <span className="inline-block text-xs font-extrabold uppercase tracking-[0.14em] text-[#ff5b00] mb-4">{children}</span>
 );
 
@@ -254,7 +314,8 @@ const Landing = () => {
                     </div>
 
                     <div className="relative max-w-6xl mx-auto px-4 sm:px-6">
-                        <div className="max-w-3xl">
+                        <div className="grid lg:grid-cols-[1.2fr_0.8fr] gap-14 lg:gap-8 items-center">
+                        <div>
                             <Reveal>
                                 <span className="inline-flex items-center gap-2 rounded-full bg-white ring-1 ring-[#ff5b00]/20 pl-2 pr-4 py-1.5 text-sm font-bold text-[#083d5a] shadow-sm mb-7">
                                     <span className="bg-[#ff5b00] text-white rounded-full px-2.5 py-0.5 text-xs font-extrabold">Nuevo</span>
@@ -262,7 +323,7 @@ const Landing = () => {
                                 </span>
                             </Reveal>
                             <Reveal delay={60}>
-                                <h1 className="text-[2.6rem] leading-[1.02] sm:text-6xl lg:text-7xl font-extrabold text-[#083d5a] mb-6">
+                                <h1 className="text-[2.6rem] leading-[1.02] sm:text-6xl xl:text-7xl font-extrabold text-[#083d5a] mb-6">
                                     Todo tu local en <span className="text-[#ff5b00]">un solo lugar</span>
                                 </h1>
                             </Reveal>
@@ -293,6 +354,8 @@ const Landing = () => {
                                     ))}
                                 </ul>
                             </Reveal>
+                        </div>
+                        <Reveal delay={200} className="flex justify-center lg:justify-end"><DemoPhone /></Reveal>
                         </div>
 
                         <Reveal delay={240} className="relative mt-16 sm:mt-20">
