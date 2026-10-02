@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import {
     ArrowRight, Store, Check, Zap, Plus, Wallet, PackageCheck, Receipt, Bike,
-    BarChart3, UserPlus, UtensilsCrossed, Share2, Smartphone, ShieldCheck, BadgePercent
+    BarChart3, Minus, UserPlus, UtensilsCrossed, Share2, Smartphone, ShieldCheck, BadgePercent
 } from 'lucide-react';
 import api from '../api/axiosConfig';
 
@@ -117,7 +117,7 @@ const PREGUNTAS = [
     },
     {
         p: '¿Puedo probarlo gratis?',
-        r: 'Sí, 10 días con todo incluido. Hoy no pagás nada. Si no cancelás antes del día 10, se te cobra el plan. Cancelás online cuando quieras.'
+        r: 'Sí, 10 días gratis, con cualquiera de los dos planes. Hoy no pagás nada. Si no cancelás antes del día 10, se te cobra el plan. Cancelás online cuando quieras.'
     },
     {
         p: '¿Tengo que saber de computación?',
@@ -133,11 +133,32 @@ const PREGUNTAS = [
     }
 ];
 
-const INCLUYE = [
-    'Tu tienda online y el panel para manejar tu local',
+const INCLUYE_BASE = [
+    'Tu tienda online con tu logo y tus colores',
     'Stock y recetas: cada venta descuenta ingredientes',
-    'Facturas electrónicas de ARCA (ex AFIP)',
-    'Soporte prioritario'
+    'Pedidos y clientes sin límite',
+    'Panel con estadísticas de tus ventas'
+];
+
+const PLANES = [
+    {
+        id: 'clasica',
+        nombre: 'Clásica',
+        resumen: 'Todo para vender online y manejar tu local, sin facturación automática.',
+        incluye: INCLUYE_BASE,
+        noIncluye: 'Facturación automática con ARCA'
+    },
+    {
+        id: 'premium',
+        nombre: 'Premium',
+        resumen: 'El sistema completo, con las facturas saliendo solas en cada venta.',
+        incluye: [
+            ...INCLUYE_BASE,
+            'Facturas electrónicas de ARCA (ex AFIP) automáticas',
+            'Ticket en PDF para descargar',
+            'Soporte prioritario'
+        ]
+    }
 ];
 
 const botonPrincipal = 'group bg-[#ff5b00] hover:bg-[#ef4c00] text-white font-extrabold text-base sm:text-lg rounded-full min-h-[56px] px-8 py-3 inline-flex items-center justify-center gap-3 shadow-xl shadow-[#ff5b00]/30 transition-[transform,background-color] duration-200 active:scale-[0.97] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#ff5b00]';
@@ -238,7 +259,11 @@ const Etiqueta =({ children }) => (
 );
 
 const Landing = () => {
-    const [prices, setPrices] = useState({ premium: 40000, premiumAnual: 408000, clasica: 30000 });
+    const [prices, setPrices] = useState({
+        clasica: { mensual: 30000, anual: 306000 },
+        premium: { mensual: 40000, anual: 408000 }
+    });
+    const [anual, setAnual] = useState(false);
     const [tab, setTab] = useState(0);
     const [scrolled, setScrolled] = useState(false);
 
@@ -251,9 +276,8 @@ const Landing = () => {
                     return plan ? parseFloat(plan.precio) : fallback;
                 };
                 setPrices({
-                    premium: precio('PREMIUM_MONTHLY', 40000),
-                    premiumAnual: precio('PREMIUM_ANNUAL', 408000),
-                    clasica: precio('CLASICA_MONTHLY', 30000)
+                    clasica: { mensual: precio('CLASICA_MONTHLY', 30000), anual: precio('CLASICA_ANNUAL', 306000) },
+                    premium: { mensual: precio('PREMIUM_MONTHLY', 40000), anual: precio('PREMIUM_ANNUAL', 408000) }
                 });
             } catch (error) {
                 console.error('Error fetching planes for landing:', error);
@@ -319,7 +343,7 @@ const Landing = () => {
                             <Reveal>
                                 <span className="inline-flex items-center gap-2 rounded-full bg-white ring-1 ring-[#ff5b00]/20 pl-2 pr-4 py-1.5 text-sm font-bold text-[#083d5a] shadow-sm mb-7">
                                     <span className="bg-[#ff5b00] text-white rounded-full px-2.5 py-0.5 text-xs font-extrabold">Nuevo</span>
-                                    10 días gratis, con todo incluido
+                                    10 días gratis para probarlo
                                 </span>
                             </Reveal>
                             <Reveal delay={60}>
@@ -577,71 +601,84 @@ const Landing = () => {
 
                 {/* Precio */}
                 <section id="precio" className="bg-white py-20 sm:py-28">
-                    <div className="max-w-6xl mx-auto px-4 sm:px-6 grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-                        <Reveal>
+                    <div className="max-w-6xl mx-auto px-4 sm:px-6">
+                        <Reveal className="text-center max-w-2xl mx-auto mb-10">
                             <Etiqueta>Precio</Etiqueta>
                             <h2 className="text-3xl sm:text-5xl font-extrabold text-[#083d5a] mb-4 leading-[1.05]">Dos planes, sin comisiones</h2>
-                            <p className="text-lg text-[#305a83] font-medium mb-8">Sin comisiones por venta.</p>
-                            <ul className="space-y-3">
-                                {[
-                                    { icon: BadgePercent, t: 'Sin comisiones por venta' },
-                                    { icon: Zap, t: '10 días gratis para probarlo' },
-                                    { icon: ShieldCheck, t: 'Cancelás online cuando quieras' }
-                                ].map(({ icon, t }) => {
-                                    const Icon = icon;
-                                    return (
-                                        <li key={t} className="flex items-center gap-3 font-bold text-[#25323f]">
-                                            <span className="w-9 h-9 rounded-xl bg-[#ff5b00]/10 text-[#ff5b00] flex items-center justify-center"><Icon size={18} aria-hidden="true" /></span>
-                                            {t}
-                                        </li>
-                                    );
-                                })}
-                            </ul>
-                        </Reveal>
-
-                        <Reveal delay={100}>
-                            <div className="bg-[#25323f] rounded-[2rem] sm:rounded-[2.5rem] p-7 sm:p-10 max-w-md w-full mx-auto lg:ml-auto relative overflow-hidden shadow-2xl shadow-[#083d5a]/30 landing-grain">
-                                <div className="absolute top-0 right-0 p-8 opacity-10 text-white pointer-events-none">
-                                    <Store size={120} aria-hidden="true" />
-                                </div>
-                                <div className="flex flex-wrap gap-2 mb-5 relative z-10">
-                                    <span className="bg-emerald-600 text-white text-xs font-extrabold uppercase tracking-widest px-3 py-1.5 rounded-full">10 días gratis</span>
-                                    <span className="bg-[#ff5b00] text-white text-xs font-extrabold uppercase tracking-widest px-3 py-1.5 rounded-full">Todo incluido</span>
-                                </div>
-                                <p className="text-xs font-extrabold uppercase tracking-widest text-[#ffaa66] mb-1 relative z-10">Premium · con facturación automática</p>
-                                <div className="flex items-baseline gap-2 mb-2 relative z-10">
-                                    <span className="text-4xl sm:text-5xl font-extrabold text-white tabular-nums">${prices.premium.toLocaleString('es-AR')}</span>
-                                    <span className="text-gray-300 font-bold">por mes</span>
-                                </div>
-                                <p className="text-sm font-bold text-[#ffaa66] mb-4 relative z-10">Pagando por año: ${prices.premiumAnual.toLocaleString('es-AR')}</p>
-                                <p className="text-sm font-bold text-gray-300 mb-6 relative z-10 border-t border-white/10 pt-4">
-                                    ¿No necesitás facturar automáticamente? Plan Clásica: <span className="text-white tabular-nums">${prices.clasica.toLocaleString('es-AR')}</span> por mes.
-                                </p>
-
-                                <div className="bg-emerald-950/40 border border-emerald-500/30 rounded-2xl p-4 mb-6 flex items-start gap-3 relative z-10">
-                                    <div className="w-5 h-5 bg-emerald-500/20 rounded-full flex items-center justify-center text-emerald-400 shrink-0 mt-0.5">
-                                        <Zap size={12} strokeWidth={3} className="fill-emerald-400" aria-hidden="true" />
-                                    </div>
-                                    <div>
-                                        <h3 className="text-base font-extrabold text-emerald-400">Probalo 10 días gratis</h3>
-                                        <p className="text-sm text-gray-300 font-medium mt-0.5">Hoy no pagás nada. Si no cancelás antes del día 10, se cobra el plan.</p>
-                                    </div>
-                                </div>
-
-                                <ul className="space-y-4 relative z-10 mb-8">
-                                    {INCLUYE.map(item => (
-                                        <li key={item} className="flex items-start gap-3 font-bold text-white">
-                                            <Check className="text-[#ff5b00] shrink-0 mt-0.5" size={22} strokeWidth={3} aria-hidden="true" /> {item}
-                                        </li>
-                                    ))}
-                                </ul>
-
-                                <Link to="/register" className="w-full bg-[#ff5b00] hover:bg-[#ef4c00] text-white min-h-[56px] rounded-2xl font-extrabold text-lg flex items-center justify-center transition-[transform,background-color] duration-200 active:scale-[0.97] shadow-lg shadow-[#ff5b00]/25 relative z-10">
-                                    Probalo gratis
-                                </Link>
-                                <p className="text-xs text-gray-300 text-center mt-3 font-bold relative z-10">Cancelás online cuando quieras.</p>
+                            <p className="text-lg text-[#305a83] font-medium mb-8">Elegí el que mejor te quede. Los dos incluyen 10 días gratis.</p>
+                            <div className="inline-flex items-center gap-1 rounded-full bg-[#083d5a]/6 p-1" role="group" aria-label="Frecuencia de pago">
+                                {[{ v: false, t: 'Mensual' }, { v: true, t: 'Anual' }].map(({ v, t }) => (
+                                    <button
+                                        key={t}
+                                        type="button"
+                                        aria-pressed={anual === v}
+                                        onClick={() => setAnual(v)}
+                                        className={`min-h-[44px] px-6 rounded-full font-extrabold text-sm sm:text-base inline-flex items-center gap-2 transition-[background-color,color] duration-200 ${anual === v ? 'bg-[#083d5a] text-white' : 'text-[#305a83] hover:text-[#ff5b00]'}`}
+                                    >
+                                        {t}
+                                        {v && <span className={`text-[10px] font-extrabold rounded-full px-2 py-0.5 ${anual ? 'bg-[#ff5b00] text-white' : 'bg-[#ff5b00]/15 text-[#ff5b00]'}`}>-15%</span>}
+                                    </button>
+                                ))}
                             </div>
                         </Reveal>
+
+                        <div className="grid md:grid-cols-2 gap-5 sm:gap-6 max-w-4xl mx-auto items-stretch">
+                            {PLANES.map((plan, i) => {
+                                const premium = plan.id === 'premium';
+                                const precio = prices[plan.id][anual ? 'anual' : 'mensual'];
+                                return (
+                                    <Reveal key={plan.id} delay={i * 100} className="h-full">
+                                        <div className={`relative h-full flex flex-col rounded-[2rem] sm:rounded-[2.5rem] p-7 sm:p-9 overflow-hidden ${premium ? 'bg-[#25323f] text-white shadow-2xl shadow-[#083d5a]/30 landing-grain' : 'bg-[#fbf8f4] text-[#25323f] ring-1 ring-[#083d5a]/10'}`}>
+                                            <div className="relative z-10 flex flex-wrap items-center gap-2 mb-5">
+                                                <span className={`text-xs font-extrabold uppercase tracking-widest px-3 py-1.5 rounded-full ${premium ? 'bg-[#ff5b00] text-white' : 'bg-[#083d5a] text-white'}`}>{plan.nombre}</span>
+                                                {premium && <span className="bg-emerald-600 text-white text-xs font-extrabold uppercase tracking-widest px-3 py-1.5 rounded-full">Recomendado</span>}
+                                            </div>
+                                            <p className={`relative z-10 text-sm sm:text-base font-bold mb-5 ${premium ? 'text-gray-300' : 'text-[#305a83]'}`}>{plan.resumen}</p>
+                                            <div className="relative z-10 flex items-baseline gap-2 mb-1">
+                                                <span className={`text-4xl sm:text-5xl font-extrabold tabular-nums ${premium ? 'text-white' : 'text-[#083d5a]'}`}>${precio.toLocaleString('es-AR')}</span>
+                                                <span className={`font-bold ${premium ? 'text-gray-300' : 'text-[#305a83]'}`}>{anual ? 'por año' : 'por mes'}</span>
+                                            </div>
+                                            <p className={`relative z-10 text-sm font-bold mb-6 min-h-[20px] ${premium ? 'text-[#ffaa66]' : 'text-[#ff5b00]'}`}>
+                                                {anual ? 'Ahorrás 15% pagando por año' : `O $${prices[plan.id].anual.toLocaleString('es-AR')} por año`}
+                                            </p>
+
+                                            <ul className="relative z-10 space-y-3.5 mb-8 flex-1">
+                                                {plan.incluye.map(item => (
+                                                    <li key={item} className={`flex items-start gap-3 font-bold ${premium ? 'text-white' : 'text-[#25323f]'}`}>
+                                                        <Check className="text-[#ff5b00] shrink-0 mt-0.5" size={20} strokeWidth={3} aria-hidden="true" /> {item}
+                                                    </li>
+                                                ))}
+                                                {plan.noIncluye && (
+                                                    <li className="flex items-start gap-3 font-bold text-[#305a83]/70">
+                                                        <Minus className="shrink-0 mt-0.5" size={20} strokeWidth={3} aria-hidden="true" /> {plan.noIncluye}
+                                                    </li>
+                                                )}
+                                            </ul>
+
+                                            <Link to="/register" className={`relative z-10 w-full min-h-[56px] rounded-2xl font-extrabold text-lg flex items-center justify-center transition-[transform,background-color,color] duration-200 active:scale-[0.97] ${premium ? 'bg-[#ff5b00] hover:bg-[#ef4c00] text-white shadow-lg shadow-[#ff5b00]/25' : 'bg-white ring-1 ring-[#083d5a]/15 text-[#083d5a] hover:ring-[#ff5b00] hover:text-[#ff5b00]'}`}>
+                                                Probalo 10 días gratis
+                                            </Link>
+                                        </div>
+                                    </Reveal>
+                                );
+                            })}
+                        </div>
+
+                        <ul className="mt-10 flex flex-wrap justify-center gap-x-8 gap-y-3">
+                            {[
+                                { icon: BadgePercent, t: 'Sin comisiones por venta' },
+                                { icon: Zap, t: 'Hoy no pagás nada. Si no cancelás antes del día 10, se cobra el plan' },
+                                { icon: ShieldCheck, t: 'Cancelás online cuando quieras' }
+                            ].map(({ icon, t }) => {
+                                const Icon = icon;
+                                return (
+                                    <li key={t} className="flex items-center gap-3 font-bold text-[#25323f] text-sm sm:text-base">
+                                        <span className="w-9 h-9 shrink-0 rounded-xl bg-[#ff5b00]/10 text-[#ff5b00] flex items-center justify-center"><Icon size={18} aria-hidden="true" /></span>
+                                        {t}
+                                    </li>
+                                );
+                            })}
+                        </ul>
                     </div>
                 </section>
 
@@ -674,7 +711,7 @@ const Landing = () => {
                         <div aria-hidden="true" className="absolute -bottom-40 left-1/2 -translate-x-1/2 w-[640px] h-[320px] rounded-full bg-[#ff5b00]/35 blur-3xl pointer-events-none" />
                         <div className="relative">
                             <h2 className="text-3xl sm:text-5xl font-extrabold mb-4 leading-[1.05]">Probalo en tu local</h2>
-                            <p className="text-lg text-white/80 font-medium mb-9">10 días gratis, con todo incluido.</p>
+                            <p className="text-lg text-white/80 font-medium mb-9">10 días gratis para probarlo.</p>
                             <Link to="/register" className={botonPrincipal}>
                                 Crear mi cuenta <ArrowRight size={20} className="transition-transform duration-200 group-hover:translate-x-1" aria-hidden="true" />
                             </Link>
