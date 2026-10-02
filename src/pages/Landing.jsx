@@ -181,10 +181,10 @@ const DemoPhone = () => {
     const [cargada, setCargada] = useState(false);
 
     return (
-        <div className="relative w-[285px] sm:w-[300px] shrink-0">
+        <div className="relative w-[300px] sm:w-[340px] shrink-0">
             <div aria-hidden="true" className="absolute -inset-6 rounded-full bg-[#ff5b00]/20 blur-3xl" />
             <div className="relative rounded-[2.8rem] bg-[#25323f] p-[10px] shadow-2xl shadow-[#083d5a]/40 ring-1 ring-white/10">
-                <div className="relative h-[570px] sm:h-[600px] rounded-[2.2rem] overflow-hidden bg-[#083d5a]">
+                <div className="relative h-[570px] sm:h-[640px] rounded-[2.2rem] overflow-hidden bg-[#083d5a]">
                     <div aria-hidden="true" className="absolute top-2.5 left-1/2 -translate-x-1/2 w-20 h-5 rounded-full bg-[#25323f] z-20" />
 
                     {abierta ? (
@@ -197,7 +197,7 @@ const DemoPhone = () => {
                                 title="Demo de la tienda de Acommerr"
                                 onLoad={() => setCargada(true)}
                                 loading="lazy"
-                                className={`absolute inset-0 w-full h-full border-0 bg-white pt-8 transition-opacity duration-300 ${cargada ? "opacity-100" : "opacity-0"}`}
+                                className={`absolute top-0 left-0 w-[375px] h-[763px] sm:h-[750px] origin-top-left scale-[0.7467] sm:scale-[0.8533] border-0 bg-white pt-8 transition-opacity duration-300 ${cargada ? "opacity-100" : "opacity-0"}`}
                             />
                             <button
                                 type="button"
