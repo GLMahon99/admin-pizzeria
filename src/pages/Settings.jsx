@@ -33,6 +33,8 @@ const Settings = () => {
         mp_access_token: '',
         costo_envio: 0,
         envio_gratis_desde: '',
+        acepta_delivery: true,
+        acepta_retiro: true,
         direccion: '',
         ciudad: '',
         control_insumos: true,
@@ -65,6 +67,19 @@ const Settings = () => {
         } finally {
             setLoading(false);
         }
+    };
+
+    // Métodos de entrega (la base devuelve 1/0). El local tiene que ofrecer al menos uno.
+    const aceptaDelivery = !!(config.acepta_delivery ?? true);
+    const aceptaRetiro = !!(config.acepta_retiro ?? true);
+    const setMetodoEntrega = (campo, valor) => {
+        const otro = campo === 'acepta_delivery' ? aceptaRetiro : aceptaDelivery;
+        if (!valor && !otro) {
+            setMessage({ type: 'error', text: 'Tu local tiene que ofrecer al menos un método de entrega: envío a domicilio o retiro.' });
+            return;
+        }
+        setMessage({ type: '', text: '' });
+        setConfig({ ...config, [campo]: valor });
     };
 
     const handleCopyMasterCuit = () => {
@@ -340,6 +355,37 @@ const Settings = () => {
                         <Truck className="text-purple-600" size={20} /> Envío y Logística
                     </h2>
                     
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        {[
+                            { campo: 'acepta_delivery', activo: aceptaDelivery, titulo: 'Envío a domicilio', texto: 'Hacés entregas en el domicilio del cliente.' },
+                            { campo: 'acepta_retiro', activo: aceptaRetiro, titulo: 'Retiro en el local', texto: 'El cliente pasa a buscar su pedido.' }
+                        ].map(({ campo, activo, titulo, texto }) => (
+                            <label
+                                key={campo}
+                                className={`flex items-start gap-3 p-4 rounded-2xl border-2 cursor-pointer select-none transition-all ${activo ? 'border-purple-300 bg-purple-50/60' : 'border-gray-100 bg-gray-50'}`}
+                            >
+                                <input
+                                    type="checkbox"
+                                    className="mt-0.5 w-5 h-5 rounded text-purple-600 focus:ring-purple-500 border-gray-300 cursor-pointer"
+                                    checked={activo}
+                                    onChange={(e) => setMetodoEntrega(campo, e.target.checked)}
+                                />
+                                <span className="flex flex-col">
+                                    <span className="font-black text-gray-800 text-sm">{titulo}</span>
+                                    <span className="text-[11px] text-gray-500 font-bold">{texto}</span>
+                                    <span className={`text-[10px] font-black uppercase mt-1 ${activo ? 'text-green-600' : 'text-gray-400'}`}>{activo ? 'Activado' : 'Desactivado'}</span>
+                                </span>
+                            </label>
+                        ))}
+                    </div>
+
+                    {!aceptaDelivery && (
+                        <p className="text-xs font-bold text-gray-500 bg-gray-50 border border-gray-100 rounded-2xl p-4">
+                            Tu tienda solo ofrece retiro en el local: no se piden direcciones ni se cobra envío.
+                        </p>
+                    )}
+
+                    {aceptaDelivery && (<>
                     <div className="bg-purple-50 p-4 rounded-2xl border border-purple-100 space-y-2">
                         <p className="text-[10px] font-bold text-purple-600 uppercase tracking-widest flex items-center gap-1">
                             Opciones de Delivery
@@ -386,6 +432,7 @@ const Settings = () => {
                             <p className="text-[10px] text-gray-400 font-bold uppercase tracking-tight">Dejar vacío para permitir envíos a cualquier código postal.</p>
                         </div>
                     </div>
+                    </>)}
                 </div>
                 )}
 
