@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Save, ShieldCheck, Key, Palette, Image as ImageIcon, Loader2, Phone, Truck, Database, DollarSign, Link, FileText, Copy, Check, Clock } from 'lucide-react';
+import { Save, ShieldCheck, Key, Palette, Image as ImageIcon, Loader2, Phone, Truck, Database, DollarSign, Link, FileText, Copy, Check, Clock, Upload, Trash2 } from 'lucide-react';
 import api from '../api/axiosConfig';
 import HorariosConfig from '../components/HorariosConfig';
 import { useAuth } from '../context/AuthContext';
+
+const LOGO_TIPOS = ['image/png', 'image/jpeg', 'image/webp', 'image/svg+xml'];
+const LOGO_MAX_BYTES = 2 * 1024 * 1024;
 
 const SECCIONES = [
     { id: 'horarios', label: 'Horarios y estado del local', icon: Clock },
@@ -52,6 +55,8 @@ const Settings = () => {
     });
     const [message, setMessage] = useState({ type: '', text: '' });
     const [copied, setCopied] = useState(false);
+    const [subiendoLogo, setSubiendoLogo] = useState(false);
+    const [logoMsg, setLogoMsg] = useState({ type: '', text: '' });
 
     useEffect(() => {
         fetchConfig();
@@ -66,6 +71,56 @@ const Settings = () => {
             setMessage({ type: 'error', text: 'Error al cargar la configuración' });
         } finally {
             setLoading(false);
+        }
+    };
+
+    const aplicarLogo = (logo_url) => {
+        setConfig(prev => ({ ...prev, logo_url }));
+        login({ ...user, logo_url }, token); // actualiza el menú lateral al instante
+    };
+
+    const handleLogoChange = async (e) => {
+        const file = e.target.files?.[0];
+        e.target.value = ''; // permite volver a elegir el mismo archivo
+        if (!file) return;
+        if (!LOGO_TIPOS.includes(file.type)) {
+            setLogoMsg({ type: 'error', text: 'Formato no válido. Subí una imagen PNG, JPG, WEBP o SVG.' });
+            return;
+        }
+        if (file.size > LOGO_MAX_BYTES) {
+            setLogoMsg({ type: 'error', text: 'El logo pesa más de 2 MB. Elegí una imagen más liviana.' });
+            return;
+        }
+
+        const form = new FormData();
+        form.append('logo', file);
+        try {
+            setSubiendoLogo(true);
+            setLogoMsg({ type: '', text: '' });
+            const response = await api.put('/admin/logo', form, { headers: { 'Content-Type': 'multipart/form-data' } });
+            aplicarLogo(response.data.logo_url);
+            setLogoMsg({ type: 'success', text: 'Logo actualizado.' });
+        } catch (error) {
+            console.error('Error al subir el logo:', error);
+            setLogoMsg({ type: 'error', text: error.response?.data?.message || 'No se pudo subir el logo.' });
+        } finally {
+            setSubiendoLogo(false);
+        }
+    };
+
+    const handleLogoRemove = async () => {
+        if (!window.confirm('¿Quitar el logo de tu tienda?')) return;
+        try {
+            setSubiendoLogo(true);
+            setLogoMsg({ type: '', text: '' });
+            await api.delete('/admin/logo');
+            aplicarLogo(null);
+            setLogoMsg({ type: 'success', text: 'Logo quitado.' });
+        } catch (error) {
+            console.error('Error al quitar el logo:', error);
+            setLogoMsg({ type: 'error', text: error.response?.data?.message || 'No se pudo quitar el logo.' });
+        } finally {
+            setSubiendoLogo(false);
         }
     };
 
@@ -197,15 +252,44 @@ const Settings = () => {
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">URL del Logo (Link)</label>
-                            <div className="relative">
-                                <ImageIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300" size={18} />
-                                <input
-                                    type="text"
-                                    className="w-full bg-gray-50 border-2 border-gray-100 p-4 pl-12 rounded-2xl focus:border-gold-600 outline-none font-bold"
-                                    value={config.logo_url}
-                                    onChange={(e) => setConfig({...config, logo_url: e.target.value})}
-                                />
+                            <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Logo</label>
+                            <div className="flex items-center gap-4">
+                                <div className="w-20 h-20 shrink-0 rounded-2xl border-2 border-gray-100 bg-gray-50 flex items-center justify-center overflow-hidden">
+                                    {config.logo_url ? (
+                                        <img src={config.logo_url} alt="Logo actual" className="w-full h-full object-contain p-1.5" />
+                                    ) : (
+                                        <ImageIcon className="text-gray-300" size={28} />
+                                    )}
+                                </div>
+                                <div className="flex flex-col items-start gap-2 min-w-0">
+                                    <div className="flex flex-wrap gap-2">
+                                        <label className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl font-black text-xs transition-all focus-within:ring-2 focus-within:ring-gold-500 focus-within:ring-offset-2 ${subiendoLogo ? 'bg-gray-100 text-gray-400 cursor-wait' : 'bg-gray-900 text-white hover:bg-gray-700 cursor-pointer'}`}>
+                                            {subiendoLogo ? <Loader2 className="animate-spin" size={14} /> : <Upload size={14} />}
+                                            {subiendoLogo ? 'Subiendo...' : config.logo_url ? 'Cambiar logo' : 'Subir logo'}
+                                            <input
+                                                type="file"
+                                                accept="image/png,image/jpeg,image/webp,image/svg+xml"
+                                                className="sr-only"
+                                                disabled={subiendoLogo}
+                                                onChange={handleLogoChange}
+                                            />
+                                        </label>
+                                        {config.logo_url && (
+                                            <button
+                                                type="button"
+                                                onClick={handleLogoRemove}
+                                                disabled={subiendoLogo}
+                                                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl font-black text-xs text-red-600 hover:bg-red-50 transition-all disabled:opacity-40 cursor-pointer"
+                                            >
+                                                <Trash2 size={14} /> Quitar
+                                            </button>
+                                        )}
+                                    </div>
+                                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-tight">PNG, JPG, WEBP o SVG · máximo 2 MB</p>
+                                    {logoMsg.text && (
+                                        <p role="status" className={`text-xs font-bold ${logoMsg.type === 'success' ? 'text-green-600' : 'text-red-600'}`}>{logoMsg.text}</p>
+                                    )}
+                                </div>
                             </div>
                         </div>
 
