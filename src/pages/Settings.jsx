@@ -1,11 +1,24 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Save, ShieldCheck, Key, Palette, Image as ImageIcon, Loader2, Phone, Truck, Database, DollarSign, Link, FileText, Copy, Check, Clock, Upload, Trash2 } from 'lucide-react';
+import { Save, ShieldCheck, Key, Palette, Image as ImageIcon, Loader2, Phone, Truck, Database, DollarSign, Link, FileText, Copy, Check, Clock, Upload, Trash2, Landmark, AlertTriangle } from 'lucide-react';
 import api from '../api/axiosConfig';
 import HorariosConfig from '../components/HorariosConfig';
 import { useAuth } from '../context/AuthContext';
 
 const LOGO_TIPOS = ['image/png', 'image/jpeg', 'image/webp', 'image/svg+xml'];
+
+const CVU_RE = /^\d{22}$/;
+const ALIAS_RE = /^[A-Za-z0-9.-]{6,20}$/;
+// Qué falta para poder cobrar por transferencia (null = está todo)
+const faltanteTransferencia = (c) => {
+    const cvu = String(c.cvu || '').replace(/[\s-]/g, '');
+    const alias = String(c.alias || '').trim();
+    if (!cvu && !alias) return 'Cargá tu CVU/CBU o tu alias para poder activarla.';
+    if (!String(c.transferencia_titular || '').trim()) return 'Cargá el titular de la cuenta para poder activarla.';
+    if (cvu && !CVU_RE.test(cvu)) return 'El CVU/CBU tiene que tener 22 números.';
+    if (alias && !ALIAS_RE.test(alias)) return 'El alias tiene que tener entre 6 y 20 caracteres (letras, números, punto o guion).';
+    return null;
+};
 const LOGO_MAX_BYTES = 2 * 1024 * 1024;
 
 const SECCIONES = [
@@ -13,6 +26,7 @@ const SECCIONES = [
     { id: 'branding', label: 'Branding y diseño', icon: Palette },
     { id: 'contacto', label: 'Redes y contacto', icon: Phone },
     { id: 'mercadopago', label: 'Mercado Pago', icon: Key },
+    { id: 'transferencia', label: 'Transferencia', icon: Landmark },
     { id: 'envio', label: 'Envío y logística', icon: Truck },
     { id: 'inventario', label: 'Inventario', icon: Database },
     { id: 'facturacion', label: 'Facturación ARCA', icon: FileText }
@@ -38,6 +52,11 @@ const Settings = () => {
         envio_gratis_desde: '',
         acepta_delivery: true,
         acepta_retiro: true,
+        acepta_transferencia: false,
+        transferencia_titular: '',
+        transferencia_instrucciones: '',
+        transferencia_descuento_pct: 0,
+        transferencia_plazo_min: 60,
         direccion: '',
         ciudad: '',
         control_insumos: true,
@@ -57,6 +76,8 @@ const Settings = () => {
     const [copied, setCopied] = useState(false);
     const [subiendoLogo, setSubiendoLogo] = useState(false);
     const [logoMsg, setLogoMsg] = useState({ type: '', text: '' });
+    const [transfGuardada, setTransfGuardada] = useState(false); // cómo estaba guardado (para pedir confirmación al activarla)
+    const [transfMsg, setTransfMsg] = useState('');
 
     useEffect(() => {
         fetchConfig();
@@ -66,6 +87,7 @@ const Settings = () => {
         try {
             const response = await api.get('/admin/config-details');
             setConfig(response.data);
+            setTransfGuardada(!!response.data.acepta_transferencia);
         } catch (error) {
             console.error('Error al cargar config:', error);
             setMessage({ type: 'error', text: 'Error al cargar la configuración' });
@@ -125,6 +147,26 @@ const Settings = () => {
     };
 
     // Métodos de entrega (la base devuelve 1/0). El local tiene que ofrecer al menos uno.
+    // Transferencia: no se puede activar con los datos de cobro incompletos.
+    // La primera vez se pide confirmar que el local entiende que va a verificar cada cobro.
+    const aceptaTransferencia = !!config.acepta_transferencia;
+    const toggleTransferencia = (activar) => {
+        setTransfMsg('');
+        if (!activar) {
+            setConfig({ ...config, acepta_transferencia: false });
+            return;
+        }
+        const falta = faltanteTransferencia(config);
+        if (falta) {
+            setTransfMsg(falta);
+            return;
+        }
+        if (!transfGuardada && !window.confirm('Entendido: voy a confirmar cada cobro por transferencia revisando mi banco o billetera antes de preparar el pedido.')) {
+            return;
+        }
+        setConfig({ ...config, acepta_transferencia: true });
+    };
+
     const aceptaDelivery = !!(config.acepta_delivery ?? true);
     const aceptaRetiro = !!(config.acepta_retiro ?? true);
     const setMetodoEntrega = (campo, valor) => {
@@ -165,7 +207,7 @@ const Settings = () => {
             setTimeout(() => window.location.reload(), 1500);
         } catch (error) {
             console.error('Error al guardar:', error);
-            setMessage({ type: 'error', text: 'No se pudo guardar la configuración' });
+            setMessage({ type: 'error', text: error.response?.data?.message || 'No se pudo guardar la configuración' });
         } finally {
             setSaving(false);
         }
@@ -430,6 +472,116 @@ const Settings = () => {
                         </div>
                     </div>
                    </div>
+                )}
+
+                {/* Transferencia */}
+                {seccion === 'transferencia' && (
+                <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100 space-y-6">
+                    <h2 className="text-xl font-black text-gray-800 flex items-center gap-2">
+                        <Landmark className="text-emerald-600" size={20} /> Pago por transferencia
+                    </h2>
+
+                    <label className={`flex items-start gap-3 p-4 rounded-2xl border-2 cursor-pointer select-none transition-all ${aceptaTransferencia ? 'border-emerald-300 bg-emerald-50/60' : 'border-gray-100 bg-gray-50'}`}>
+                        <input
+                            type="checkbox"
+                            className="mt-0.5 w-5 h-5 rounded text-emerald-600 focus:ring-emerald-500 border-gray-300 cursor-pointer"
+                            checked={aceptaTransferencia}
+                            onChange={(e) => toggleTransferencia(e.target.checked)}
+                        />
+                        <span className="flex flex-col">
+                            <span className="font-black text-gray-800 text-sm">Aceptar pagos por transferencia</span>
+                            <span className="text-[11px] text-gray-500 font-bold">Tus clientes van a poder elegir transferencia además de Mercado Pago.</span>
+                            <span className={`text-[10px] font-black uppercase mt-1 ${aceptaTransferencia ? 'text-green-600' : 'text-gray-400'}`}>{aceptaTransferencia ? 'Activado' : 'Desactivado'}</span>
+                        </span>
+                    </label>
+                    {transfMsg && <p role="alert" className="text-xs font-bold text-red-600 -mt-3">{transfMsg}</p>}
+
+                    {/* Siempre visible, esté activada o no: se lee antes de activarla */}
+                    <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex gap-3">
+                        <AlertTriangle className="text-amber-600 shrink-0 mt-0.5" size={18} />
+                        <div className="space-y-1">
+                            <p className="text-sm font-black text-amber-900">Importante: vas a confirmar cada cobro vos</p>
+                            <p className="text-xs text-amber-800 font-medium leading-relaxed">
+                                Las transferencias no se acreditan solas en el sistema. Cuando un cliente avise que pagó, vas a tener que revisar tu banco o billetera, comprobar que el dinero llegó (por monto, hora y titular) y recién entonces confirmar el pago. Hasta que lo confirmes, el pedido no avanza ni se factura.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className={`space-y-4 ${aceptaTransferencia ? '' : 'opacity-70'}`}>
+                        <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Datos de cobro {aceptaTransferencia ? '' : '(completalos para poder activarla)'}</p>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">CVU / CBU</label>
+                                <input
+                                    type="text"
+                                    inputMode="numeric"
+                                    className="w-full bg-gray-50 border-2 border-gray-100 p-4 rounded-2xl focus:border-emerald-600 outline-none font-mono text-sm"
+                                    value={config.cvu || ''}
+                                    onChange={(e) => setConfig({ ...config, cvu: e.target.value })}
+                                    placeholder="22 números"
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Alias</label>
+                                <input
+                                    type="text"
+                                    className="w-full bg-gray-50 border-2 border-gray-100 p-4 rounded-2xl focus:border-emerald-600 outline-none font-mono text-sm"
+                                    value={config.alias || ''}
+                                    onChange={(e) => setConfig({ ...config, alias: e.target.value })}
+                                    placeholder="Ej: mi.local.mp"
+                                />
+                            </div>
+                            <div className="space-y-2 md:col-span-2">
+                                <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Titular de la cuenta</label>
+                                <input
+                                    type="text"
+                                    maxLength={100}
+                                    className="w-full bg-gray-50 border-2 border-gray-100 p-4 rounded-2xl focus:border-emerald-600 outline-none font-bold text-sm"
+                                    value={config.transferencia_titular || ''}
+                                    onChange={(e) => setConfig({ ...config, transferencia_titular: e.target.value })}
+                                    placeholder="Como figura en tu banco (lo ve el cliente)"
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Plazo para pagar (minutos)</label>
+                                <input
+                                    type="number"
+                                    min="15"
+                                    max="240"
+                                    className="w-full bg-gray-50 border-2 border-gray-100 p-4 rounded-2xl focus:border-emerald-600 outline-none font-mono text-sm"
+                                    value={config.transferencia_plazo_min ?? 60}
+                                    onChange={(e) => setConfig({ ...config, transferencia_plazo_min: e.target.value === '' ? '' : Number(e.target.value) })}
+                                />
+                                <p className="text-[10px] text-gray-400 font-bold uppercase tracking-tight">Entre 15 y 240. Pasado el plazo sin aviso, el pedido vence.</p>
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Descuento por transferencia (%)</label>
+                                <input
+                                    type="number"
+                                    min="0"
+                                    max="50"
+                                    step="0.5"
+                                    className="w-full bg-gray-50 border-2 border-gray-100 p-4 rounded-2xl focus:border-emerald-600 outline-none font-mono text-sm"
+                                    value={config.transferencia_descuento_pct ?? 0}
+                                    onChange={(e) => setConfig({ ...config, transferencia_descuento_pct: e.target.value === '' ? '' : Number(e.target.value) })}
+                                />
+                                <p className="text-[10px] text-gray-400 font-bold uppercase tracking-tight">Opcional. Se aplica sobre los productos, no sobre el envío.</p>
+                            </div>
+                            <div className="space-y-2 md:col-span-2">
+                                <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Instrucciones para el cliente (opcional)</label>
+                                <textarea
+                                    rows={2}
+                                    maxLength={500}
+                                    className="w-full bg-gray-50 border-2 border-gray-100 p-4 rounded-2xl focus:border-emerald-600 outline-none font-medium text-sm resize-none"
+                                    value={config.transferencia_instrucciones || ''}
+                                    onChange={(e) => setConfig({ ...config, transferencia_instrucciones: e.target.value })}
+                                    placeholder="Ej: Poné tu número de pedido en el concepto."
+                                />
+                            </div>
+                        </div>
+                        <p className="text-[11px] text-gray-400 font-bold">Los cambios se guardan con el botón “Guardar Cambios”.</p>
+                    </div>
+                </div>
                 )}
 
                 {/* Envío y Logística */}

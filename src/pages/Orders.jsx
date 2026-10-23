@@ -4,6 +4,7 @@ import api from '../api/axiosConfig';
 import { useAuth } from '../context/AuthContext';
 import { parseAddress } from '../utils/formatters';
 import ArmarItemModal from '../components/ArmarItemModal';
+import PagosPorVerificar from '../components/PagosPorVerificar';
 
 const ETIQUETA_SELECCION = { GUSTO: 'Gustos', TOPPING: 'Toppings', ADEREZO: 'Aderezos', GUARNICION: 'Guarnición' };
 
@@ -226,6 +227,7 @@ const Orders = () => {
                 <div class="bold">ORDEN: #${pedido.id_pedido}</div>
                 <div>FECHA: ${fechaFormat}</div>
                 <div class="bold">MÉTODO: ${pedido.metodo_entrega === 'takeaway' ? 'RETIRO POR LOCAL 🛍️' : 'ENVÍO A DOMICILIO 🛵'}</div>
+                <div>PAGO: ${pedido.metodo_pago === 'transferencia' ? `TRANSFERENCIA${Number(pedido.descuento_transferencia) > 0 ? ` (desc. $${Number(pedido.descuento_transferencia).toLocaleString()})` : ''}` : 'MERCADO PAGO'}</div>
                 <div class="divider"></div>
                 
                 <div class="bold">CLIENTE:</div>
@@ -555,6 +557,8 @@ const Orders = () => {
                 <ArmarItemModal product={armando} onAgregar={agregarItem} onClose={() => setArmando(null)} />
             )}
 
+            <PagosPorVerificar pedidos={pedidos} onCambio={() => fetchData(true)} />
+
             {/* Barra de Filtros */}
             <div className="bg-white p-3 rounded-3xl shadow-sm border border-gray-100 inline-flex flex-wrap gap-2">
                 {filterOptions.map((opt) => (
@@ -585,15 +589,20 @@ const Orders = () => {
                                 <div className="flex justify-between items-start mb-6">
                                     <div className="flex flex-col">
                                         <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none mb-1">Orden de Compra</span>
-                                        <div className="flex items-center gap-2">
+                                        <div className="flex flex-wrap items-center gap-2">
                                             <span className="text-sm font-black text-slate-800 tracking-tight">#{pedido.id_pedido}</span>
                                             <span className={`px-4 py-1.5 rounded-xl text-xs font-black uppercase tracking-wider ${
                                                 pedido.estado === 'Aprobado' || pedido.estado === 'Listo para retirar' || pedido.estado === 'Entregado' ? 'bg-green-100 text-green-700' :
-                                                pedido.estado === 'Rechazado' ? 'bg-red-100 text-red-700' :
+                                                pedido.estado === 'Rechazado' || pedido.estado === 'Pago no confirmado' || pedido.estado === 'Vencido' ? 'bg-red-100 text-red-700' :
                                                 'bg-yellow-100 text-yellow-700'
                                             }`}>
                                                 {pedido.estado}
                                             </span>
+                                            {pedido.metodo_pago === 'transferencia' && (
+                                                <span className="px-4 py-1.5 rounded-xl text-xs font-black uppercase tracking-wider bg-emerald-100 text-emerald-700">
+                                                    Transferencia
+                                                </span>
+                                            )}
                                             {pedido.metodo_entrega === 'takeaway' && (
                                                 <span className="px-4 py-1.5 rounded-xl text-xs font-black uppercase tracking-wider bg-purple-100 text-purple-700">
                                                     Retiro 🛍️
