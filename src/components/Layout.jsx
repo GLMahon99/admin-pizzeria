@@ -11,7 +11,8 @@ const Layout = () => {
             <Sidebar isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} />
 
             {/* Área de contenido con margen para no solaparse */}
-            <main className={`flex-1 transition-all duration-300 p-10 ${isCollapsed ? 'ml-20' : 'ml-64'}`}>
+            {/* min-w-0: sin esto, contenido ancho (ej. las pestañas con scroll de Configuración) estira el main y se corta a la derecha */}
+            <main className={`flex-1 min-w-0 transition-all duration-300 p-10 ${isCollapsed ? 'ml-20' : 'ml-64'}`}>
                 <div className="max-w-7xl mx-auto">
                     <Outlet />
                 </div>

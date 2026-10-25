@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Landmark, CheckCircle2, XCircle, Clock } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { Landmark, CheckCircle2, XCircle, Clock, Bell, BellOff, AlertTriangle } from 'lucide-react';
 import api from '../api/axiosConfig';
 
 const hora = (iso) => (iso
@@ -8,12 +8,43 @@ const hora = (iso) => (iso
 const fecha = (iso) => new Date(iso).toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', timeZone: 'America/Argentina/Buenos_Aires' });
 const esHoy = (iso) => new Date(iso).toDateString() === new Date().toDateString();
 
+const CLAVE_SONIDO = 'acommerr_sonido_transferencias';
+const leerSonido = () => {
+    try { return localStorage.getItem(CLAVE_SONIDO) === '1'; } catch { return false; }
+};
+const guardarSonido = (activo) => {
+    try { localStorage.setItem(CLAVE_SONIDO, activo ? '1' : '0'); } catch { /* sin almacenamiento: solo dura esta sesión */ }
+};
+
+// Dos tonos cortos. El navegador solo deja reproducir audio después de un clic, por eso el botón "Activar sonido".
+let audioCtx = null;
+const sonarAviso = () => {
+    try {
+        audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        [880, 1320].forEach((frecuencia, i) => {
+            const inicio = audioCtx.currentTime + i * 0.18;
+            const osc = audioCtx.createOscillator();
+            const vol = audioCtx.createGain();
+            osc.frequency.value = frecuencia;
+            vol.gain.setValueAtTime(0.0001, inicio);
+            vol.gain.exponentialRampToValueAtTime(0.25, inicio + 0.02);
+            vol.gain.exponentialRampToValueAtTime(0.0001, inicio + 0.16);
+            osc.connect(vol).connect(audioCtx.destination);
+            osc.start(inicio);
+            osc.stop(inicio + 0.17);
+        });
+    } catch { /* navegador sin Web Audio */ }
+};
+
 /**
  * Pagos por transferencia pendientes de verificar.
  * El local busca el ingreso en su banco por monto, hora y titular, y confirma o rechaza.
  */
 const PagosPorVerificar = ({ pedidos, onCambio }) => {
     const [procesando, setProcesando] = useState(null);
+    const [sonido, setSonido] = useState(leerSonido);
+    const avisadosVistos = useRef(null); // ids de 'Transferencia informada' ya vistos (null = primera carga)
 
     // Primero los que ya avisaron (por hora de aviso), después los que todavía no avisaron
     const informados = pedidos
@@ -23,6 +54,38 @@ const PagosPorVerificar = ({ pedidos, onCambio }) => {
         .filter(p => p.metodo_pago === 'transferencia' && p.estado === 'Esperando transferencia')
         .sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
     const lista = [...informados, ...esperando];
+
+    // Mismo monto en más de un pedido: hay que mirar bien el titular y la hora antes de confirmar
+    const vecesPorMonto = lista.reduce((acc, p) => {
+        const monto = Number(p.total);
+        acc[monto] = (acc[monto] || 0) + 1;
+        return acc;
+    }, {});
+
+    const idsInformados = informados.map(p => p.id_pedido).join(',');
+
+    // Suena cuando un cliente avisa que transfirió (no en la primera carga de la página)
+    useEffect(() => {
+        const ids = idsInformados ? idsInformados.split(',') : [];
+        const vistos = avisadosVistos.current;
+        avisadosVistos.current = new Set(ids);
+        if (vistos && sonido && ids.some(id => !vistos.has(id))) sonarAviso();
+    }, [idsInformados, sonido]);
+
+    // Contador en el título de la pestaña, para verlo aunque esté en otra pestaña
+    const cantidadInformados = informados.length;
+    useEffect(() => {
+        const base = document.title.replace(/^\(\d+\) /, '');
+        document.title = cantidadInformados > 0 ? `(${cantidadInformados}) ${base}` : base;
+        return () => { document.title = document.title.replace(/^\(\d+\) /, ''); };
+    }, [cantidadInformados]);
+
+    const alternarSonido = () => {
+        const activo = !sonido;
+        setSonido(activo);
+        guardarSonido(activo);
+        if (activo) sonarAviso(); // de paso confirma que se escucha
+    };
 
     if (lista.length === 0) return null;
 
@@ -61,7 +124,16 @@ const PagosPorVerificar = ({ pedidos, onCambio }) => {
                     <Landmark size={18} /> Pagos por verificar
                     <span className="bg-emerald-600 text-white text-xs font-black px-2.5 py-0.5 rounded-full">{informados.length}</span>
                 </h2>
-                <p className="text-xs font-bold text-emerald-800">Buscá cada ingreso en tu banco por monto, hora y titular.</p>
+                <div className="flex flex-wrap items-center gap-3">
+                    <p className="text-xs font-bold text-emerald-800">Buscá cada ingreso en tu banco por monto, hora y titular.</p>
+                    <button
+                        type="button"
+                        onClick={alternarSonido}
+                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-black transition-all ${sonido ? 'bg-emerald-600 text-white' : 'bg-white text-emerald-700 border border-emerald-200 hover:bg-emerald-100'}`}
+                    >
+                        {sonido ? <Bell size={13} /> : <BellOff size={13} />} {sonido ? 'Sonido activado' : 'Activar sonido'}
+                    </button>
+                </div>
             </div>
             <ul className="divide-y divide-gray-100">
                 {lista.map(p => {
@@ -76,6 +148,11 @@ const PagosPorVerificar = ({ pedidos, onCambio }) => {
                                 <div>
                                     <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Monto</p>
                                     <p className="font-black text-gray-900 text-lg tracking-tight">${Number(p.total).toLocaleString('es-AR')}</p>
+                                    {vecesPorMonto[Number(p.total)] > 1 && (
+                                        <p className="inline-flex items-center gap-1 text-[10px] font-black uppercase text-orange-700 bg-orange-50 px-2 py-0.5 rounded-md mt-0.5" title="Hay otro pedido por el mismo monto: fijate el titular y la hora en tu banco.">
+                                            <AlertTriangle size={11} /> Monto repetido
+                                        </p>
+                                    )}
                                 </div>
                                 <div className="min-w-0">
                                     <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Titular</p>

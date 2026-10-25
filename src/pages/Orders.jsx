@@ -357,7 +357,18 @@ const Orders = () => {
             fetchData();
         } catch (error) {
             console.error('Error al actualizar el estado del pedido:', error);
-            alert('No se pudo actualizar el estado del pedido.');
+            alert(error.response?.data?.message || 'No se pudo actualizar el estado del pedido.');
+        }
+    };
+
+    // Transferencia rechazada o vencida, pero el local después vio la plata (o habló con el cliente)
+    const handleConfirmarPagoIgual = async (pedido) => {
+        if (!window.confirm(`El pedido #${pedido.id_pedido} figura como "${pedido.estado}". ¿Confirmás que recibiste $${Number(pedido.total).toLocaleString('es-AR')}? El pedido pasa a preparación.`)) return;
+        try {
+            await api.post(`/pedidos/${pedido.id_pedido}/confirmar-pago`, {});
+            fetchData(true);
+        } catch (error) {
+            alert(error.response?.data?.message || 'No se pudo confirmar el pago.');
         }
     };
 
@@ -665,9 +676,18 @@ const Orders = () => {
                             </div>
 
                             <div className="p-6 bg-gray-50/30 border-t border-gray-100 space-y-2">
+                                {pedido.metodo_pago === 'transferencia' && (pedido.estado === 'Pago no confirmado' || pedido.estado === 'Vencido') && (
+                                    <button
+                                        onClick={() => handleConfirmarPagoIgual(pedido)}
+                                        className="w-full flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 shadow-lg shadow-emerald-100"
+                                    >
+                                        <CheckCircle2 size={16} /> Confirmar pago igual
+                                    </button>
+                                )}
+
                                 {pedido.metodo_entrega === 'takeaway' && (
                                     <>
-                                        {(pedido.estado === 'Pendiente' || pedido.estado === 'Preparando' || pedido.estado === 'Aprobado') && (
+                                        {(pedido.estado === 'Pendiente' || pedido.estado === 'Preparando' || pedido.estado === 'En preparación' || pedido.estado === 'Aprobado') && (
                                             <button 
                                                 onClick={() => handleUpdateStatus(pedido.id_pedido, 'Listo para retirar')}
                                                 disabled={pedido.estado === 'Pendiente'}

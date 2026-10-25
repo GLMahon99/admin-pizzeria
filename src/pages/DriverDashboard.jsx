@@ -112,9 +112,10 @@ const DriverDashboard = () => {
     // Actualizar el estado del pedido
     const handleUpdateStatus = async (pedidoId, currentStatus) => {
         let nuevo_estado = '';
-        if (currentStatus.toLowerCase() === 'aprobado' || currentStatus.toLowerCase() === 'preparando' || currentStatus.toLowerCase() === 'pendiente') {
+        const actual = currentStatus.toLowerCase();
+        if (actual === 'aprobado' || actual === 'preparando' || actual === 'en preparación') {
             nuevo_estado = 'En camino';
-        } else if (currentStatus.toLowerCase() === 'en camino') {
+        } else if (actual === 'en camino') {
             nuevo_estado = 'Entregado';
         } else {
             return; // Ya está entregado o en otro estado
@@ -132,7 +133,7 @@ const DriverDashboard = () => {
             fetchDeliveries();
         } catch (err) {
             console.error('Error al actualizar estado:', err);
-            alert('No se pudo actualizar el estado de entrega.');
+            alert(err.response?.data?.message || 'No se pudo actualizar el estado de entrega.');
         } finally {
             setLoading(false);
         }
