@@ -1,10 +1,55 @@
+import { useState } from 'react';
 import { BookOpen, Package, Key, Play, ShieldAlert, ShoppingBag, Database, Bike, Settings, FileText, LayoutDashboard, ExternalLink } from 'lucide-react';
+
+/**
+ * Video de YouTube (no listado). Hasta que tocan play se muestra solo la miniatura,
+ * así la página no carga el reproductor de YouTube por cada tutorial.
+ */
+const VideoTutorial = ({ youtubeId, titulo }) => {
+    const [reproduciendo, setReproduciendo] = useState(false);
+
+    if (reproduciendo) {
+        return (
+            <div className="aspect-video rounded-3xl overflow-hidden bg-black">
+                <iframe
+                    className="w-full h-full"
+                    src={`https://www.youtube-nocookie.com/embed/${youtubeId}?autoplay=1&rel=0&modestbranding=1`}
+                    title={titulo}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                />
+            </div>
+        );
+    }
+
+    return (
+        <button
+            type="button"
+            onClick={() => setReproduciendo(true)}
+            className="group relative block w-full aspect-video rounded-3xl overflow-hidden bg-slate-900"
+            aria-label={`Reproducir video: ${titulo}`}
+        >
+            <img
+                src={`https://i.ytimg.com/vi/${youtubeId}/hqdefault.jpg`}
+                alt=""
+                loading="lazy"
+                className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity"
+            />
+            <span className="absolute inset-0 flex items-center justify-center">
+                <span className="w-16 h-16 bg-red-600 text-white rounded-full flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform">
+                    <Play size={26} fill="currentColor" className="ml-1" />
+                </span>
+            </span>
+        </button>
+    );
+};
 
 const Support = () => {
     const tutorials = [
         {
             id: 'productos',
             title: '1. Cómo Cargar Productos e Inventario',
+            youtubeId: 'TGt-Ua0iyP8',
             icon: <Package className="text-gold-600" size={24} />,
             description: 'Guía paso a paso para administrar tus categorías, productos, precios, fotos y la asociación de recetas para el control de insumos.',
             steps: [
@@ -45,6 +90,7 @@ const Support = () => {
         {
             id: 'repartidores',
             title: '4. Carga de Repartidores y App de Reparto QR',
+            youtubeId: 'V-XqJ0sPSp4',
             icon: <Bike className="text-emerald-600" size={24} />,
             description: 'Gestioná tu plantel de cadetes y aprendé cómo funciona el portal de auto-asignación por escaneo de código QR.',
             steps: [
@@ -140,17 +186,19 @@ const Support = () => {
 
                         {/* Contenedor del Vídeo Tutorial */}
                         <div className="pt-4 border-t border-gray-50">
-                            <div className="bg-slate-50 border-2 border-dashed border-gray-200 rounded-3xl p-6 flex flex-col items-center justify-center text-center gap-2 group hover:border-gold-500 hover:bg-slate-100/50 transition-all cursor-pointer">
-                                <div className="w-12 h-12 bg-red-50 text-red-600 rounded-full flex items-center justify-center group-hover:scale-115 group-hover:bg-red-100 transition-all shadow-sm">
-                                    <Play size={20} fill="currentColor" className="ml-0.5" />
+                            {tutorial.youtubeId ? (
+                                <VideoTutorial youtubeId={tutorial.youtubeId} titulo={tutorial.title} />
+                            ) : (
+                                <div className="bg-slate-50 border-2 border-dashed border-gray-200 rounded-3xl p-6 flex flex-col items-center justify-center text-center gap-2">
+                                    <div className="w-12 h-12 bg-red-50 text-red-600 rounded-full flex items-center justify-center shadow-sm">
+                                        <Play size={20} fill="currentColor" className="ml-0.5" />
+                                    </div>
+                                    <div className="space-y-1">
+                                        <p className="font-black text-gray-700 text-sm uppercase tracking-wide">Video Tutorial en camino</p>
+                                        <p className="text-xs text-gray-400 font-bold">Próximamente vas a poder verlo acá.</p>
+                                    </div>
                                 </div>
-                                <div className="space-y-1">
-                                    <p className="font-black text-gray-700 text-sm uppercase tracking-wide">Video Tutorial en camino</p>
-                                    <p className="text-xs text-gray-400 font-bold">
-                                        Próximamente disponible. Hacé click para reproducir en YouTube cuando esté cargado.
-                                    </p>
-                                </div>
-                            </div>
+                            )}
                         </div>
                     </div>
                 ))}
