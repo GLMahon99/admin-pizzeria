@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import { parseAddress } from '../utils/formatters';
 import ArmarItemModal from '../components/ArmarItemModal';
 import PagosPorVerificar from '../components/PagosPorVerificar';
+import EnvioPedidosYa from '../components/EnvioPedidosYa';
 
 const ETIQUETA_SELECCION = { GUSTO: 'Gustos', TOPPING: 'Toppings', ADEREZO: 'Aderezos', GUARNICION: 'Guarnición' };
 
@@ -683,6 +684,10 @@ const Orders = () => {
                                     >
                                         <CheckCircle2 size={16} /> Confirmar pago igual
                                     </button>
+                                )}
+
+                                {pedido.proveedor_envio === 'pedidosya' && pedido.metodo_entrega !== 'takeaway' && (
+                                    <EnvioPedidosYa pedido={pedido} onCambio={() => fetchData(true)} />
                                 )}
 
                                 {pedido.metodo_entrega === 'takeaway' && (
