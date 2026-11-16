@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import { Save, ShieldCheck, Key, Palette, Image as ImageIcon, Loader2, Phone, Truck, Database, DollarSign, Link, FileText, Copy, Check, Clock, Upload, Trash2, Landmark, AlertTriangle } from 'lucide-react';
 import api from '../api/axiosConfig';
 import HorariosConfig from '../components/HorariosConfig';
+import ConfigPedidosYa from '../components/ConfigPedidosYa';
 import { useAuth } from '../context/AuthContext';
 
 const LOGO_TIPOS = ['image/png', 'image/jpeg', 'image/webp', 'image/svg+xml'];
@@ -169,6 +170,7 @@ const Settings = () => {
 
     const aceptaDelivery = !!(config.acepta_delivery ?? true);
     const aceptaRetiro = !!(config.acepta_retiro ?? true);
+    const proveedorEnvio = config.pedidosya_disponible && config.envio_proveedor === 'pedidosya' ? 'pedidosya' : 'propio';
     const setMetodoEntrega = (campo, valor) => {
         const otro = campo === 'acepta_delivery' ? aceptaRetiro : aceptaDelivery;
         if (!valor && !otro) {
@@ -621,7 +623,40 @@ const Settings = () => {
                         </p>
                     )}
 
-                    {aceptaDelivery && (<>
+                    {aceptaDelivery && config.pedidosya_disponible && (
+                        <div className="space-y-3">
+                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">¿Quién hace los envíos?</p>
+                            <div role="radiogroup" className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                {[
+                                    { valor: 'propio', titulo: 'Repartidores propios', texto: 'Tus repartidores toman los pedidos desde su app.' },
+                                    { valor: 'pedidosya', titulo: 'PedidosYa Envíos', texto: 'Un repartidor de PedidosYa retira en tu local. Se pide solo.' }
+                                ].map(({ valor, titulo, texto }) => {
+                                    const activo = proveedorEnvio === valor;
+                                    return (
+                                        <button
+                                            key={valor}
+                                            type="button"
+                                            role="radio"
+                                            aria-checked={activo}
+                                            onClick={() => setConfig({ ...config, envio_proveedor: valor })}
+                                            className={`text-left p-4 rounded-2xl border-2 transition-all ${activo ? 'border-purple-300 bg-purple-50/60' : 'border-gray-100 bg-gray-50 hover:border-gray-200'}`}
+                                        >
+                                            <span className="block font-black text-gray-800 text-sm">{titulo}</span>
+                                            <span className="block text-[11px] text-gray-500 font-bold">{texto}</span>
+                                            <span className={`block text-[10px] font-black uppercase mt-1 ${activo ? 'text-green-600' : 'text-gray-400'}`}>{activo ? 'Elegido' : 'No elegido'}</span>
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                            <p className="text-[11px] text-gray-400 font-bold">Es uno u otro: todos los envíos a domicilio salen por la opción elegida.</p>
+                        </div>
+                    )}
+
+                    {aceptaDelivery && proveedorEnvio === 'pedidosya' && (
+                        <ConfigPedidosYa config={config} setConfig={setConfig} />
+                    )}
+
+                    {aceptaDelivery && proveedorEnvio === 'propio' && (<>
                     <div className="bg-purple-50 p-4 rounded-2xl border border-purple-100 space-y-2">
                         <p className="text-[10px] font-bold text-purple-600 uppercase tracking-widest flex items-center gap-1">
                             Opciones de Delivery
