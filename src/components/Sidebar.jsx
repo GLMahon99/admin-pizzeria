@@ -16,10 +16,11 @@ import {
     ChevronRight,
     Maximize2,
     Minimize2,
-    ShieldCheck
+    ShieldCheck,
+    X
 } from 'lucide-react';
 
-const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
+const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile = false, mobileOpen = false, onClose }) => {
     const { logout, user } = useAuth();
     const navigate = useNavigate();
     const [isFullscreen, setIsFullscreen] = useState(!!document.fullscreenElement);
@@ -58,21 +59,33 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
     ];
 
     return (
-        <aside className={`fixed top-0 left-0 h-screen bg-slate-900 text-slate-300 flex flex-col shadow-2xl z-50 transition-all duration-300 ${
-            isCollapsed ? 'w-20' : 'w-64'
+        <aside className={`fixed top-0 left-0 h-dvh bg-slate-900 text-slate-300 flex flex-col shadow-2xl z-50 transition-all duration-300 ${
+            isMobile
+                ? `w-72 max-w-[85vw] ${mobileOpen ? 'translate-x-0' : '-translate-x-full'}`
+                : isCollapsed ? 'w-20' : 'w-64'
         }`}>
 
-            {/* Toggle Button */}
-            <button 
-                onClick={() => setIsCollapsed(!isCollapsed)}
-                className="absolute top-8 -right-3 bg-gold-600 hover:bg-gold-700 text-white p-1 rounded-full border border-slate-800 transition-all z-50 shadow-md hover:scale-110 active:scale-95"
-                title={isCollapsed ? "Expandir Menú" : "Contraer Menú"}
-            >
-                {isCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
-            </button>
+            {/* Toggle Button (en celular se cierra con la X o tocando afuera) */}
+            {isMobile ? (
+                <button
+                    onClick={onClose}
+                    className="absolute top-5 right-4 p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+                    aria-label="Cerrar menú"
+                >
+                    <X size={22} />
+                </button>
+            ) : (
+                <button
+                    onClick={() => setIsCollapsed(!isCollapsed)}
+                    className="absolute top-8 -right-3 bg-gold-600 hover:bg-gold-700 text-white p-1 rounded-full border border-slate-800 transition-all z-50 shadow-md hover:scale-110 active:scale-95"
+                    title={isCollapsed ? "Expandir Menú" : "Contraer Menú"}
+                >
+                    {isCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
+                </button>
+            )}
 
             {/* Logo Area */}
-            <div className={`p-8 flex items-center gap-3 ${isCollapsed ? 'justify-center px-4' : ''}`}>
+            <div className={`${isMobile ? 'p-6 pr-14' : 'p-8'} flex items-center gap-3 ${isCollapsed ? 'justify-center px-4' : ''}`}>
                 {user?.logo_url ? (
                     <img src={user.logo_url} alt={user.nombre} className="h-14 w-auto object-contain rounded-lg flex-shrink-0" />
                 ) : (
@@ -88,7 +101,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
             </div>
 
             {/* Navigation */}
-            <nav className="flex-1 px-4 space-y-2">
+            <nav className="flex-1 min-h-0 overflow-y-auto px-4 space-y-2">
                 {navItems.map((item) => (
                     <NavLink
                         key={item.to}
@@ -112,7 +125,9 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
 
             {/* User & Footer */}
             <div className="p-4 border-t border-slate-700/50 space-y-2">
-                
+
+                {/* Soporte y Configuración solo en tablet/escritorio */}
+                {!isMobile && (<>
                 <NavLink
                     to="/soporte"
                     title={isCollapsed ? "Soporte" : undefined}
@@ -142,8 +157,9 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
                     <SettingsIcon size={20} />
                     {!isCollapsed && <span className="animate-in fade-in duration-200">Configuración</span>}
                 </NavLink>
+                </>)}
 
-                {localStorage.getItem('superadmin_token') && (
+                {!isMobile && localStorage.getItem('superadmin_token') && (
                     <NavLink
                         to="/superadmin"
                         title={isCollapsed ? "Panel Master" : undefined}
@@ -160,8 +176,8 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
                     </NavLink>
                 )}
 
-                {/* Botón de Pantalla Completa */}
-                <button
+                {/* Botón de Pantalla Completa (no aplica en celular) */}
+                {!isMobile && <button
                     onClick={toggleFullscreen}
                     title={isCollapsed ? (isFullscreen ? "Salir de Pantalla Completa" : "Pantalla Completa") : undefined}
                     className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-slate-400 hover:bg-slate-800 hover:text-white transition-all duration-200 ${
@@ -170,7 +186,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
                 >
                     {isFullscreen ? <Minimize2 size={20} /> : <Maximize2 size={20} />}
                     {!isCollapsed && <span className="animate-in fade-in duration-200">{isFullscreen ? "Pantalla Normal" : "Pantalla Completa"}</span>}
-                </button>
+                </button>}
 
                 <div className={`flex items-center gap-3 px-4 py-2 pt-2 ${isCollapsed ? 'justify-center px-2' : ''}`}>
                     <div className="w-10 h-10 bg-slate-800/50 rounded-full flex items-center justify-center text-gold-500 border border-slate-700 flex-shrink-0">

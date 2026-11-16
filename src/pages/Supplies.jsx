@@ -13,8 +13,11 @@ import {
     DollarSign,
     Save
 } from 'lucide-react';
+import useIsMobile from '../hooks/useIsMobile';
 
 const Supplies = () => {
+    // En celular los insumos son de solo consulta (sin carga, edición ni borrado)
+    const isMobile = useIsMobile();
     const [showForm, setShowForm] = useState(false);
     const [insumos, setInsumos] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -93,11 +96,11 @@ const Supplies = () => {
         : null;
 
     return (
-        <div className="space-y-8 pb-10">
+        <div className="space-y-5 md:space-y-8 pb-10">
             {/* Header con Stats Rápidos */}
-            <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+            <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 md:gap-6">
                 <div>
-                    <h1 className="text-3xl font-extrabold text-gray-800">
+                    <h1 className="text-2xl md:text-3xl font-extrabold text-gray-800">
                         Control de <span className="text-gold-600">Insumos</span>
                     </h1>
                     <p className="text-gray-500 text-sm font-medium flex items-center gap-1">
@@ -107,14 +110,14 @@ const Supplies = () => {
 
                 <button
                     onClick={() => setShowForm(true)}
-                    className="bg-slate-900 hover:bg-black text-white px-6 py-3 rounded-2xl font-bold flex items-center gap-2 shadow-lg transition-all active:scale-95"
+                    className="hidden md:flex bg-slate-900 hover:bg-black text-white px-6 py-3 rounded-2xl font-bold items-center gap-2 shadow-lg transition-all active:scale-95"
                 >
                     <Plus size={20} /> Cargar Insumo
                 </button>
             </header>
 
             {/* Modal de Carga de Insumos */}
-            {showForm && (
+            {showForm && !isMobile && (
                 <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
                     <div className="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden animate-in fade-in zoom-in duration-200">
 
@@ -135,7 +138,7 @@ const Supplies = () => {
                             </button>
                         </div>
 
-                        <form onSubmit={handleSubmit} className="p-8 space-y-5">
+                        <form onSubmit={handleSubmit} className="p-6 md:p-8 space-y-5">
                             {/* Nombre del Insumo */}
                             <div>
                                 <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-1">Nombre del Insumo</label>
@@ -250,19 +253,19 @@ const Supplies = () => {
             )}
 
             {/* Widgets de Estado de Almacén */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm flex items-center gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-6">
+                <div className="bg-white p-4 md:p-6 rounded-3xl border border-gray-100 shadow-sm flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
                     <div className="bg-green-100 p-3 rounded-2xl text-green-600"><PackageSearch /></div>
                     <div>
-                        <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Total Insumos</p>
-                        <p className="text-2xl font-black text-gray-800">{loading ? '...' : insumos.length}</p>
+                        <p className="text-[11px] md:text-xs font-bold text-gray-400 uppercase tracking-widest">Total Insumos</p>
+                        <p className="text-xl md:text-2xl font-black text-gray-800">{loading ? '...' : insumos.length}</p>
                     </div>
                 </div>
-                <div className="bg-white p-6 rounded-3xl border border-red-100 shadow-sm flex items-center gap-4">
+                <div className="bg-white p-4 md:p-6 rounded-3xl border border-red-100 shadow-sm flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
                     <div className="bg-red-100 p-3 rounded-2xl text-red-600 animate-pulse"><AlertTriangle /></div>
                     <div>
-                        <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Bajo Stock</p>
-                        <p className="text-2xl font-black text-red-600">
+                        <p className="text-[11px] md:text-xs font-bold text-gray-400 uppercase tracking-widest">Bajo Stock</p>
+                        <p className="text-xl md:text-2xl font-black text-red-600">
                             {loading ? '...' : itemsBajoStock.length} Críticos
                         </p>
                     </div>
@@ -275,9 +278,38 @@ const Supplies = () => {
                     {loading ? (
                         <div className="p-8 text-center text-gray-400 font-bold">Cargando insumos...</div>
                     ) : insumos.length === 0 ? (
-                        <div className="p-8 text-center text-gray-400 font-bold">No hay insumos cargados. ¡Creá el primero!</div>
+                        <div className="p-8 text-center text-gray-400 font-bold">{isMobile ? 'No hay insumos cargados.' : 'No hay insumos cargados. ¡Creá el primero!'}</div>
+                    ) : isMobile ? (
+                        <ul className="divide-y divide-gray-100">
+                            {insumos.map((insumo) => {
+                                const alertaStock = parseFloat(insumo.stock_actual) <= parseFloat(insumo.stock_minimo);
+                                return (
+                                    <li key={insumo.id_insumo} className={`p-4 flex items-center gap-3 ${alertaStock ? 'bg-red-50/40' : ''}`}>
+                                        <div className="flex-1 min-w-0">
+                                            <p className="font-bold text-gray-800 break-words">{insumo.nombre}</p>
+                                            <div className="flex flex-wrap items-center gap-1.5 mt-1">
+                                                <span className="text-[10px] font-bold bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full uppercase">{insumo.categoria}</span>
+                                                <span className="text-[10px] text-gray-400 font-bold">Mín. {insumo.stock_minimo} {insumo.unidad_medida}</span>
+                                            </div>
+                                        </div>
+                                        <div className="text-right shrink-0">
+                                            <p className={`text-lg font-black leading-tight ${alertaStock ? 'text-red-600' : 'text-gray-700'}`}>
+                                                {insumo.stock_actual} <span className="text-xs font-bold text-gray-400 uppercase">{insumo.unidad_medida}</span>
+                                            </p>
+                                            {alertaStock ? (
+                                                <span className="inline-flex items-center gap-1 mt-1 bg-red-100 text-red-700 px-2 py-0.5 rounded-lg text-[10px] font-black uppercase">
+                                                    <AlertTriangle size={11} /> Reponer
+                                                </span>
+                                            ) : (
+                                                <span className="inline-block mt-1 bg-green-100 text-green-700 px-2 py-0.5 rounded-lg text-[10px] font-black uppercase">OK</span>
+                                            )}
+                                        </div>
+                                    </li>
+                                );
+                            })}
+                        </ul>
                     ) : (
-                        <table className="w-full text-left border-collapse">
+                        <table className="w-full text-left border-collapse min-w-[720px]">
                             <thead className="bg-gray-50 border-b border-gray-100">
                                 <tr>
                                     <th className="px-6 py-4 text-xs font-black text-gray-400 uppercase tracking-widest">Insumo</th>
@@ -354,8 +386,8 @@ const Supplies = () => {
 
             {/* Footer para el Analista - Solo si hay elementos críticos */}
             {masCritico && (
-                <div className="p-6 bg-gold-50 rounded-3xl border border-gold-100 flex items-center gap-4">
-                    <div className="text-gold-600"><Scale size={32} /></div>
+                <div className="p-4 md:p-6 bg-gold-50 rounded-3xl border border-gold-100 flex items-start md:items-center gap-3 md:gap-4">
+                    <div className="text-gold-600 shrink-0"><Scale size={32} /></div>
                     <p className="text-sm text-gold-800 leading-relaxed">
                         <span className="font-bold">Alerta Crítica Automática:</span> Tu insumo más crítico es el <span className="font-black underline">{masCritico.nombre}</span>.
                         El stock actual ({masCritico.stock_actual} {masCritico.unidad_medida}) no cubre el mínimo sugerido de {masCritico.stock_minimo} {masCritico.unidad_medida}.

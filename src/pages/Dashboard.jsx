@@ -88,14 +88,14 @@ const Dashboard = () => {
     })) || [];
 
     return (
-        <div className="space-y-8 pb-10">
+        <div className="space-y-5 md:space-y-8 pb-10">
             {/* Header */}
             <header className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-extrabold text-gray-800">Panel de <span className="text-gold-600">Alta Gerencia</span></h1>
+                    <h1 className="text-2xl md:text-3xl font-extrabold text-gray-800">Panel de <span className="text-gold-600">Alta Gerencia</span></h1>
                     <p className="text-gray-500">Métricas clave, comportamiento de usuarios y pronóstico de ventas.</p>
                 </div>
-                <div className="flex flex-col sm:flex-row items-center gap-3">
+                <div className="flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center gap-3">
                     {rango === 'personalizado' && (
                         <div className="flex items-center gap-2">
                             <input 
@@ -137,7 +137,7 @@ const Dashboard = () => {
             </header>
 
             {/* 1. KPIs Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
                 <StatCard title="Ventas Hoy (Bruto)" value={`$${Math.round(kpis.ventas_hoy).toLocaleString() || 0}`} icon={<DollarSign className="text-[#10b981]" />} trend="+15%" color="bg-[#10b981]/10" />
                 <StatCard title="Ventas del Mes" value={`$${Math.round(kpis.ventas_mes || 0).toLocaleString()}`} icon={<ShoppingCart className="text-[#083d5a]" />} trend="Estable" color="bg-[#083d5a]/10" />
                 <StatCard title="Ticket Promedio" value={`$${Math.round(kpis.ticket_promedio).toLocaleString() || 0}`} icon={<TrendingUp className="text-[#ff5b00]" />} trend="+8%" color="bg-[#ff5b00]/10" />
@@ -145,16 +145,16 @@ const Dashboard = () => {
             </div>
 
             {/* 2. Main Charts Section */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 md:gap-8">
                 {/* 2A. Evolución de Ventas (Area Chart) */}
-                <div className="lg:col-span-2 bg-white p-6 rounded-[2rem] shadow-xl shadow-gray-200/40 border border-gray-100">
+                <div className="lg:col-span-2 bg-white p-4 md:p-6 rounded-3xl md:rounded-[2rem] shadow-xl shadow-gray-200/40 border border-gray-100">
                     <div className="flex justify-between items-center mb-6">
                         <div>
-                            <h2 className="text-xl font-black text-gray-800">Crecimiento de Ventas</h2>
+                            <h2 className="text-lg md:text-xl font-black text-gray-800">Crecimiento de Ventas</h2>
                             <p className="text-sm text-gray-500 font-medium">Evolución temporal del negocio</p>
                         </div>
                     </div>
-                    <div className="h-80 w-full">
+                    <div className="h-64 md:h-80 w-full">
                         <ResponsiveContainer width="100%" height="100%">
                             <AreaChart data={ventasSemanales} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                                 <defs>
@@ -174,12 +174,12 @@ const Dashboard = () => {
                 </div>
 
                 {/* 2B. Distribución de Ventas (Pie Chart) */}
-                <div className="bg-white p-6 rounded-[2rem] shadow-xl shadow-gray-200/40 border border-gray-100 flex flex-col">
+                <div className="bg-white p-4 md:p-6 rounded-3xl md:rounded-[2rem] shadow-xl shadow-gray-200/40 border border-gray-100 flex flex-col">
                     <div>
-                        <h2 className="text-xl font-black text-gray-800">Distribución de Ventas</h2>
+                        <h2 className="text-lg md:text-xl font-black text-gray-800">Distribución de Ventas</h2>
                         <p className="text-sm text-gray-500 font-medium">Categorías más solicitadas</p>
                     </div>
-                    <div className="flex-1 min-h-[300px] w-full flex items-center justify-center">
+                    <div className="flex-1 min-h-[260px] md:min-h-[300px] w-full flex items-center justify-center">
                         <ResponsiveContainer width="100%" height="100%">
                             <PieChart>
                                 <Pie
@@ -205,14 +205,14 @@ const Dashboard = () => {
             </div>
 
             {/* 3. Secondary Analytics Section */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 md:gap-8">
                 {/* 3A. Horas Pico (Bar Chart) */}
-                <div className="lg:col-span-2 bg-[#25323f] p-6 rounded-[2rem] shadow-xl shadow-gray-200/40 border border-[#305a83]/50">
+                <div className="lg:col-span-2 bg-[#25323f] p-4 md:p-6 rounded-3xl md:rounded-[2rem] shadow-xl shadow-gray-200/40 border border-[#305a83]/50">
                     <div>
-                        <h2 className="text-xl font-black text-white">Mapa de Horas Pico</h2>
+                        <h2 className="text-lg md:text-xl font-black text-white">Mapa de Horas Pico</h2>
                         <p className="text-sm text-gray-400 font-medium">Volumen de pedidos según franja horaria (hace 30 días)</p>
                     </div>
-                    <div className="h-80 w-full mt-6">
+                    <div className="h-64 md:h-80 w-full mt-6">
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={dataHorarios} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#305a83" opacity={0.3} />
@@ -226,14 +226,14 @@ const Dashboard = () => {
                 </div>
 
                 {/* 3B. Top Productos */}
-                <div className="bg-white p-6 rounded-[2rem] shadow-xl shadow-gray-200/40 border border-gray-100">
+                <div className="bg-white p-4 md:p-6 rounded-3xl md:rounded-[2rem] shadow-xl shadow-gray-200/40 border border-gray-100">
                     <div className="flex justify-between items-center mb-6">
                         <div>
-                            <h2 className="text-xl font-black text-gray-800">Top Productos</h2>
+                            <h2 className="text-lg md:text-xl font-black text-gray-800">Top Productos</h2>
                             <p className="text-sm text-gray-500 font-medium">Los más vendidos históricos</p>
                         </div>
                     </div>
-                    <div className="h-80 w-full">
+                    <div className="h-64 md:h-80 w-full">
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={topProductos} layout="vertical" margin={{ left: 0, right: 30, top: 0, bottom: 0 }}>
                                 <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} stroke="#f1f5f9" />
@@ -252,9 +252,9 @@ const Dashboard = () => {
             </div>
 
             {/* 4. Actividad Reciente List */}
-            <div className="bg-white p-6 rounded-[2rem] shadow-xl shadow-gray-200/40 border border-gray-100">
+            <div className="bg-white p-4 md:p-6 rounded-3xl md:rounded-[2rem] shadow-xl shadow-gray-200/40 border border-gray-100">
                 <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-xl font-black text-gray-800">Transacciones Recientes</h2>
+                    <h2 className="text-lg md:text-xl font-black text-gray-800">Transacciones Recientes</h2>
                     <button onClick={() => window.location.href='/pedidos'} className="text-sm font-bold text-[#ff5b00] hover:text-[#ef4c00] transition-colors">
                         Ver todo el historial
                     </button>
@@ -264,7 +264,7 @@ const Dashboard = () => {
                         <thead>
                             <tr className="text-xs uppercase tracking-widest text-gray-400 border-b border-gray-100">
                                 <th className="pb-4 font-black">Cliente</th>
-                                <th className="pb-4 font-black">Hora</th>
+                                <th className="pb-4 font-black hidden sm:table-cell">Hora</th>
                                 <th className="pb-4 font-black">Estado</th>
                                 <th className="pb-4 font-black text-right">Importe</th>
                             </tr>
@@ -274,13 +274,13 @@ const Dashboard = () => {
                                 <tr key={venta.id} className="border-b border-gray-50 hover:bg-gray-50 transition-colors">
                                     <td className="py-4">
                                         <div className="flex items-center gap-3">
-                                            <div className="w-10 h-10 rounded-full flex items-center justify-center bg-[#305a83]/10 text-[#305a83]">
+                                            <div className="hidden sm:flex w-10 h-10 rounded-full items-center justify-center bg-[#305a83]/10 text-[#305a83] shrink-0">
                                                 <Users size={16} />
                                             </div>
-                                            <span className="font-bold text-gray-800">{venta.cliente}</span>
+                                            <span className="font-bold text-gray-800 text-sm md:text-base">{venta.cliente}</span>
                                         </div>
                                     </td>
-                                    <td className="py-4 text-sm font-medium text-gray-500">
+                                    <td className="py-4 text-sm font-medium text-gray-500 hidden sm:table-cell">
                                         {new Date(venta.hora).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })}
                                     </td>
                                     <td className="py-4">
@@ -303,18 +303,18 @@ const Dashboard = () => {
 
 // Componente pequeño para las tarjetas de estadísticas
 const StatCard = ({ title, value, icon, trend, color }) => (
-    <div className={`p-6 rounded-[2rem] bg-white border border-gray-100 shadow-xl shadow-gray-200/40 relative overflow-hidden group hover:-translate-y-1 transition-all`}>
+    <div className={`p-4 md:p-6 rounded-3xl md:rounded-[2rem] bg-white border border-gray-100 shadow-xl shadow-gray-200/40 relative overflow-hidden group hover:-translate-y-1 transition-all min-w-0`}>
         <div className={`absolute -right-6 -top-6 w-24 h-24 rounded-full ${color} opacity-50 group-hover:scale-150 transition-transform duration-500`} />
         
         <div className="flex justify-between items-start relative z-10">
-            <div className={`p-3 rounded-2xl ${color} shadow-sm backdrop-blur-sm`}>{icon}</div>
-            <span className="flex items-center text-xs font-bold text-gray-500 bg-gray-50 px-2 py-1 rounded-lg border border-gray-100">
+            <div className={`p-2 md:p-3 rounded-xl md:rounded-2xl ${color} shadow-sm backdrop-blur-sm`}>{icon}</div>
+            <span className="hidden sm:flex items-center text-xs font-bold text-gray-500 bg-gray-50 px-2 py-1 rounded-lg border border-gray-100">
                 {trend}
             </span>
         </div>
-        <div className="mt-6 relative z-10">
-            <p className="text-sm font-bold text-gray-400 tracking-wide uppercase">{title}</p>
-            <p className="text-3xl font-black text-gray-800 mt-1">{value}</p>
+        <div className="mt-4 md:mt-6 relative z-10">
+            <p className="text-[11px] md:text-sm font-bold text-gray-400 tracking-wide uppercase leading-tight">{title}</p>
+            <p className="text-xl md:text-3xl font-black text-gray-800 mt-1 leading-tight break-words">{value}</p>
         </div>
     </div>
 );

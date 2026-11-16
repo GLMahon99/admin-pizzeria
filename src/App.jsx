@@ -10,6 +10,7 @@ import Dashboard from './pages/Dashboard';
 import Inventory from './pages/Inventory';
 import Orders from './pages/Orders';
 import Layout from './components/Layout';
+import SoloEscritorio from './components/SoloEscritorio';
 import Supplies from './pages/Supplies';
 import Settings from './pages/Settings';
 import SubscriptionPlans from './pages/SubscriptionPlans';
@@ -55,8 +56,8 @@ function App() {
               <Route path="inventario" element={<Inventory />} />
               <Route path="insumos" element={<Supplies />} />
               <Route path="repartidores" element={<Drivers />} />
-              <Route path="soporte" element={<Support />} />
-              <Route path="configuracion" element={<Settings />} />
+              <Route path="soporte" element={<SoloEscritorio seccion="Soporte"><Support /></SoloEscritorio>} />
+              <Route path="configuracion" element={<SoloEscritorio seccion="Configuración"><Settings /></SoloEscritorio>} />
             </>
           )}
         </Route>
