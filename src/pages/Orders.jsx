@@ -6,6 +6,7 @@ import { parseAddress } from '../utils/formatters';
 import ArmarItemModal from '../components/ArmarItemModal';
 import PagosPorVerificar from '../components/PagosPorVerificar';
 import EnvioPedidosYa from '../components/EnvioPedidosYa';
+import useIsMobile from '../hooks/useIsMobile';
 
 const ETIQUETA_SELECCION = { GUSTO: 'Gustos', TOPPING: 'Toppings', ADEREZO: 'Aderezos', GUARNICION: 'Guarnición' };
 
@@ -33,6 +34,8 @@ const Orders = () => {
 
     // Estados para el Modal de Nuevo Pedido
     const [showNewOrderModal, setShowNewOrderModal] = useState(false);
+    // En celular no se cargan pedidos nuevos (solo se ven y gestionan los que entran)
+    const isMobile = useIsMobile();
     const [availableProducts, setAvailableProducts] = useState([]);
     const [newOrder, setNewOrder] = useState({
         cliente: '',
@@ -393,24 +396,24 @@ const Orders = () => {
     ];
 
     return (
-        <div className="max-w-7xl mx-auto space-y-8 pb-10">
+        <div className="max-w-7xl mx-auto space-y-5 md:space-y-8 pb-10">
             {/* Header */}
-            <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+            <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 md:gap-6">
                 <div>
-                    <h1 className="text-4xl font-black text-gray-800 tracking-tight">
+                    <h1 className="text-2xl md:text-4xl font-black text-gray-800 tracking-tight">
                         Gestión de <span className="text-gold-600">Pedidos</span>
                     </h1>
                     <p className="text-gray-500 font-medium">Control total de ventas y despachos</p>
                 </div>
 
                 <div className="flex items-center gap-4">
-                    <div className="flex items-center gap-2 bg-slate-100 text-slate-600 px-5 py-3 rounded-2xl font-black text-sm uppercase tracking-widest border border-slate-200 shadow-sm">
+                    <div className="flex items-center gap-2 bg-slate-100 text-slate-600 px-4 py-2 md:px-5 md:py-3 rounded-2xl font-black text-xs md:text-sm uppercase tracking-widest border border-slate-200 shadow-sm">
                         <Package size={18} className="text-gold-500" />
                         {filteredOrders.length} {filter === 'Hoy' ? 'hoy' : 'encontrados'}
                     </div>
                     <button 
                         onClick={() => setShowNewOrderModal(true)}
-                        className="flex items-center gap-2 bg-gold-600 hover:bg-gold-700 text-white px-8 py-4 rounded-[2rem] font-black shadow-xl shadow-gold-100 transition-all hover:-translate-y-1 active:scale-95"
+                        className="hidden md:flex items-center gap-2 bg-gold-600 hover:bg-gold-700 text-white px-6 py-3 lg:px-8 lg:py-4 rounded-[2rem] font-black shadow-xl shadow-gold-100 transition-all hover:-translate-y-1 active:scale-95"
                     >
                         <Plus size={24} /> Nuevo Pedido
                     </button>
@@ -418,11 +421,11 @@ const Orders = () => {
             </header>
 
             {/* Modal Nuevo Pedido */}
-            {showNewOrderModal && (
+            {showNewOrderModal && !isMobile && (
                 <div className="fixed inset-0 bg-slate-900/70 backdrop-blur-md z-50 flex items-center justify-center p-4">
                     <div className="bg-white rounded-[3rem] shadow-2xl w-full max-w-6xl overflow-hidden animate-in fade-in zoom-in duration-300 h-[90vh] flex flex-col border border-white/20">
                         {/* Modal Header */}
-                        <div className="bg-gold-600 p-8 text-white flex justify-between items-center shrink-0">
+                        <div className="bg-gold-600 p-5 lg:p-8 text-white flex justify-between items-center shrink-0">
                             <div className="flex items-center gap-4">
                                 <div className="bg-white/20 p-3 rounded-2xl backdrop-blur-sm">
                                     <ShoppingCart size={24} />
@@ -435,9 +438,9 @@ const Orders = () => {
                             <button onClick={() => setShowNewOrderModal(false)} className="bg-black/10 hover:bg-black/20 p-2 rounded-xl transition-all"><X size={24}/></button>
                         </div>
 
-                        <div className="flex-1 overflow-hidden flex flex-col md:flex-row">
+                        <div className="flex-1 min-h-0 overflow-hidden flex flex-col lg:flex-row">
                             {/* Columna Izquierda: Selección de Productos */}
-                            <div className="flex-1 p-8 border-r border-gray-100 overflow-y-auto space-y-6">
+                            <div className="flex-1 min-h-0 p-5 lg:p-8 lg:border-r border-gray-100 overflow-y-auto space-y-6">
                                 <div className="space-y-4">
                                     <div className="relative">
                                         <Search className="absolute left-4 top-4 text-gray-400" size={20} />
@@ -493,16 +496,16 @@ const Orders = () => {
                             </div>
 
                             {/* Columna Derecha: Detalle del Pedido Actual */}
-                            <div className="w-full md:w-[450px] bg-gray-50/50 p-8 flex flex-col border-l border-gray-100">
-                                <h3 className="text-xs font-black text-gray-400 mb-6 uppercase tracking-widest flex items-center gap-2">
+                            <div className="w-full lg:w-[420px] max-h-[50%] lg:max-h-none min-h-0 bg-gray-50/50 p-5 lg:p-8 flex flex-col border-t lg:border-t-0 lg:border-l border-gray-100">
+                                <h3 className="text-xs font-black text-gray-400 mb-4 lg:mb-6 uppercase tracking-widest flex items-center gap-2">
                                     <ShoppingCart size={14}/> Detalle del Pedido Actual
                                 </h3>
 
 
-                                <div className="flex-1 overflow-y-auto mb-8 pr-2 custom-scrollbar">
+                                <div className="flex-1 min-h-0 overflow-y-auto mb-4 lg:mb-8 pr-2 custom-scrollbar">
                                     {newOrder.items.length === 0 ? (
-                                        <div className="h-full border-4 border-dashed border-gray-100/80 rounded-[3rem] flex flex-col items-center justify-center p-12 text-center bg-gray-50/30">
-                                            <ShoppingCart size={80} className="text-gray-100 mb-8 animate-pulse" />
+                                        <div className="h-full border-4 border-dashed border-gray-100/80 rounded-[3rem] flex flex-col items-center justify-center p-6 lg:p-12 text-center bg-gray-50/30">
+                                            <ShoppingCart size={80} className="hidden lg:block text-gray-100 mb-8 animate-pulse" />
                                             <p className="text-xs font-black text-gray-300 uppercase tracking-[0.3em] leading-loose">
                                                 Tu pedido está<br/>
                                                 <span className="text-gold-200 font-black">esperando</span>
@@ -511,7 +514,7 @@ const Orders = () => {
                                     ) : (
                                         <div className="space-y-4">
                                             {newOrder.items.map(item => (
-                                                <div key={item.key} className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 flex items-center justify-between group animate-in slide-in-from-right-3">
+                                                <div key={item.key} className="bg-white p-4 lg:p-6 rounded-[2rem] shadow-sm border border-gray-100 flex items-center justify-between group animate-in slide-in-from-right-3">
                                                     <div className="flex flex-col flex-1">
                                                         <span className="text-base font-black text-gray-800 uppercase tracking-tighter line-clamp-1">
                                                             {item.nombre}{item.variante && <span className="text-gray-400"> ({item.variante})</span>}
@@ -538,7 +541,7 @@ const Orders = () => {
                                     )}
                                 </div>
 
-                                <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 space-y-4">
+                                <div className="bg-white p-4 lg:p-6 rounded-[2rem] shadow-sm border border-gray-100 space-y-3 lg:space-y-4 shrink-0">
                                     <div className="flex justify-between items-center text-gray-400 uppercase tracking-[0.2em] font-black text-[10px]">
                                         <span>Subtotal</span>
                                         <span>${calculateTotal().toLocaleString()}</span>
@@ -572,12 +575,12 @@ const Orders = () => {
             <PagosPorVerificar pedidos={pedidos} onCambio={() => fetchData(true)} />
 
             {/* Barra de Filtros */}
-            <div className="bg-white p-3 rounded-3xl shadow-sm border border-gray-100 inline-flex flex-wrap gap-2">
+            <div className="bg-white p-2 md:p-3 rounded-3xl shadow-sm border border-gray-100 grid grid-cols-2 sm:inline-flex sm:flex-wrap gap-2 w-full sm:w-auto">
                 {filterOptions.map((opt) => (
                     <button
                         key={opt.value}
                         onClick={() => setFilter(opt.value)}
-                        className={`px-8 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all ${filter === opt.value
+                        className={`px-4 md:px-8 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all ${filter === opt.value
                                 ? 'bg-gold-600 text-white shadow-xl shadow-gold-100'
                                 : 'text-gray-400 hover:bg-gray-50 hover:text-gray-600'
                             }`}
@@ -588,7 +591,7 @@ const Orders = () => {
             </div>
 
             {/* Lista de Pedidos Actuales */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
                 {loading ? (
                     <div className="col-span-full py-32 text-center text-gray-400">
                          <div className="animate-bounce mb-4 text-gold-500"><ShoppingCart size={40} className="mx-auto" /></div>
@@ -596,9 +599,9 @@ const Orders = () => {
                     </div>
                 ) : filteredOrders.length > 0 ? (
                     filteredOrders.map((pedido) => (
-                        <div key={pedido.id_pedido} className="group bg-white rounded-[2.5rem] shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-2xl hover:shadow-gray-200/50 transition-all duration-300 border-t-8 border-t-gold-500">
-                            <div className="p-8 flex-1">
-                                <div className="flex justify-between items-start mb-6">
+                        <div key={pedido.id_pedido} className="group bg-white rounded-3xl md:rounded-[2.5rem] shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-2xl hover:shadow-gray-200/50 transition-all duration-300 border-t-8 border-t-gold-500">
+                            <div className="p-5 md:p-8 flex-1">
+                                <div className="flex justify-between items-start gap-3 mb-5 md:mb-6">
                                     <div className="flex flex-col">
                                         <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none mb-1">Orden de Compra</span>
                                         <div className="flex flex-wrap items-center gap-2">
@@ -637,24 +640,24 @@ const Orders = () => {
                                             )}
                                         </div>
                                     </div>
-                                    <div className="flex items-center text-slate-500 text-[10px] font-black bg-slate-50 px-3 py-1.5 rounded-full uppercase tracking-tighter">
+                                    <div className="flex items-center shrink-0 text-slate-500 text-[10px] font-black bg-slate-50 px-3 py-1.5 rounded-full uppercase tracking-tighter">
                                         <Clock size={12} className="mr-1.5 text-gold-500" /> {new Date(pedido.fecha).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Argentina/Buenos_Aires' })}
                                     </div>
                                 </div>
 
-                                <div className="flex items-center gap-4 mb-6">
-                                    <div className="w-12 h-12 bg-gold-100 rounded-2xl flex items-center justify-center text-gold-600">
+                                <div className="flex items-center gap-4 mb-5 md:mb-6">
+                                    <div className="w-12 h-12 shrink-0 bg-gold-100 rounded-2xl flex items-center justify-center text-gold-600">
                                         <User size={24} />
                                     </div>
                                     <div>
-                                        <h3 className="font-black text-gray-800 text-xl leading-tight">{pedido.cliente_nombre || 'Cliente Mostrador'}</h3>
+                                        <h3 className="font-black text-gray-800 text-lg md:text-xl leading-tight break-words">{pedido.cliente_nombre || 'Cliente Mostrador'}</h3>
                                         <p className="text-[10px] text-gray-400 uppercase tracking-widest font-black flex items-center gap-1.5 mt-0.5">
                                             <Calendar size={10} /> {new Date(pedido.fecha).toLocaleDateString()}
                                         </p>
                                     </div>
                                 </div>
 
-                                <div className="space-y-3 mb-8 bg-gray-50/50 p-6 rounded-[1.5rem] border border-gray-100/50 max-h-40 overflow-y-auto custom-scrollbar">
+                                <div className="space-y-3 mb-6 md:mb-8 bg-gray-50/50 p-4 md:p-6 rounded-[1.5rem] border border-gray-100/50 max-h-40 overflow-y-auto custom-scrollbar">
                                     <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Resumen de Productos</p>
                                     {pedido.detalle && pedido.detalle.map((item, idx) => (
                                         <div key={idx} className="flex justify-between items-start gap-3 text-sm">
@@ -672,11 +675,11 @@ const Orders = () => {
 
                                 <div className="flex justify-between items-center px-2">
                                     <span className="text-gray-400 font-black text-[10px] uppercase tracking-[0.2em]">Total Cobrado</span>
-                                    <span className="text-3xl font-black text-slate-900 tracking-tighter">${parseFloat(pedido.total).toLocaleString()}</span>
+                                    <span className="text-2xl md:text-3xl font-black text-slate-900 tracking-tighter">${parseFloat(pedido.total).toLocaleString()}</span>
                                 </div>
                             </div>
 
-                            <div className="p-6 bg-gray-50/30 border-t border-gray-100 space-y-2">
+                            <div className="p-4 md:p-6 bg-gray-50/30 border-t border-gray-100 space-y-2">
                                 {pedido.metodo_pago === 'transferencia' && (pedido.estado === 'Pago no confirmado' || pedido.estado === 'Vencido') && (
                                     <button
                                         onClick={() => handleConfirmarPagoIgual(pedido)}
@@ -735,10 +738,10 @@ const Orders = () => {
                         </div>
                     ))
                 ) : (
-                    <div className="col-span-full py-32 text-center bg-gray-50/50 rounded-[3rem] border-4 border-dashed border-gray-100">
+                    <div className="col-span-full py-16 md:py-32 px-4 text-center bg-gray-50/50 rounded-[3rem] border-4 border-dashed border-gray-100">
                         <Package size={64} className="mx-auto text-gray-200 mb-6" />
                         <h4 className="text-xl font-black text-gray-400 uppercase tracking-widest">Sin ventas registradas</h4>
-                        <p className="text-gray-400 font-bold text-sm">Cargá un nuevo pedido para empezar</p>
+                        <p className="text-gray-400 font-bold text-sm">{isMobile ? 'Los pedidos nuevos van a aparecer acá' : 'Cargá un nuevo pedido para empezar'}</p>
                     </div>
                 )}
             </div>

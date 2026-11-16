@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Plus, ImagePlus, Utensils, DollarSign, Tag, Trash2, Edit, Save, X, Beaker, IceCream, Beef, Pause, Play } from 'lucide-react';
 import api from '../api/axiosConfig';
 import ListaEditable from '../components/ListaEditable';
+import useIsMobile from '../hooks/useIsMobile';
 
 // Tipos de producto fijos: cada uno con sus propios campos (ver productoTiposService en el backend)
 const TIPOS = [
@@ -56,7 +57,39 @@ const CampoNumero = ({ label, value, onChange, min, max }) => (
     </div>
 );
 
+// Precio(s) del producto según su tipo. Se usa en la tabla y en la lista del celular.
+const PrecioProducto = ({ prod }) => (
+    <div className="flex flex-col justify-center">
+        {prod.tipo === 'PIZZA' && prod.pizza ? (
+            <>
+                <div className="flex items-baseline gap-1">
+                    <span className="text-xs font-bold text-gray-400">G:</span>
+                    <span className="font-black text-gray-900 text-2xl tracking-tighter">${prod.pizza.precio_grande.toLocaleString()}</span>
+                </div>
+                {prod.pizza.precio_chica != null && (
+                    <div className="flex items-baseline gap-1 mt-1 opacity-60">
+                        <span className="text-[10px] font-bold text-gray-400 uppercase">CH:</span>
+                        <span className="font-black text-slate-700 text-sm">${prod.pizza.precio_chica.toLocaleString()}</span>
+                    </div>
+                )}
+            </>
+        ) : (
+            <span className="font-black text-gray-900 text-2xl tracking-tighter">${parseFloat(prod.precio || 0).toLocaleString()}</span>
+        )}
+        {prod.tipo === 'HELADO' && prod.helado && (
+            <span className="text-[10px] font-black text-gold-700 mt-1">{prod.helado.gustos.length} gustos · hasta {prod.helado.max_gustos}</span>
+        )}
+        {prod.tipo === 'HAMBURGUESA' && prod.hamburguesa && (
+            <span className="text-[10px] font-black text-gold-700 mt-1">
+                {prod.hamburguesa.toppings.length} toppings · {prod.hamburguesa.aderezos.length} aderezos · {prod.hamburguesa.guarniciones.length} guarniciones
+            </span>
+        )}
+    </div>
+);
+
 const Inventory = () => {
+    // En celular el inventario es de solo consulta: se puede pausar/reanudar, pero no crear, editar ni borrar
+    const isMobile = useIsMobile();
     const [showForm, setShowForm] = useState(false);
     const [imagePreview, setImagePreview] = useState(null);
     const [products, setProducts] = useState([]);
@@ -317,12 +350,12 @@ const Inventory = () => {
     };
 
     return (
-        <div className="max-w-6xl mx-auto space-y-8 pb-10">
+        <div className="max-w-6xl mx-auto space-y-5 md:space-y-8 pb-10">
             {/* Header */}
-            <header className="flex justify-between items-center">
+            <header className="flex justify-between items-center gap-4">
                 <div>
-                    <h1 className="text-3xl font-extrabold text-gray-800">Inventario de <span className="text-gold-600">Productos</span></h1>
-                    <p className="text-gray-500">Gestioná el menú y los precios de tu local</p>
+                    <h1 className="text-2xl md:text-3xl font-extrabold text-gray-800">Inventario de <span className="text-gold-600">Productos</span></h1>
+                    <p className="text-gray-500 text-sm md:text-base">{isMobile ? 'Consultá tu menú y pausá lo que se quedó sin stock' : 'Gestioná el menú y los precios de tu local'}</p>
                 </div>
                 <button
                     onClick={() => {
@@ -333,14 +366,14 @@ const Inventory = () => {
                         setImageFile(null);
                         setShowForm(true);
                     }}
-                    className="flex items-center gap-2 bg-gold-600 hover:bg-gold-700 text-white px-6 py-3 rounded-2xl font-bold shadow-lg shadow-gold-200 transition-all active:scale-95"
+                    className="hidden md:flex items-center gap-2 shrink-0 bg-gold-600 hover:bg-gold-700 text-white px-6 py-3 rounded-2xl font-bold shadow-lg shadow-gold-200 transition-all active:scale-95"
                 >
                     <Plus size={20} /> Nuevo Producto
                 </button>
             </header>
 
             {/* Modal / Formulario de Carga */}
-            {showForm && (
+            {showForm && !isMobile && (
                 <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
                     <div className="bg-white rounded-3xl shadow-2xl w-full max-w-4xl overflow-hidden animate-in fade-in zoom-in duration-200 h-auto max-h-[95vh] flex flex-col">
                         <div className="bg-gold-600 p-6 text-white flex justify-between items-center shrink-0">
@@ -355,8 +388,8 @@ const Inventory = () => {
                             }} className="hover:bg-gold-500 p-1 rounded-full"><X /></button>
                         </div>
 
-                        <div className="overflow-y-auto p-8">
-                            <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div className="overflow-y-auto p-5 lg:p-8">
+                            <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
                                 {/* Columna Izquierda: Datos Básicos */}
                                 <div className="space-y-6">
                                     <div className="space-y-4">
@@ -599,7 +632,7 @@ const Inventory = () => {
             )}
 
             {/* Lista de Productos Existentes */}
-            <div className="bg-white rounded-[2rem] shadow-xl shadow-gray-200/50 border border-gray-100 overflow-hidden">
+            <div className="bg-white rounded-3xl md:rounded-[2rem] shadow-xl shadow-gray-200/50 border border-gray-100 overflow-hidden">
                 {loading ? (
                     <div className="p-20 text-center text-gray-400">
                          <div className="animate-bounce mb-4 text-gold-500"><Utensils size={40} className="mx-auto" /></div>
@@ -610,32 +643,67 @@ const Inventory = () => {
                          <div className="mb-4 text-gray-200"><Utensils size={60} className="mx-auto" /></div>
                          <p className="font-bold text-gray-400">Tu menú está vacío. ¡Empezá a cargar delicias!</p>
                     </div>
+                ) : isMobile ? (
+                    <ul className="divide-y divide-gray-100">
+                        {products.map((prod) => (
+                            <li key={prod.id_producto} className={`flex items-center gap-3 p-4 ${prod.pausado ? 'bg-amber-50/40' : ''}`}>
+                                {prod.img ? (
+                                    <img src={prod.img} alt={prod.nombre} className={`w-16 h-16 rounded-2xl object-cover shrink-0 ${prod.pausado ? 'opacity-50' : ''}`} />
+                                ) : (
+                                    <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center text-gray-300 shrink-0">
+                                        <Utensils size={24} />
+                                    </div>
+                                )}
+                                <div className="flex-1 min-w-0">
+                                    <p className="font-black text-gray-800 leading-tight break-words">{prod.nombre}</p>
+                                    <div className="flex flex-wrap items-center gap-1.5 mt-1">
+                                        <span className="bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-widest">{prod.categoria}</span>
+                                        {!!prod.pausado && (
+                                            <span className="bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-widest">Pausado</span>
+                                        )}
+                                    </div>
+                                    <div className="mt-1 [&_.text-2xl]:text-lg">
+                                        <PrecioProducto prod={prod} />
+                                    </div>
+                                </div>
+                                <button
+                                    onClick={() => handleTogglePausa(prod)}
+                                    className={`shrink-0 w-12 h-12 flex items-center justify-center rounded-2xl border transition-all active:scale-95 ${prod.pausado ? 'bg-green-50 border-green-200 text-green-600' : 'bg-white border-gray-200 text-slate-500'}`}
+                                    aria-label={prod.pausado ? `Reanudar ${prod.nombre}` : `Pausar ${prod.nombre}`}
+                                    title={prod.pausado ? 'Reanudar venta' : 'Pausar venta (sin stock)'}
+                                >
+                                    {prod.pausado ? <Play size={20} /> : <Pause size={20} />}
+                                </button>
+                            </li>
+                        ))}
+                    </ul>
                 ) : (
-                    <table className="w-full text-left">
+                    <div className="overflow-x-auto">
+                    <table className="w-full text-left min-w-[680px]">
                         <thead className="bg-gray-50/50 text-gray-400 text-[10px] uppercase tracking-widest font-black">
                             <tr>
-                                <th className="px-8 py-6">Detalles del Producto</th>
-                                <th className="px-8 py-6">Categoría</th>
-                                <th className="px-8 py-6">Lista de Precios</th>
-                                <th className="px-8 py-6 text-center">Acciones</th>
+                                <th className="px-5 lg:px-8 py-5 lg:py-6">Detalles del Producto</th>
+                                <th className="px-5 lg:px-8 py-5 lg:py-6">Categoría</th>
+                                <th className="px-5 lg:px-8 py-5 lg:py-6">Lista de Precios</th>
+                                <th className="px-5 lg:px-8 py-5 lg:py-6 text-center">Acciones</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-100">
                             {products.map((prod) => (
                                 <tr key={prod.id_producto} className="group hover:bg-gold-50/20 transition-all duration-300">
-                                    <td className="px-8 py-6">
+                                    <td className="px-5 lg:px-8 py-5 lg:py-6">
                                         <div className="flex items-center gap-5">
                                             {prod.img ? (
-                                                <div className="w-20 h-20 bg-gray-100 rounded-[1.5rem] overflow-hidden shadow-sm shrink-0 border-4 border-white group-hover:scale-105 transition-transform">
+                                                <div className="w-16 h-16 lg:w-20 lg:h-20 bg-gray-100 rounded-[1.5rem] overflow-hidden shadow-sm shrink-0 border-4 border-white group-hover:scale-105 transition-transform">
                                                     <img src={prod.img} alt={prod.nombre} className="w-full h-full object-cover" />
                                                 </div>
                                             ) : (
-                                                <div className="w-20 h-20 bg-gray-100 rounded-[1.5rem] flex items-center justify-center text-gray-300 shrink-0 border-4 border-white group-hover:scale-105 transition-transform">
+                                                <div className="w-16 h-16 lg:w-20 lg:h-20 bg-gray-100 rounded-[1.5rem] flex items-center justify-center text-gray-300 shrink-0 border-4 border-white group-hover:scale-105 transition-transform">
                                                     <Utensils size={32} />
                                                 </div>
                                             )}
                                             <div className="flex flex-col">
-                                                <span className="font-black text-gray-800 text-xl leading-tight group-hover:text-gold-600 transition-colors">
+                                                <span className="font-black text-gray-800 text-lg lg:text-xl leading-tight group-hover:text-gold-600 transition-colors">
                                                     {prod.nombre}
                                                     {!!prod.pausado && (
                                                         <span className="ml-2 align-middle bg-amber-100 text-amber-700 px-2 py-0.5 rounded-lg text-[10px] font-black uppercase tracking-widest">Pausado</span>
@@ -645,41 +713,16 @@ const Inventory = () => {
                                             </div>
                                         </div>
                                     </td>
-                                    <td className="px-8 py-6">
+                                    <td className="px-5 lg:px-8 py-5 lg:py-6">
                                         <span className="bg-slate-100 group-hover:bg-gold-100 group-hover:text-gold-700 text-slate-500 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-colors">
                                             {prod.categoria}
                                         </span>
                                     </td>
-                                    <td className="px-8 py-6">
-                                        <div className="flex flex-col justify-center">
-                                            {prod.tipo === 'PIZZA' && prod.pizza ? (
-                                                <>
-                                                    <div className="flex items-baseline gap-1">
-                                                        <span className="text-xs font-bold text-gray-400">G:</span>
-                                                        <span className="font-black text-gray-900 text-2xl tracking-tighter">${prod.pizza.precio_grande.toLocaleString()}</span>
-                                                    </div>
-                                                    {prod.pizza.precio_chica != null && (
-                                                        <div className="flex items-baseline gap-1 mt-1 opacity-60">
-                                                            <span className="text-[10px] font-bold text-gray-400 uppercase">CH:</span>
-                                                            <span className="font-black text-slate-700 text-sm">${prod.pizza.precio_chica.toLocaleString()}</span>
-                                                        </div>
-                                                    )}
-                                                </>
-                                            ) : (
-                                                <span className="font-black text-gray-900 text-2xl tracking-tighter">${parseFloat(prod.precio || 0).toLocaleString()}</span>
-                                            )}
-                                            {prod.tipo === 'HELADO' && prod.helado && (
-                                                <span className="text-[10px] font-black text-gold-700 mt-1">{prod.helado.gustos.length} gustos · hasta {prod.helado.max_gustos}</span>
-                                            )}
-                                            {prod.tipo === 'HAMBURGUESA' && prod.hamburguesa && (
-                                                <span className="text-[10px] font-black text-gold-700 mt-1">
-                                                    {prod.hamburguesa.toppings.length} toppings · {prod.hamburguesa.aderezos.length} aderezos · {prod.hamburguesa.guarniciones.length} guarniciones
-                                                </span>
-                                            )}
-                                        </div>
+                                    <td className="px-5 lg:px-8 py-5 lg:py-6">
+                                        <PrecioProducto prod={prod} />
                                     </td>
-                                    <td className="px-8 py-6">
-                                        <div className="flex justify-center gap-3">
+                                    <td className="px-5 lg:px-8 py-5 lg:py-6">
+                                        <div className="flex justify-center gap-1 lg:gap-3">
                                             <button
                                                 onClick={() => handleTogglePausa(prod)}
                                                 className={`p-3 rounded-2xl transition-all active:scale-95 hover:bg-white hover:shadow-lg ${prod.pausado ? 'text-amber-600 hover:text-green-600 hover:shadow-green-50' : 'text-slate-400 hover:text-amber-600 hover:shadow-amber-50'}`}
@@ -708,6 +751,7 @@ const Inventory = () => {
                             ))}
                         </tbody>
                     </table>
+                    </div>
                 )}
             </div>
         </div>
