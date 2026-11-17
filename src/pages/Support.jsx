@@ -81,11 +81,15 @@ const Support = () => {
             icon: <FileText className="text-purple-600" size={24} />,
             description: 'Configurá tus datos fiscales para emitir facturas electrónicas oficiales en piloto automático al confirmar cada cobro.',
             steps: [
-                'Dirigite a la sección de **Configuración** en el menú lateral.',
-                'Buscá la tarjeta **AFIP / ARCA Facturación**.',
-                'Ingresá el **CUIT del Emisor**, el número de **Punto de Venta** habilitado para factura electrónica y tu **Condición Frente al IVA**.',
-                'Marcá la casilla **Habilitar Facturación Automática** y guardá los cambios.',
-                '**Importante:** Asegurate de haber delegado previamente tu CUIT en la AFIP hacia el servidor (si necesitás ayuda con este paso, contactá a soporte técnico).'
+                'Antes de empezar, tené a mano tu **CUIT**, tu **Clave Fiscal** (nivel 3 o superior) y el **plan Premium** activo: sin Premium, la casilla de facturación automática aparece bloqueada.',
+                'En ARCA, entrá a **Administración de puntos de venta y domicilios** y creá un punto de venta nuevo con el sistema **"Factura Electrónica - Web Services"**. No uses el de "Comprobantes en Línea". Anotá el número que te asigna.',
+                'En este administrador, andá a **Configuración** y abrí la pestaña **Facturación ARCA**.',
+                'Completá el **CUIT del Emisor**, el **Punto de Venta** que creaste recién y tu **Condición Frente al IVA**. Monotributo emite Factura C y Responsable Inscripto emite Factura B.',
+                'En esa misma pantalla, a la derecha, copiá con el botón **Copiar** el **CUIT de la plataforma a autorizar**.',
+                'En ARCA, entrá a **Administrador de Relaciones de Clave Fiscal**, hacé click en **Nueva Relación** y elegí **Buscar** → **ARCA** → **WebServices** → **Facturación Electrónica (wsfe)**.',
+                'En **Representante**, pegá el CUIT que copiaste en el paso anterior y hacé click en **Confirmar**.',
+                'Volvé al administrador, marcá **Habilitar Facturación Automática** y hacé click en **Guardar Cambios**.',
+                'Para comprobar que quedó bien, hacé un pedido de prueba y cobralo: la factura se tiene que emitir sola. Si algo falla, contactá a soporte.'
             ]
         },
         {
