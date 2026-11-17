@@ -249,8 +249,8 @@ const Settings = () => {
                 </div>
             )}
 
-            {/* Secciones */}
-            <nav className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1" aria-label="Secciones de configuración">
+            {/* Secciones: grilla de 4 columnas (8 secciones = 2 filas), sin scroll lateral */}
+            <nav className="grid grid-cols-4 gap-2" aria-label="Secciones de configuración">
                 {SECCIONES.map(({ id, label, icon }) => {
                     const Icon = icon;
                     return (
@@ -259,14 +259,14 @@ const Settings = () => {
                         type="button"
                         onClick={() => setSearchParams({ seccion: id }, { replace: true })}
                         aria-current={seccion === id ? 'page' : undefined}
-                        className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl text-sm font-black whitespace-nowrap border-2 transition-all cursor-pointer ${
+                        className={`flex items-center gap-2 px-3 lg:px-4 py-2.5 min-h-12 rounded-2xl text-xs lg:text-sm text-left leading-tight font-black border-2 transition-all cursor-pointer ${
                             seccion === id
                                 ? 'bg-gray-900 border-gray-900 text-white shadow-lg'
                                 : 'bg-white border-gray-100 text-gray-500 hover:border-gray-200 hover:text-gray-800'
                         }`}
                     >
-                        <Icon size={16} />
-                        {label}
+                        <Icon size={16} className="shrink-0" />
+                        <span>{label}</span>
                     </button>
                     );
                 })}
