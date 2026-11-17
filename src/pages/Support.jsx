@@ -63,6 +63,7 @@ const Support = () => {
         {
             id: 'mercadopago',
             title: '2. Conectar Mercado Pago Checkout Pro',
+            youtubeId: 'Y_NYjLhW510',
             icon: <Key className="text-blue-600" size={24} />,
             description: 'Vinculá tu cuenta de Mercado Pago para procesar cobros de forma 100% automática y recibir el dinero al instante.',
             steps: [
