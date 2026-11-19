@@ -8,6 +8,7 @@ import {
     LogOut,
     User,
     PackageCheck,
+    Percent,
     Bike,
     Settings as SettingsIcon,
     HelpCircle,
@@ -56,6 +57,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile = false, mobileOpen = f
         { to: "/", icon: <LayoutDashboard size={20} />, label: "Dashboard" },
         { to: "/pedidos", icon: <ShoppingBag size={20} />, label: "Pedidos" },
         { to: "/inventario", icon: <Package size={20} />, label: "Inventario" },
+        { to: "/promociones", icon: <Percent size={20} />, label: "Promociones" },
         { to: "/insumos", icon: <PackageCheck size={20} />, label: "Insumos" },
         { to: "/repartidores", icon: <Bike size={20} />, label: "Repartidores" },
     ];

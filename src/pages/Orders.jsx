@@ -253,9 +253,11 @@ const Orders = () => {
                         <span>$${(item.cantidad * item.precio_unitario).toLocaleString()}</span>
                     </div>
                     ${lineasDetalle(item).map(l => `<div style="margin: -3px 0 4px 12px;">${esc(l)}</div>`).join('')}
+                    ${Number(item.descuento) > 0 ? `<div class="item" style="margin: -3px 0 4px 12px;"><span>${esc(item.promo_nombre || 'Promo')}</span><span>-$${Number(item.descuento).toLocaleString()}</span></div>` : ''}
                 `).join('') : 'Sin detalle'}
-                
+
                 <div class="divider"></div>
+                ${Number(pedido.descuento_promociones) > 0 ? `<div class="item"><span>PROMOCIONES:</span><span>-$${Number(pedido.descuento_promociones).toLocaleString()}</span></div>` : ''}
                 <div class="total bold">
                     <span>TOTAL:</span>
                     <span>$${parseFloat(pedido.total).toLocaleString()}</span>
@@ -667,12 +669,23 @@ const Orders = () => {
                                                 {lineasDetalle(item).map(l => (
                                                     <span key={l} className={`block text-xs font-medium pl-6 ${l.startsWith('Obs:') ? 'text-amber-700' : 'text-gray-500'}`}>{l}</span>
                                                 ))}
+                                                {Number(item.descuento) > 0 && (
+                                                    <span className="block text-xs font-bold pl-6 text-green-700">
+                                                        {item.promo_nombre || 'Promo'}: -${Number(item.descuento).toLocaleString()}
+                                                    </span>
+                                                )}
                                             </span>
                                             <span className="text-gray-400 font-bold text-xs">${parseFloat(item.precio_unitario).toLocaleString()}</span>
                                         </div>
                                     ))}
                                 </div>
 
+                                {Number(pedido.descuento_promociones) > 0 && (
+                                    <div className="flex justify-between items-center px-2 mb-2 text-green-700">
+                                        <span className="font-black text-[10px] uppercase tracking-[0.2em]">Promociones</span>
+                                        <span className="font-black">-${Number(pedido.descuento_promociones).toLocaleString()}</span>
+                                    </div>
+                                )}
                                 <div className="flex justify-between items-center px-2">
                                     <span className="text-gray-400 font-black text-[10px] uppercase tracking-[0.2em]">Total Cobrado</span>
                                     <span className="text-2xl md:text-3xl font-black text-slate-900 tracking-tighter">${parseFloat(pedido.total).toLocaleString()}</span>

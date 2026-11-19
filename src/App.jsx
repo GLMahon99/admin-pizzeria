@@ -8,6 +8,7 @@ import Register from './pages/Register';
 import Landing from './pages/Landing';
 import Dashboard from './pages/Dashboard';
 import Inventory from './pages/Inventory';
+import Promotions from './pages/Promotions';
 import Orders from './pages/Orders';
 import Layout from './components/Layout';
 import SoloEscritorio from './components/SoloEscritorio';
@@ -54,6 +55,7 @@ function App() {
               <Route index element={<Dashboard />} />
               <Route path="pedidos" element={<Orders />} />
               <Route path="inventario" element={<Inventory />} />
+              <Route path="promociones" element={<Promotions />} />
               <Route path="insumos" element={<Supplies />} />
               <Route path="repartidores" element={<Drivers />} />
               <Route path="soporte" element={<SoloEscritorio seccion="Soporte"><Support /></SoloEscritorio>} />
