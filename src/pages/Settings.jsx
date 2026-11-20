@@ -21,6 +21,8 @@ const faltanteTransferencia = (c) => {
     return null;
 };
 const LOGO_MAX_BYTES = 2 * 1024 * 1024;
+const BANNER_TIPOS = ['image/png', 'image/jpeg', 'image/webp'];
+const BANNER_MAX_BYTES = 4 * 1024 * 1024;
 
 const SECCIONES = [
     { id: 'horarios', label: 'Horarios y estado del local', icon: Clock },
@@ -77,6 +79,8 @@ const Settings = () => {
     const [copied, setCopied] = useState(false);
     const [subiendoLogo, setSubiendoLogo] = useState(false);
     const [logoMsg, setLogoMsg] = useState({ type: '', text: '' });
+    const [subiendoBanner, setSubiendoBanner] = useState(false);
+    const [bannerMsg, setBannerMsg] = useState({ type: '', text: '' });
     const [transfGuardada, setTransfGuardada] = useState(false); // cómo estaba guardado (para pedir confirmación al activarla)
     const [transfMsg, setTransfMsg] = useState('');
 
@@ -100,6 +104,50 @@ const Settings = () => {
     const aplicarLogo = (logo_url) => {
         setConfig(prev => ({ ...prev, logo_url }));
         login({ ...user, logo_url }, token); // actualiza el menú lateral al instante
+    };
+
+    const handleBannerChange = async (e) => {
+        const file = e.target.files?.[0];
+        e.target.value = '';
+        if (!file) return;
+        if (!BANNER_TIPOS.includes(file.type)) {
+            setBannerMsg({ type: 'error', text: 'Formato no válido. Subí una imagen PNG, JPG o WEBP.' });
+            return;
+        }
+        if (file.size > BANNER_MAX_BYTES) {
+            setBannerMsg({ type: 'error', text: 'La portada pesa más de 4 MB. Elegí una imagen más liviana.' });
+            return;
+        }
+        const form = new FormData();
+        form.append('banner', file);
+        try {
+            setSubiendoBanner(true);
+            setBannerMsg({ type: '', text: '' });
+            const response = await api.put('/admin/banner', form, { headers: { 'Content-Type': 'multipart/form-data' } });
+            setConfig(prev => ({ ...prev, banner_url: response.data.banner_url }));
+            setBannerMsg({ type: 'success', text: 'Portada actualizada.' });
+        } catch (error) {
+            console.error('Error al subir la portada:', error);
+            setBannerMsg({ type: 'error', text: error.response?.data?.message || 'No se pudo subir la portada.' });
+        } finally {
+            setSubiendoBanner(false);
+        }
+    };
+
+    const handleBannerRemove = async () => {
+        if (!window.confirm('¿Quitar la portada de tu tienda?')) return;
+        try {
+            setSubiendoBanner(true);
+            setBannerMsg({ type: '', text: '' });
+            await api.delete('/admin/banner');
+            setConfig(prev => ({ ...prev, banner_url: null }));
+            setBannerMsg({ type: 'success', text: 'Portada quitada.' });
+        } catch (error) {
+            console.error('Error al quitar la portada:', error);
+            setBannerMsg({ type: 'error', text: error.response?.data?.message || 'No se pudo quitar la portada.' });
+        } finally {
+            setSubiendoBanner(false);
+        }
     };
 
     const handleLogoChange = async (e) => {
@@ -335,6 +383,47 @@ const Settings = () => {
                                     )}
                                 </div>
                             </div>
+                        </div>
+
+                        <div className="space-y-2">
+                            <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Portada de la tienda</label>
+                            <div className="w-full aspect-[16/6] rounded-2xl border-2 border-gray-100 bg-gray-50 flex items-center justify-center overflow-hidden">
+                                {config.banner_url ? (
+                                    <img src={config.banner_url} alt="Portada actual" className="w-full h-full object-cover" />
+                                ) : (
+                                    <div className="text-center text-gray-300">
+                                        <ImageIcon className="mx-auto" size={32} />
+                                        <p className="text-[10px] font-black uppercase tracking-widest mt-1">Sin portada</p>
+                                    </div>
+                                )}
+                            </div>
+                            <div className="flex flex-wrap items-center gap-2">
+                                <label className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl font-black text-xs transition-all focus-within:ring-2 focus-within:ring-gold-500 focus-within:ring-offset-2 ${subiendoBanner ? 'bg-gray-100 text-gray-400 cursor-wait' : 'bg-gray-900 text-white hover:bg-gray-700 cursor-pointer'}`}>
+                                    {subiendoBanner ? <Loader2 className="animate-spin" size={14} /> : <Upload size={14} />}
+                                    {subiendoBanner ? 'Subiendo...' : config.banner_url ? 'Cambiar portada' : 'Subir portada'}
+                                    <input
+                                        type="file"
+                                        accept="image/png,image/jpeg,image/webp"
+                                        className="sr-only"
+                                        disabled={subiendoBanner}
+                                        onChange={handleBannerChange}
+                                    />
+                                </label>
+                                {config.banner_url && (
+                                    <button
+                                        type="button"
+                                        onClick={handleBannerRemove}
+                                        disabled={subiendoBanner}
+                                        className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl font-black text-xs text-red-600 hover:bg-red-50 transition-all disabled:opacity-40 cursor-pointer"
+                                    >
+                                        <Trash2 size={14} /> Quitar
+                                    </button>
+                                )}
+                            </div>
+                            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-tight">Se muestra arriba del menú · horizontal, ideal 1920×600 · PNG, JPG o WEBP · máximo 4 MB</p>
+                            {bannerMsg.text && (
+                                <p role="status" className={`text-xs font-bold ${bannerMsg.type === 'success' ? 'text-green-600' : 'text-red-600'}`}>{bannerMsg.text}</p>
+                            )}
                         </div>
 
                         <div className="grid grid-cols-2 gap-4">
