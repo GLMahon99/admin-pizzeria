@@ -4,7 +4,6 @@ import {
     TrendingUp, Users, ShoppingCart, DollarSign,
     UserPlus, Star, ArrowUpRight, DownloadCloud
 } from 'lucide-react';
-import * as XLSX from 'xlsx';
 import {
     BarChart, Bar, XAxis, YAxis, CartesianGrid,
     Tooltip, ResponsiveContainer, AreaChart, Area,
@@ -19,6 +18,7 @@ const Dashboard = () => {
     const [rango, setRango] = useState('14dias');
     const [fechaDesde, setFechaDesde] = useState('');
     const [fechaHasta, setFechaHasta] = useState('');
+    const [exporting, setExporting] = useState(false);
 
     const fetchStats = async () => {
         try {
@@ -43,30 +43,32 @@ const Dashboard = () => {
     }, [rango, fechaDesde, fechaHasta]);
 
     const handleDownloadExcel = async () => {
+        if (rango === 'personalizado' && (!fechaDesde || !fechaHasta)) {
+            alert('Elegí las fechas desde y hasta para exportar el balance.');
+            return;
+        }
         try {
-            const response = await api.get('/pedidos');
-            const orders = response.data;
-            
-            // Format data for excel
-            const excelData = orders.map(order => ({
-                'ID Pedido': order.id_pedido,
-                'Fecha': new Date(order.fecha).toLocaleString(),
-                'Cliente': order.cliente_nombre || 'Mostrador',
-                'Teléfono': order.telefono || '-',
-                'Total ($)': parseFloat(order.total),
-                'Estado': order.estado || 'ENTREGADO'
-            }));
+            setExporting(true);
+            // El balance lo arma el servidor con el mismo rango que se ve en pantalla
+            const params = { rango };
+            if (rango === 'personalizado') { params.fecha_desde = fechaDesde; params.fecha_hasta = fechaHasta; }
+            const response = await api.get('/admin/balance', { params, responseType: 'blob' });
 
-            // Create worksheet and workbook
-            const worksheet = XLSX.utils.json_to_sheet(excelData);
-            const workbook = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(workbook, worksheet, 'Balance Ventas');
-            
-            // Generate and download
-            XLSX.writeFile(workbook, `Balance_Ventas_${new Date().toLocaleDateString().replace(/\//g, '-')}.xlsx`);
+            const disposition = response.headers['content-disposition'] || '';
+            const nombre = /filename="([^"]+)"/.exec(disposition)?.[1] || 'Balance.xlsx';
+            const url = URL.createObjectURL(response.data);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = nombre;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            URL.revokeObjectURL(url);
         } catch (error) {
             console.error('Error al descargar el Excel:', error);
             alert('Hubo un error al generar el balance.');
+        } finally {
+            setExporting(false);
         }
     };
 
@@ -128,10 +130,11 @@ const Dashboard = () => {
                     </select>
                     <button
                         onClick={handleDownloadExcel}
-                        className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-[#305a83] hover:bg-[#25323f] text-white rounded-2xl font-bold shadow-lg shadow-slate-200 transition-all active:scale-95 hover:-translate-y-1"
+                        disabled={exporting}
+                        className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-[#305a83] hover:bg-[#25323f] text-white rounded-2xl font-bold shadow-lg shadow-slate-200 transition-all active:scale-95 hover:-translate-y-1 disabled:opacity-60 disabled:pointer-events-none"
                     >
                         <DownloadCloud size={20} />
-                        Exportar Balance (.xlsx)
+                        {exporting ? 'Generando balance...' : 'Exportar Balance (.xlsx)'}
                     </button>
                 </div>
             </header>
