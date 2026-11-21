@@ -758,7 +758,7 @@ const SuperAdminDashboard = () => {
                                                         {/* Botón Abrir Tienda */}
                                                         {company.slug && (
                                                             <a
-                                                                href={`http://${company.slug}.localhost:5173`}
+                                                                href={`https://acommerr.store/?tenant=${company.slug}`}
                                                                 target="_blank"
                                                                 rel="noopener noreferrer"
                                                                 title="Ver Tienda Online"

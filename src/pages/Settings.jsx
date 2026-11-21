@@ -77,6 +77,7 @@ const Settings = () => {
     });
     const [message, setMessage] = useState({ type: '', text: '' });
     const [copied, setCopied] = useState(false);
+    const [copiedTienda, setCopiedTienda] = useState(false);
     const [subiendoLogo, setSubiendoLogo] = useState(false);
     const [logoMsg, setLogoMsg] = useState({ type: '', text: '' });
     const [subiendoBanner, setSubiendoBanner] = useState(false);
@@ -236,6 +237,14 @@ const Settings = () => {
         setTimeout(() => setCopied(false), 2000);
     };
 
+    const urlTienda = user?.slug ? `https://acommerr.store/?tenant=${user.slug}` : '';
+    const handleCopyUrlTienda = () => {
+        if (!urlTienda) return;
+        navigator.clipboard.writeText(urlTienda);
+        setCopiedTienda(true);
+        setTimeout(() => setCopiedTienda(false), 2000);
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setSaving(true);
@@ -294,6 +303,31 @@ const Settings = () => {
                 }`}>
                     <ShieldCheck size={20} />
                     {message.text}
+                </div>
+            )}
+
+            {urlTienda && (
+                <div className="bg-white p-5 rounded-[2rem] border border-gray-100 shadow-sm flex flex-col md:flex-row md:items-center gap-3">
+                    <div className="flex items-center gap-2 shrink-0">
+                        <Link className="text-gold-600" size={18} />
+                        <span className="text-xs font-black uppercase tracking-widest text-gray-500">Tu tienda</span>
+                    </div>
+                    <a
+                        href={urlTienda}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex-1 min-w-0 truncate font-bold text-gray-800 hover:text-gold-600 transition-colors"
+                    >
+                        {urlTienda}
+                    </a>
+                    <button
+                        type="button"
+                        onClick={handleCopyUrlTienda}
+                        className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-2xl bg-gray-900 text-white text-sm font-black active:scale-95 transition-all cursor-pointer"
+                    >
+                        {copiedTienda ? <Check size={14} /> : <Copy size={14} />}
+                        {copiedTienda ? 'Copiado' : 'Copiar link'}
+                    </button>
                 </div>
             )}
 
