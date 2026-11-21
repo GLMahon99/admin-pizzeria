@@ -14,6 +14,7 @@ import {
     Tag
 } from 'lucide-react';
 import api from '../api/axiosConfig';
+import { toast, confirmar } from '../utils/feedback';
 
 const TZ = 'America/Argentina/Buenos_Aires';
 const hoyAR = () =>
@@ -185,18 +186,18 @@ const Promotions = () => {
             cargar();
         } catch (err) {
             console.error('Error al pausar promoción:', err);
-            alert('No se pudo cambiar el estado de la promoción.');
+            toast.error('No se pudo cambiar el estado de la promoción.');
         }
     };
 
     const eliminar = async (p) => {
-        if (!window.confirm(`¿Eliminar la promoción "${p.nombre}"? Los pedidos anteriores conservan su descuento.`)) return;
+        if (!(await confirmar(`¿Eliminar la promoción "${p.nombre}"? Los pedidos anteriores conservan su descuento.`))) return;
         try {
             await api.delete(`/promociones/${p.id_promocion}`);
             cargar();
         } catch (err) {
             console.error('Error al eliminar promoción:', err);
-            alert('No se pudo eliminar la promoción.');
+            toast.error('No se pudo eliminar la promoción.');
         }
     };
 

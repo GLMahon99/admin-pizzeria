@@ -13,6 +13,7 @@ import {
     UserX
 } from 'lucide-react';
 import api from '../api/axiosConfig';
+import { toast, confirmar } from '../utils/feedback';
 
 const Drivers = () => {
     const [drivers, setDrivers] = useState([]);
@@ -83,13 +84,13 @@ const Drivers = () => {
         if (isSubmitting) return;
 
         if (!formData.nombre || !formData.telefono || !formData.pin) {
-            alert('Por favor completa todos los campos requeridos.');
+            toast.error('Por favor completa todos los campos requeridos.');
             return;
         }
 
         const pinRegex = /^\d{4}$/;
         if (!pinRegex.test(formData.pin)) {
-            alert('El PIN debe ser de exactamente 4 dígitos numéricos.');
+            toast.error('El PIN debe ser de exactamente 4 dígitos numéricos.');
             return;
         }
 
@@ -98,17 +99,17 @@ const Drivers = () => {
             if (editingDriver) {
                 // Editar repartidor
                 await api.put(`/repartidores/${editingDriver.id_repartidor}`, formData);
-                alert('Repartidor actualizado con éxito.');
+                toast.success('Repartidor actualizado con éxito.');
             } else {
                 // Crear repartidor nuevo
                 await api.post('/repartidores', formData);
-                alert('Repartidor registrado con éxito.');
+                toast.success('Repartidor registrado con éxito.');
             }
             setShowModal(false);
             fetchDrivers();
         } catch (err) {
             console.error('Error saving driver:', err);
-            alert(err.response?.data?.message || 'Error al guardar los datos del repartidor.');
+            toast.error(err.response?.data?.message || 'Error al guardar los datos del repartidor.');
         } finally {
             setIsSubmitting(false);
         }
@@ -116,7 +117,7 @@ const Drivers = () => {
 
     const handleToggleStatus = async (driver) => {
         const confirmMsg = `¿Estás seguro de que deseas ${driver.activo ? 'desactivar' : 'activar'} a ${driver.nombre}?`;
-        if (!window.confirm(confirmMsg)) return;
+        if (!(await confirmar(confirmMsg))) return;
 
         try {
             await api.put(`/repartidores/${driver.id_repartidor}`, {
@@ -125,7 +126,7 @@ const Drivers = () => {
             fetchDrivers();
         } catch (err) {
             console.error('Error toggling driver status:', err);
-            alert('No se pudo cambiar el estado del repartidor.');
+            toast.error('No se pudo cambiar el estado del repartidor.');
         }
     };
 

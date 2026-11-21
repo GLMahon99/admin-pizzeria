@@ -7,6 +7,7 @@ import ArmarItemModal from '../components/ArmarItemModal';
 import PagosPorVerificar from '../components/PagosPorVerificar';
 import EnvioPedidosYa from '../components/EnvioPedidosYa';
 import useIsMobile from '../hooks/useIsMobile';
+import { toast, confirmar } from '../utils/feedback';
 
 const ETIQUETA_SELECCION = { GUSTO: 'Gustos', TOPPING: 'Toppings', ADEREZO: 'Aderezos', GUARNICION: 'Guarnición' };
 
@@ -56,7 +57,7 @@ const Orders = () => {
             setPedidos(response.data);
         } catch (error) {
             console.error('Error al cargar pedidos:', error);
-            if (!silent) alert('No se pudieron cargar los pedidos.');
+            if (!silent) toast.error('No se pudieron cargar los pedidos.');
         } finally {
             if (!silent) setLoading(false);
         }
@@ -156,10 +157,10 @@ const Orders = () => {
             setShowNewOrderModal(false);
             setNewOrder({ cliente: '', items: [] });
             fetchData(); // Recargar lista
-            alert('Pedido registrado con éxito');
+            toast.success('Pedido registrado con éxito');
         } catch (error) {
             console.error('Error al confirmar pedido:', error);
-            alert(error.response?.data?.message || 'Hubo un error al procesar la venta.');
+            toast.error(error.response?.data?.message || 'Hubo un error al procesar la venta.');
         } finally {
             setIsSubmitting(false);
         }
@@ -359,34 +360,34 @@ const Orders = () => {
     const handleUpdateStatus = async (id_pedido, nuevoEstado) => {
         try {
             await api.put(`/pedidos/${id_pedido}/estado`, { estado: nuevoEstado });
-            alert(`Pedido #${id_pedido} actualizado a: ${nuevoEstado}`);
+            toast.success(`Pedido #${id_pedido} actualizado a: ${nuevoEstado}`);
             fetchData();
         } catch (error) {
             console.error('Error al actualizar el estado del pedido:', error);
-            alert(error.response?.data?.message || 'No se pudo actualizar el estado del pedido.');
+            toast.error(error.response?.data?.message || 'No se pudo actualizar el estado del pedido.');
         }
     };
 
     // Transferencia rechazada o vencida, pero el local después vio la plata (o habló con el cliente)
     const handleConfirmarPagoIgual = async (pedido) => {
-        if (!window.confirm(`El pedido #${pedido.id_pedido} figura como "${pedido.estado}". ¿Confirmás que recibiste $${Number(pedido.total).toLocaleString('es-AR')}? El pedido pasa a preparación.`)) return;
+        if (!(await confirmar(`El pedido #${pedido.id_pedido} figura como "${pedido.estado}". ¿Confirmás que recibiste $${Number(pedido.total).toLocaleString('es-AR')}? El pedido pasa a preparación.`))) return;
         try {
             await api.post(`/pedidos/${pedido.id_pedido}/confirmar-pago`, {});
             fetchData(true);
         } catch (error) {
-            alert(error.response?.data?.message || 'No se pudo confirmar el pago.');
+            toast.error(error.response?.data?.message || 'No se pudo confirmar el pago.');
         }
     };
 
     const handleRetryInvoice = async (id_pedido) => {
         try {
             await api.post(`/pedidos/${id_pedido}/facturar`);
-            alert(`Factura emitida con éxito para el pedido #${id_pedido}`);
+            toast.success(`Factura emitida con éxito para el pedido #${id_pedido}`);
             fetchData();
         } catch (error) {
             console.error('Error al reintentar facturación:', error);
             const msg = error.response?.data?.details || error.response?.data?.message || 'Error al emitir la factura.';
-            alert(`Error: ${msg}`);
+            toast.error(`Error: ${msg}`);
         }
     };
 

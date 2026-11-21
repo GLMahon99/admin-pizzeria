@@ -46,6 +46,7 @@ import {
     Cell,
     Legend
 } from 'recharts';
+import { toast, confirmar } from '../utils/feedback';
 
 const PIE_COLORS = ['#10b981', '#f59e0b', '#ef4444', '#64748b'];
 
@@ -135,7 +136,7 @@ const SuperAdminDashboard = () => {
             fetchData();
         } catch (error) {
             console.error('Error al actualizar suscripción:', error);
-            alert('Hubo un error al actualizar la suscripción: ' + (error.response?.data?.message || error.message));
+            toast.error('Hubo un error al actualizar la suscripción: ' + (error.response?.data?.message || error.message));
         } finally {
             setSavingSub(false);
         }
@@ -150,7 +151,7 @@ const SuperAdminDashboard = () => {
 
     // Impersonar empresa (Soporte Técnico en 1 Clic)
     const handleImpersonate = async (company) => {
-        if (!window.confirm(`¿Deseas acceder al panel administrativo de "${company.nombre}" en modo soporte?`)) {
+        if (!(await confirmar(`¿Deseas acceder al panel administrativo de "${company.nombre}" en modo soporte?`))) {
             return;
         }
 
@@ -167,7 +168,7 @@ const SuperAdminDashboard = () => {
             window.open('/', '_blank');
         } catch (error) {
             console.error('Error al impersonar empresa:', error);
-            alert('Error al acceder al panel del cliente: ' + (error.response?.data?.message || error.message));
+            toast.error('Error al acceder al panel del cliente: ' + (error.response?.data?.message || error.message));
         } finally {
             setImpersonatingId(null);
         }
@@ -203,7 +204,7 @@ const SuperAdminDashboard = () => {
             XLSX.writeFile(wb, `Reporte_Clientes_Acommerr_${new Date().toISOString().split('T')[0]}.xlsx`);
         } catch (error) {
             console.error('Error al exportar a Excel:', error);
-            alert('Error al generar el archivo Excel.');
+            toast.error('Error al generar el archivo Excel.');
         }
     };
 

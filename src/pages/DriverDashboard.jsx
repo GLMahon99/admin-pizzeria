@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import api from '../api/axiosConfig';
 import { parseAddress, formatAddress } from '../utils/formatters';
+import { toast, confirmar } from '../utils/feedback';
 
 const DriverDashboard = () => {
     const [token, setToken] = useState(localStorage.getItem('repartidor_token') || null);
@@ -52,7 +53,7 @@ const DriverDashboard = () => {
         try {
             setLoading(true);
             const response = await api.post(`/pedidos/${pedidoId}/repartidor/auto-asignar`);
-            alert(response.data.message || `Pedido #${pedidoId} asignado correctamente.`);
+            toast.success(response.data.message || `Pedido #${pedidoId} asignado correctamente.`);
             
             // Limpiar query params de la URL para evitar re-ejecución al recargar
             const newUrl = window.location.pathname;
@@ -62,7 +63,7 @@ const DriverDashboard = () => {
             fetchDeliveries();
         } catch (err) {
             console.error('Error al autoasignar pedido:', err);
-            alert(err.response?.data?.message || `No se pudo asignar el pedido #${pedidoId}.`);
+            toast.error(err.response?.data?.message || `No se pudo asignar el pedido #${pedidoId}.`);
             // Limpiar params para no quedar en bucle
             const newUrl = window.location.pathname;
             window.history.replaceState({}, document.title, newUrl);
@@ -122,7 +123,7 @@ const DriverDashboard = () => {
         }
 
         const confirmMsg = `¿Deseas marcar el pedido #${pedidoId} como "${nuevo_estado}"?`;
-        if (!window.confirm(confirmMsg)) return;
+        if (!(await confirmar(confirmMsg))) return;
 
         try {
             setLoading(true);
@@ -133,7 +134,7 @@ const DriverDashboard = () => {
             fetchDeliveries();
         } catch (err) {
             console.error('Error al actualizar estado:', err);
-            alert(err.response?.data?.message || 'No se pudo actualizar el estado de entrega.');
+            toast.error(err.response?.data?.message || 'No se pudo actualizar el estado de entrega.');
         } finally {
             setLoading(false);
         }
@@ -146,7 +147,7 @@ const DriverDashboard = () => {
 
         const tenant = localStorage.getItem('repartidor_tenant_slug');
         if (!tenant) {
-            alert('Falta el identificador de la pizzería. Escanea un código QR primero o asegúrate de que el enlace sea el correcto.');
+            toast.error('Falta el identificador de la pizzería. Escanea un código QR primero o asegúrate de que el enlace sea el correcto.');
             return;
         }
 
@@ -168,7 +169,7 @@ const DriverDashboard = () => {
             }
         } catch (err) {
             console.error('Error en login de repartidor:', err);
-            alert(err.response?.data?.message || 'Error al iniciar sesión.');
+            toast.error(err.response?.data?.message || 'Error al iniciar sesión.');
         } finally {
             setLoginLoading(false);
         }

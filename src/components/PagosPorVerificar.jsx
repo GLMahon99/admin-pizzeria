@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Landmark, CheckCircle2, XCircle, Clock, Bell, BellOff, AlertTriangle } from 'lucide-react';
 import api from '../api/axiosConfig';
+import { toast, confirmar as pedirConfirmacion, pedirTexto } from '../utils/feedback';
 
 const hora = (iso) => (iso
     ? new Date(iso).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit', hourCycle: 'h23', timeZone: 'America/Argentina/Buenos_Aires' })
@@ -91,27 +92,27 @@ const PagosPorVerificar = ({ pedidos, onCambio }) => {
 
     const confirmar = async (p) => {
         const titular = p.transf_titular_origen || p.cliente_nombre || '-';
-        if (!window.confirm(`¿Confirmás que recibiste $${Number(p.total).toLocaleString('es-AR')} de ${titular}? El pedido #${p.id_pedido} pasa a preparación.`)) return;
+        if (!(await pedirConfirmacion(`¿Confirmás que recibiste $${Number(p.total).toLocaleString('es-AR')} de ${titular}? El pedido #${p.id_pedido} pasa a preparación.`))) return;
         try {
             setProcesando(p.id_pedido);
             await api.post(`/pedidos/${p.id_pedido}/confirmar-pago`, {});
             onCambio();
         } catch (error) {
-            alert(error.response?.data?.message || 'No se pudo confirmar el pago.');
+            toast.error(error.response?.data?.message || 'No se pudo confirmar el pago.');
         } finally {
             setProcesando(null);
         }
     };
 
     const rechazar = async (p) => {
-        const nota = window.prompt(`Pedido #${p.id_pedido}: el cliente va a ver que no se pudo confirmar el pago y un botón para escribirte por WhatsApp.\n\nNota interna (opcional, no la ve el cliente):`, '');
+        const nota = await pedirTexto(`Pedido #${p.id_pedido}: el cliente va a ver que no se pudo confirmar el pago y un botón para escribirte por WhatsApp.\n\nNota interna (opcional, no la ve el cliente):`, { valorInicial: '' });
         if (nota === null) return; // canceló
         try {
             setProcesando(p.id_pedido);
             await api.post(`/pedidos/${p.id_pedido}/rechazar-pago`, { nota });
             onCambio();
         } catch (error) {
-            alert(error.response?.data?.message || 'No se pudo actualizar el pago.');
+            toast.error(error.response?.data?.message || 'No se pudo actualizar el pago.');
         } finally {
             setProcesando(null);
         }

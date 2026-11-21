@@ -1,3 +1,4 @@
+import { confirmar } from '../utils/feedback';
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Save, ShieldCheck, Key, Palette, Image as ImageIcon, Loader2, Phone, Truck, Database, DollarSign, Link, FileText, Copy, Check, Clock, Upload, Trash2, Landmark, AlertTriangle } from 'lucide-react';
@@ -136,7 +137,7 @@ const Settings = () => {
     };
 
     const handleBannerRemove = async () => {
-        if (!window.confirm('¿Quitar la portada de tu tienda?')) return;
+        if (!(await confirmar('¿Quitar la portada de tu tienda?'))) return;
         try {
             setSubiendoBanner(true);
             setBannerMsg({ type: '', text: '' });
@@ -181,7 +182,7 @@ const Settings = () => {
     };
 
     const handleLogoRemove = async () => {
-        if (!window.confirm('¿Quitar el logo de tu tienda?')) return;
+        if (!(await confirmar('¿Quitar el logo de tu tienda?'))) return;
         try {
             setSubiendoLogo(true);
             setLogoMsg({ type: '', text: '' });
@@ -200,7 +201,7 @@ const Settings = () => {
     // Transferencia: no se puede activar con los datos de cobro incompletos.
     // La primera vez se pide confirmar que el local entiende que va a verificar cada cobro.
     const aceptaTransferencia = !!config.acepta_transferencia;
-    const toggleTransferencia = (activar) => {
+    const toggleTransferencia = async (activar) => {
         setTransfMsg('');
         if (!activar) {
             setConfig({ ...config, acepta_transferencia: false });
@@ -211,7 +212,7 @@ const Settings = () => {
             setTransfMsg(falta);
             return;
         }
-        if (!transfGuardada && !window.confirm('Entendido: voy a confirmar cada cobro por transferencia revisando mi banco o billetera antes de preparar el pedido.')) {
+        if (!transfGuardada && !(await confirmar('Entendido: voy a confirmar cada cobro por transferencia revisando mi banco o billetera antes de preparar el pedido.'))) {
             return;
         }
         setConfig({ ...config, acepta_transferencia: true });

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import api from '../api/axiosConfig';
 import { Crown, Zap, Save, History, FileText } from 'lucide-react';
+import { toast, confirmar } from '../utils/feedback';
 
 const formatARS = (value) => `$${parseFloat(value || 0).toLocaleString('es-AR')}`;
 
@@ -42,11 +43,11 @@ const SuperAdminPlans = ({ plans, historial, onSaved }) => {
         const d = drafts[plan.id_plan];
         const precio = parseFloat(d.precio);
         if (!Number.isFinite(precio) || precio <= 0) {
-            alert('El precio debe ser un número mayor a 0.');
+            toast.error('El precio debe ser un número mayor a 0.');
             return;
         }
         if (precio !== parseFloat(plan.precio) &&
-            !window.confirm(`¿Cambiar el precio de "${plan.nombre}" de ${formatARS(plan.precio)} a ${formatARS(precio)}?\n\nAplica a las nuevas suscripciones. Las ya autorizadas en Mercado Pago no se modifican.`)) {
+            !(await confirmar(`¿Cambiar el precio de "${plan.nombre}" de ${formatARS(plan.precio)} a ${formatARS(precio)}?\n\nAplica a las nuevas suscripciones. Las ya autorizadas en Mercado Pago no se modifican.`))) {
             return;
         }
 
@@ -61,7 +62,7 @@ const SuperAdminPlans = ({ plans, historial, onSaved }) => {
             onSaved();
         } catch (error) {
             console.error('Error al actualizar plan:', error);
-            alert('No se pudo actualizar el plan: ' + (error.response?.data?.message || error.message));
+            toast.error('No se pudo actualizar el plan: ' + (error.response?.data?.message || error.message));
         } finally {
             setSavingId(null);
         }

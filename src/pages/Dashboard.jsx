@@ -9,6 +9,7 @@ import {
     Tooltip, ResponsiveContainer, AreaChart, Area,
     PieChart, Pie, Cell, Legend
 } from 'recharts';
+import { toast } from '../utils/feedback';
 
 const COLORS = ['#ff5b00', '#083d5a', '#305a83', '#10b981', '#f59e0b', '#6366f1'];
 
@@ -44,7 +45,7 @@ const Dashboard = () => {
 
     const handleDownloadExcel = async () => {
         if (rango === 'personalizado' && (!fechaDesde || !fechaHasta)) {
-            alert('Elegí las fechas desde y hasta para exportar el balance.');
+            toast.error('Elegí las fechas desde y hasta para exportar el balance.');
             return;
         }
         try {
@@ -66,7 +67,7 @@ const Dashboard = () => {
             URL.revokeObjectURL(url);
         } catch (error) {
             console.error('Error al descargar el Excel:', error);
-            alert('Hubo un error al generar el balance.');
+            toast.error('Hubo un error al generar el balance.');
         } finally {
             setExporting(false);
         }

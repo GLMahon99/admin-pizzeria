@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Bike, Loader2, ExternalLink, RefreshCw, XCircle, Send, LifeBuoy } from 'lucide-react';
 import api from '../api/axiosConfig';
+import { confirmar as pedirConfirmacion } from '../utils/feedback';
 
 const TEXTOS = {
     CONFIRMED: 'Buscando repartidor',
@@ -33,7 +34,7 @@ const EnvioPedidosYa = ({ pedido, onCambio }) => {
     const puedeCancelar = programado || estado === 'CONFIRMED';
 
     const ejecutar = async (nombre, url, confirmar) => {
-        if (confirmar && !window.confirm(confirmar)) return;
+        if (confirmar && !(await pedirConfirmacion(confirmar))) return;
         setAccion(nombre);
         setMsg('');
         try {

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Save, X, Pizza } from 'lucide-react';
+import { toast } from '../utils/feedback';
 
 const ProductForm = ({ productToEdit, onSave, onCancel }) => {
     const [formData, setFormData] = useState({
@@ -25,7 +26,7 @@ const ProductForm = ({ productToEdit, onSave, onCancel }) => {
         e.preventDefault();
         // Validamos que el precio sea un número positivo (mentalidad de analista)
         if (parseFloat(formData.precio) <= 0) {
-            alert("El precio debe ser mayor a 0");
+            toast.error("El precio debe ser mayor a 0");
             return;
         }
         onSave(formData);

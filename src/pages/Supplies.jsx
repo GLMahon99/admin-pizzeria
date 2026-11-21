@@ -14,6 +14,7 @@ import {
     Save
 } from 'lucide-react';
 import useIsMobile from '../hooks/useIsMobile';
+import { toast, confirmar } from '../utils/feedback';
 
 const Supplies = () => {
     // En celular los insumos son de solo consulta (sin carga, edición ni borrado)
@@ -40,7 +41,7 @@ const Supplies = () => {
             setInsumos(response.data);
         } catch (error) {
             console.error('Error al cargar insumos:', error);
-            alert('Hubo un error al cargar los insumos de la base de datos.');
+            toast.error('Hubo un error al cargar los insumos de la base de datos.');
         } finally {
             setLoading(false);
         }
@@ -74,18 +75,18 @@ const Supplies = () => {
             fetchInsumos();
         } catch (error) {
             console.error('Error al crear insumo:', error);
-            alert('No se pudo guardar el insumo. Verificá los datos.');
+            toast.error('No se pudo guardar el insumo. Verificá los datos.');
         }
     };
 
     const handleDelete = async (id) => {
-        if (!window.confirm('¿Seguro que querés eliminar este insumo?')) return;
+        if (!(await confirmar('¿Seguro que querés eliminar este insumo?'))) return;
         try {
             await api.delete(`/insumos/${id}`);
             fetchInsumos();
         } catch (error) {
             console.error('Error al eliminar:', error);
-            alert('Error al intentar eliminar el insumo.');
+            toast.error('Error al intentar eliminar el insumo.');
         }
     };
 

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../api/axiosConfig';
 import { Check, Zap, Crown, ArrowLeft, ArrowRight, ShieldCheck } from 'lucide-react';
+import { toast } from '../utils/feedback';
 
 const SubscriptionPlans = () => {
     const { companyId } = useParams();
@@ -83,7 +84,7 @@ const SubscriptionPlans = () => {
             }
         } catch (error) {
             console.error('Error al iniciar suscripción:', error);
-            alert('Hubo un error al procesar tu solicitud. Por favor intenta de nuevo.');
+            toast.error('Hubo un error al procesar tu solicitud. Por favor intenta de nuevo.');
         } finally {
             setLoading(null);
         }

@@ -3,6 +3,7 @@ import { Plus, ImagePlus, Utensils, DollarSign, Tag, Trash2, Edit, Save, X, Beak
 import api from '../api/axiosConfig';
 import ListaEditable from '../components/ListaEditable';
 import useIsMobile from '../hooks/useIsMobile';
+import { toast, confirmar } from '../utils/feedback';
 
 // Tipos de producto fijos: cada uno con sus propios campos (ver productoTiposService en el backend)
 const TIPOS = [
@@ -140,7 +141,7 @@ const Inventory = () => {
             setCategories(catRes.data);
         } catch (error) {
             console.error('Error al cargar datos:', error);
-            alert('Hubo un error al cargar los datos de la base de datos.');
+            toast.error('Hubo un error al cargar los datos de la base de datos.');
         } finally {
             setLoading(false);
         }
@@ -218,7 +219,7 @@ const Inventory = () => {
             setShowForm(true);
         } catch (error) {
             console.error("Error al cargar detalle del producto:", error);
-            alert("No se pudo cargar la información completa del producto.");
+            toast.error("No se pudo cargar la información completa del producto.");
         }
     };
 
@@ -231,7 +232,7 @@ const Inventory = () => {
 
         const exists = recetaItems.find(item => item.id_insumo === insumo.id_insumo);
         if (exists) {
-            alert("Este insumo ya está en la receta.");
+            toast.error("Este insumo ya está en la receta.");
             return;
         }
 
@@ -319,21 +320,21 @@ const Inventory = () => {
             fetchData();
         } catch (error) {
             console.error('Error al guardar producto:', error);
-            alert(error.response?.data?.message || 'No se pudo guardar el producto. Verificá los datos.');
+            toast.error(error.response?.data?.message || 'No se pudo guardar el producto. Verificá los datos.');
         } finally {
             setIsSubmitting(false);
         }
     };
 
     const handleDelete = async (id) => {
-        if (!window.confirm('¿Seguro que querés eliminar este producto? Si ya se vendió, va a seguir figurando en los pedidos anteriores.')) return;
+        if (!(await confirmar('¿Seguro que querés eliminar este producto? Si ya se vendió, va a seguir figurando en los pedidos anteriores.'))) return;
         try {
             const res = await api.delete(`/productos/${id}`);
-            if (res.data?.resultado === 'baja') alert(res.data.message);
+            if (res.data?.resultado === 'baja') toast.info(res.data.message);
             fetchData();
         } catch (error) {
             console.error('Error al eliminar:', error);
-            alert(error.response?.data?.message || 'Error al intentar eliminar el producto.');
+            toast.error(error.response?.data?.message || 'Error al intentar eliminar el producto.');
         }
     };
 
@@ -345,7 +346,7 @@ const Inventory = () => {
             setProducts(prev => prev.map(p => (p.id_producto === prod.id_producto ? { ...p, pausado: pausado ? 1 : 0 } : p)));
         } catch (error) {
             console.error('Error al pausar:', error);
-            alert(error.response?.data?.message || 'No se pudo cambiar el estado del producto.');
+            toast.error(error.response?.data?.message || 'No se pudo cambiar el estado del producto.');
         }
     };
 

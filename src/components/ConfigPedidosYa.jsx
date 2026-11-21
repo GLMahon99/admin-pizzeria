@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { ShieldCheck, Loader2, CheckCircle2, AlertTriangle, ExternalLink } from 'lucide-react';
 import api from '../api/axiosConfig';
+import { confirmar } from '../utils/feedback';
 
 const inputClass = 'w-full bg-gray-50 border-2 border-gray-100 p-4 rounded-2xl focus:border-purple-600 outline-none text-sm';
 const labelClass = 'text-xs font-black text-gray-400 uppercase tracking-widest ml-1';
@@ -70,7 +71,7 @@ const ConfigPedidosYa = ({ config, setConfig }) => {
                     {conectado && (
                         <button
                             type="button"
-                            onClick={() => window.confirm('¿Desconectar la cuenta de PedidosYa? No vas a poder recibir pedidos con envío hasta conectarla de nuevo o pasar a repartidores propios.') && setConfig({ ...config, pya_token: '', pya_token_borrar: true })}
+                            onClick={async () => (await confirmar('¿Desconectar la cuenta de PedidosYa? No vas a poder recibir pedidos con envío hasta conectarla de nuevo o pasar a repartidores propios.', { peligro: true, textoConfirmar: 'Desconectar' })) && setConfig({ ...config, pya_token: '', pya_token_borrar: true })}
                             className="text-xs font-black text-red-600 uppercase tracking-widest"
                         >
                             Desconectar
