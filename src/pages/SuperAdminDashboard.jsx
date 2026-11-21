@@ -758,7 +758,7 @@ const SuperAdminDashboard = () => {
                                                         {/* Botón Abrir Tienda */}
                                                         {company.slug && (
                                                             <a
-                                                                href={`https://acommerr.store/?tenant=${company.slug}`}
+                                                                href={`https://acommerr.store/${company.slug}`}
                                                                 target="_blank"
                                                                 rel="noopener noreferrer"
                                                                 title="Ver Tienda Online"

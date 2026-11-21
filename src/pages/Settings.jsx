@@ -237,7 +237,7 @@ const Settings = () => {
         setTimeout(() => setCopied(false), 2000);
     };
 
-    const urlTienda = user?.slug ? `https://acommerr.store/?tenant=${user.slug}` : '';
+    const urlTienda = user?.slug ? `https://acommerr.store/${user.slug}` : '';
     const handleCopyUrlTienda = () => {
         if (!urlTienda) return;
         navigator.clipboard.writeText(urlTienda);
